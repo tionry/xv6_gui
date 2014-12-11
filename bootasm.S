@@ -12,8 +12,15 @@
 start:
   cli                         # BIOS enabled interrupts; disable
 
-  movw    $0x4f02, %ax
-  movw    $0x411A, %bx
+  movw    $0x4f02,%ax
+  movw    $0x4114,%bx
+  int     $0x10
+
+  movw    $0x9000,%bx
+  movw    %bx,%es
+  movw    $0x0000,%di
+  movw    $0x4f01, %ax
+  movw    $0x4114, %bx
   int     $0x10
 
   # Zero data segment registers DS, ES, and SS.
