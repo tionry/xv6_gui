@@ -13,14 +13,14 @@ start:
   cli                         # BIOS enabled interrupts; disable
 
   movw    $0x4f02,%ax
-  movw    $0x4114,%bx
+  movw    $0x411A,%bx
   int     $0x10
 
   movw    $0x9000,%bx
-  movw    %bx,%es
+  movw    %bx, %es
   movw    $0x0000,%di
-  movw    $0x4f01, %ax
-  movw    $0x4114, %bx
+  movw    $0x4f01,%ax
+  movw    $0x411A,%cx
   int     $0x10
 
   # Zero data segment registers DS, ES, and SS.
@@ -63,6 +63,7 @@ seta20.2:
 
 .code32  # Tell assembler to generate 32-bit code now.
 start32:
+
   # Set up the protected-mode data segment registers
   movw    $(SEG_KDATA<<3), %ax    # Our data segment selector
   movw    %ax, %ds                # -> DS: Data Segment

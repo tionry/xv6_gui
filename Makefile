@@ -4,7 +4,6 @@ OBJS = \
 	exec.o\
 	file.o\
 	fs.o\
-	gui.o\
 	ide.o\
 	ioapic.o\
 	kalloc.o\
@@ -28,6 +27,7 @@ OBJS = \
 	uart.o\
 	vectors.o\
 	vm.o\
+	window.o\
 
 # Cross-compiling (e.g., on Mac OS X)
 # TOOLPREFIX = i386-jos-elf
@@ -135,7 +135,7 @@ tags: $(OBJS) entryother.S _init
 vectors.S: vectors.pl
 	perl vectors.pl > vectors.S
 
-ULIB = ulib.o usys.o printf.o umalloc.o gui.o
+ULIB = ulib.o usys.o printf.o umalloc.o
 
 _%: %.o $(ULIB)
 	$(LD) $(LDFLAGS) -N -e main -Ttext 0 -o $@ $^
@@ -173,7 +173,6 @@ UPROGS=\
 	_usertests\
 	_wc\
 	_zombie\
-	_tryWindow\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
