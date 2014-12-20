@@ -17,7 +17,7 @@ Window windowQueue[MAX_WINDOW_NUM];
 unsigned short screen_temp[SCREEN_WIDTH][SCREEN_HEIGHT];
 int windowNum = 0;
 
-void update()
+void updateWindow()
 {
 	unsigned short *screen = (unsigned short *)SCREEN_MEMORY;
 	int i, j, k;
@@ -45,7 +45,6 @@ Window* createWindow(int leftTopX, int leftTopY, int width, int height)
 	mystrcpy(windowQueue[windowNum].caption, "new window");
 	windowQueue[windowNum].show = 1;
 	windowNum++;
-	update();
 	return &windowQueue[windowNum - 1];
 }
 

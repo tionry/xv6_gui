@@ -8,4 +8,5 @@ typedef struct Window
 }Window;
 
 Window* createWindow(int leftTopX, int leftTopY, int width, int height);
+void updateWindow();
 

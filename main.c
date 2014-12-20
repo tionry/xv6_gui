@@ -20,7 +20,6 @@ main(void)
 {
   kinit1(end, P2V(4*1024*1024)); // phys page allocator
   kvmalloc();      // kernel page table
-createWindow(30, 40, 800, 600);
   mpinit();        // collect info about this machine
   lapicinit();
   seginit();       // set up segments
@@ -61,6 +60,8 @@ mpmain(void)
   cprintf("cpu%d: starting\n", cpu->id);
   idtinit();       // load idt register
   xchg(&cpu->started, 1); // tell startothers() we're up
+createWindow(30, 40, 800, 600);
+createWindow(200, 300, 1000, 300);
   scheduler();     // start running processes
 }
 
