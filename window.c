@@ -1,6 +1,6 @@
 #include "window.h"
 #define MAX_WINDOW_NUM 256
-#define SCREEN_MEMORY 0xfc000000
+#define SCREEN_MEMORY 0xfD000000
 
 char*
 mystrcpy(char *s, char *t)
@@ -26,7 +26,7 @@ void updateWindow()
 		if (windowQueue[k].show == 1)
 			for (i = 0; i < windowQueue[k].width; i++)
 				for (j = 0; j < windowQueue[k].height; j++)
-					screen_temp[windowQueue[k].leftTopX + i][windowQueue[k].leftTopY + j] = 0x8888;
+					screen_temp[windowQueue[k].leftTopX + i][windowQueue[k].leftTopY + j] = 0b1111111111100000;
 
 	for (i = 0; i < SCREEN_HEIGHT; i++)
 		for (j = 0; j < SCREEN_WIDTH; j++)
