@@ -1,6 +1,6 @@
 #include "window.h"
+#include "gui.h"
 #define MAX_WINDOW_NUM 256
-#define SCREEN_MEMORY 0xfD000000
 
 char*
 mystrcpy(char *s, char *t)
@@ -14,37 +14,42 @@ mystrcpy(char *s, char *t)
 }
 
 Window windowQueue[MAX_WINDOW_NUM];
-unsigned short screen_temp[SCREEN_WIDTH][SCREEN_HEIGHT];
 int windowNum = 0;
 
 void updateWindow()
 {
-	unsigned short *screen = (unsigned short *)SCREEN_MEMORY;
-	int i, j, k;
+  RGB *screen = (RGB *)GUI_INFO.PhysBasePtr;
+  RGB *screen_temp = (RGB *)(GUI_INFO.PhysBasePtr + 0x3c0000);
 
-	for (k = 0; k < windowNum; k++)
-		if (windowQueue[k].show == 1)
-			for (i = 0; i < windowQueue[k].width; i++)
-				for (j = 0; j < windowQueue[k].height; j++)
-					screen_temp[windowQueue[k].leftTopX + i][windowQueue[k].leftTopY + j] = 0b1111111111100000;
+  int i, j, k;
 
-	for (i = 0; i < SCREEN_HEIGHT; i++)
-		for (j = 0; j < SCREEN_WIDTH; j++)
-			screen[SCREEN_WIDTH * i + j] = screen_temp[j][i];
+  for (k = 0; k < windowNum; k++)
+    if (windowQueue[k].show == 1)
+      for (i = 0; i < windowQueue[k].width; i++)
+        for (j = 0; j < windowQueue[k].height; j++)
+        {
+//          screen_temp[windowQueue[k].leftTopX + i][windowQueue[k].leftTopY + j].R = 0xFF;
+          screen_temp[(windowQueue[k].leftTopY + j) * SCREEN_WIDTH + windowQueue[k].leftTopX + i].R = 0x00;
+          screen_temp[(windowQueue[k].leftTopY + j) * SCREEN_WIDTH + windowQueue[k].leftTopX + i].G = 0xFF;
+          screen_temp[(windowQueue[k].leftTopY + j) * SCREEN_WIDTH + windowQueue[k].leftTopX + i].B = 0x00;
+        }
+
+  for (i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++)
+    screen[i] = screen_temp[i];
 }
 
 Window* createWindow(int leftTopX, int leftTopY, int width, int height)
 {
-	if (windowNum == MAX_WINDOW_NUM)
-		return (Window*)-1;
+  if (windowNum == MAX_WINDOW_NUM)
+    return (Window*)-1;
 
-	windowQueue[windowNum].leftTopX = leftTopX;
-	windowQueue[windowNum].leftTopY = leftTopY;
-	windowQueue[windowNum].width = width;
-	windowQueue[windowNum].height = height;
-	mystrcpy(windowQueue[windowNum].caption, "new window");
-	windowQueue[windowNum].show = 1;
-	windowNum++;
-	return &windowQueue[windowNum - 1];
+  windowQueue[windowNum].leftTopX = leftTopX;
+  windowQueue[windowNum].leftTopY = leftTopY;
+  windowQueue[windowNum].width = width;
+  windowQueue[windowNum].height = height;
+  mystrcpy(windowQueue[windowNum].caption, "New window");
+  windowQueue[windowNum].show = 1;
+  windowNum++;
+  return &windowQueue[windowNum - 1];
 }
 
