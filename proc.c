@@ -282,6 +282,7 @@ scheduler(void)
       // before jumping back to us.
       proc = p;
       switchuvm(p);
+
       p->state = RUNNING;
       swtch(&cpu->scheduler, proc->context);
       switchkvm();
@@ -291,6 +292,7 @@ scheduler(void)
       proc = 0;
     }
     release(&ptable.lock);
+
   }
 }
 

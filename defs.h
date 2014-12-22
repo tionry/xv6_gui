@@ -153,10 +153,6 @@ int             fetchint(uint, int*);
 int             fetchstr(uint, char**);
 void            syscall(void);
 
-// sysfile.c
-int             vfs_read(int fd, char *p, int n);
-int             vfs_open(char *path, int omode);
-
 // timer.c
 void            timerinit(void);
 

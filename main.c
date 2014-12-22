@@ -20,6 +20,12 @@ main(void)
   initGUI();
   kinit1(end, P2V(4*1024*1024)); // phys page allocator
   kvmalloc();      // kernel page table
+  initWindow();
+
+createWindow(10, 10, 60, 40);
+createWindow(100, 200, 60, 40);
+createWindow(200, 400, 60, 40);
+
   mpinit();        // collect info about this machine
   lapicinit();
   seginit();       // set up segments
@@ -38,10 +44,8 @@ main(void)
     timerinit();   // uniprocessor timer
   startothers();   // start other processors
   kinit2(P2V(4*1024*1024), P2V(PHYSTOP)); // must come after startothers()
-  initWindow();
   userinit();      // first user process
   // Finish setting up this processor in mpmain.
-drawBitmap("README", 0, 0);
   mpmain();
 }
 

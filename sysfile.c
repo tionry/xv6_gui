@@ -76,16 +76,6 @@ sys_read(void)
 }
 
 int
-vfs_read(int fd, char *p, int n)
-{
-  struct file *f = proc->ofile[fd];
-
-  if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
-    return -1;
-  return fileread(f, p, n);
-}
-
-int
 sys_write(void)
 {
   struct file *f;
@@ -300,52 +290,6 @@ sys_open(void)
 
   if(argstr(0, &path) < 0 || argint(1, &omode) < 0)
     return -1;
-
-  begin_op();
-
-  if(omode & O_CREATE){
-    ip = create(path, T_FILE, 0, 0);
-    if(ip == 0){
-      end_op();
-      return -1;
-    }
-  } else {
-    if((ip = namei(path)) == 0){
-      end_op();
-      return -1;
-    }
-    ilock(ip);
-    if(ip->type == T_DIR && omode != O_RDONLY){
-      iunlockput(ip);
-      end_op();
-      return -1;
-    }
-  }
-
-  if((f = filealloc()) == 0 || (fd = fdalloc(f)) < 0){
-    if(f)
-      fileclose(f);
-    iunlockput(ip);
-    end_op();
-    return -1;
-  }
-  iunlock(ip);
-  end_op();
-
-  f->type = FD_INODE;
-  f->ip = ip;
-  f->off = 0;
-  f->readable = !(omode & O_WRONLY);
-  f->writable = (omode & O_WRONLY) || (omode & O_RDWR);
-  return fd;
-}
-
-int
-vfs_open(char *path, int omode)
-{
-  int fd;
-  struct file *f;
-  struct inode *ip;
 
   begin_op();
 

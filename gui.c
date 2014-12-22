@@ -54,5 +54,5 @@ void updateGUI()
 
 void drawBitmap(char *filename, int leftTopX, int leftTopY)
 {
-  vfs_open(filename, 0);  
+  
 }
