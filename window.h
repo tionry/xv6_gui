@@ -1,18 +1,17 @@
-#define MAX_WINDOW_NUM 256
+#define MAX_WINDOW_NUM 32
 
-typedef enum windowType
+typedef enum windowState
 {
-  none = -1,
-  label,
-  textbox,
-  button,
-  imageView
-}windowType;
+  none,
+  hide,
+  show
+}windowState;
 
 typedef struct Window
 {
-  windowType type;
-  int leftTopX, leftTopY, width, height, show;
+  windowState state;
+  int leftTopX, leftTopY, width, height;
   char caption[256];
+  struct Window *next;
 } Window;
 

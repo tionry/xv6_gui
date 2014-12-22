@@ -5,7 +5,6 @@
 #include "mmu.h"
 #include "proc.h"
 #include "x86.h"
-#include "gui.h"
 
 static void startothers(void);
 static void mpmain(void)  __attribute__((noreturn));
@@ -21,7 +20,6 @@ main(void)
   initGUI();
   kinit1(end, P2V(4*1024*1024)); // phys page allocator
   kvmalloc();      // kernel page table
-createWindow(0, 0, 1280, 1024);
   mpinit();        // collect info about this machine
   lapicinit();
   seginit();       // set up segments
@@ -40,8 +38,10 @@ createWindow(0, 0, 1280, 1024);
     timerinit();   // uniprocessor timer
   startothers();   // start other processors
   kinit2(P2V(4*1024*1024), P2V(PHYSTOP)); // must come after startothers()
+  initWindow();
   userinit();      // first user process
   // Finish setting up this processor in mpmain.
+drawBitmap("README", 0, 0);
   mpmain();
 }
 

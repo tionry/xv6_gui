@@ -55,6 +55,7 @@ int             writei(struct inode*, char*, uint, uint);
 // gui.c
 void            initGUI();
 void            updateGUI();
+void drawBitmap(char *filename, int leftTopX, int leftTopY);
 
 // ide.c
 void            ideinit(void);
@@ -152,6 +153,10 @@ int             fetchint(uint, int*);
 int             fetchstr(uint, char**);
 void            syscall(void);
 
+// sysfile.c
+int             vfs_read(int fd, char *p, int n);
+int             vfs_open(char *path, int omode);
+
 // timer.c
 void            timerinit(void);
 
@@ -184,7 +189,9 @@ int             copyout(pde_t*, uint, void*, uint);
 void            clearpteu(pde_t *pgdir, char *uva);
 
 // window.c
+void            initWindow();
 int             createWindow(int leftTopX, int leftTopY, int width, int height);
+void            deleteWindow(int x);
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))
