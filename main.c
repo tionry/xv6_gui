@@ -5,7 +5,6 @@
 #include "mmu.h"
 #include "proc.h"
 #include "x86.h"
-#include "window.h"
 #include "gui.h"
 
 static void startothers(void);

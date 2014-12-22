@@ -6,7 +6,6 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
-#include "window.h"
 
 struct {
   struct spinlock lock;
@@ -292,8 +291,6 @@ scheduler(void)
       proc = 0;
     }
     release(&ptable.lock);
-    updateWindow();
-
   }
 }
 

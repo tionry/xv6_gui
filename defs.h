@@ -52,6 +52,10 @@ int             readi(struct inode*, char*, uint, uint);
 void            stati(struct inode*, struct stat*);
 int             writei(struct inode*, char*, uint, uint);
 
+// gui.c
+void            initGUI();
+void            updateGUI();
+
 // ide.c
 void            ideinit(void);
 void            ideintr(void);
@@ -178,6 +182,9 @@ void            switchuvm(struct proc*);
 void            switchkvm(void);
 int             copyout(pde_t*, uint, void*, uint);
 void            clearpteu(pde_t *pgdir, char *uva);
+
+// window.c
+int             createWindow(int leftTopX, int leftTopY, int width, int height);
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))

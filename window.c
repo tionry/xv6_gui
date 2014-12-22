@@ -1,9 +1,17 @@
+#include "types.h"
+#include "defs.h"
+#include "param.h"
+#include "memlayout.h"
+#include "mmu.h"
+#include "proc.h"
+#include "x86.h"
 #include "window.h"
-#include "gui.h"
-#define MAX_WINDOW_NUM 256
 
-char*
-mystrcpy(char *s, char *t)
+Window windowLine[MAX_WINDOW_NUM];
+Window *windowQueue = (Window *)-1;
+int windowNum = 0;
+
+char* mystrcpy(char *s, char *t)
 {
   char *os;
 
@@ -13,43 +21,24 @@ mystrcpy(char *s, char *t)
   return os;
 }
 
-Window windowQueue[MAX_WINDOW_NUM];
-int windowNum = 0;
-
-void updateWindow()
+void initWindow()
 {
-  RGB *screen = (RGB *)GUI_INFO.PhysBasePtr;
-  RGB *screen_temp = (RGB *)(GUI_INFO.PhysBasePtr + 0x3c0000);
-
-  int i, j, k;
-
-  for (k = 0; k < windowNum; k++)
-    if (windowQueue[k].show == 1)
-      for (i = 0; i < windowQueue[k].width; i++)
-        for (j = 0; j < windowQueue[k].height; j++)
-        {
-//          screen_temp[windowQueue[k].leftTopX + i][windowQueue[k].leftTopY + j].R = 0xFF;
-          screen_temp[(windowQueue[k].leftTopY + j) * SCREEN_WIDTH + windowQueue[k].leftTopX + i].R = 0x00;
-          screen_temp[(windowQueue[k].leftTopY + j) * SCREEN_WIDTH + windowQueue[k].leftTopX + i].G = 0xFF;
-          screen_temp[(windowQueue[k].leftTopY + j) * SCREEN_WIDTH + windowQueue[k].leftTopX + i].B = 0x00;
-        }
-
-  for (i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++)
-    screen[i] = screen_temp[i];
+  
 }
 
-Window* createWindow(int leftTopX, int leftTopY, int width, int height)
+int createWindow(int leftTopX, int leftTopY, int width, int height)
 {
   if (windowNum == MAX_WINDOW_NUM)
-    return (Window*)-1;
+    return (-1);
 
-  windowQueue[windowNum].leftTopX = leftTopX;
-  windowQueue[windowNum].leftTopY = leftTopY;
-  windowQueue[windowNum].width = width;
-  windowQueue[windowNum].height = height;
-  mystrcpy(windowQueue[windowNum].caption, "New window");
-  windowQueue[windowNum].show = 1;
+  windowLine[windowNum].leftTopX = leftTopX;
+  windowLine[windowNum].leftTopY = leftTopY;
+  windowLine[windowNum].width = width;
+  windowLine[windowNum].height = height;
+  mystrcpy(windowLine[windowNum].caption, "New window");
+  windowLine[windowNum].show = 1;
   windowNum++;
-  return &windowQueue[windowNum - 1];
+  updateGUI();
+  return (windowNum - 1);
 }
 
