@@ -29,12 +29,20 @@ void drawWindow()
     p = p->next;
     if (p->state == show)
       for (i = 0; i < p->width; i++)
-        for (j = 0; j < p->height; j++)
+      {
+        for (j = 0; j < CAPTION_HEIGHT; j++)
+        {
+          screen_temp[(p->leftTopY + j) * SCREEN_WIDTH + p->leftTopX + i].R = 0xFF;
+          screen_temp[(p->leftTopY + j) * SCREEN_WIDTH + p->leftTopX + i].G = 0xFF;
+          screen_temp[(p->leftTopY + j) * SCREEN_WIDTH + p->leftTopX + i].B = 0x00;
+        }
+        for (j = CAPTION_HEIGHT; j < p->height; j++)
         {
           screen_temp[(p->leftTopY + j) * SCREEN_WIDTH + p->leftTopX + i].R = 0x00;
           screen_temp[(p->leftTopY + j) * SCREEN_WIDTH + p->leftTopX + i].G = 0xFF;
           screen_temp[(p->leftTopY + j) * SCREEN_WIDTH + p->leftTopX + i].B = 0x00;
         }
+      }
   }
 }
 

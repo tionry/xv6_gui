@@ -22,9 +22,9 @@ main(void)
   kvmalloc();      // kernel page table
   initWindow();
 
-createWindow(10, 10, 60, 40);
-createWindow(100, 200, 60, 40);
-createWindow(200, 400, 60, 40);
+createWindow(10, 10, 300, 400);
+createWindow(100, 200, 400, 200);
+createWindow(200, 400, 100, 400);
 
   mpinit();        // collect info about this machine
   lapicinit();
