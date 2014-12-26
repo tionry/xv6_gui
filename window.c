@@ -62,11 +62,35 @@ void deleteWindow(int x)
 {
   Window *p = &windowQueue;
   while (p->next != &windowLine[x])
+  {
     p = p->next;
+    if (p == (Window *)-1)
+      return;
+  }
   p->next->state = none;
   p->next = p->next->next;
   windowLine[x].next = (Window *)-1;
   updateGUI();
+}
+
+int sys_deleteWindow(void)
+{
+  int x;
+  if (argint(0, &x) < 0)
+    return -1;
+
+  Window *p = &windowQueue;
+  while (p->next != &windowLine[x])
+  {
+    p = p->next;
+    if (p == (Window *)-1)
+      return -1;
+  }
+  p->next->state = none;
+  p->next = p->next->next;
+  windowLine[x].next = (Window *)-1;
+  updateGUI();
+  return 0;
 }
 
 int createWindow(int leftTopX, int leftTopY, int width, int height)
@@ -80,7 +104,30 @@ int createWindow(int leftTopX, int leftTopY, int width, int height)
   windowLine[hWind].leftTopY = leftTopY;
   windowLine[hWind].width = width;
   windowLine[hWind].height = height;
-  mystrcpy(windowLine[hWind].caption, "New window");
+  safestrcpy(windowLine[hWind].caption, "New window", 10);
+  windowLine[hWind].state = show;
+  addWindow(hWind);  
+  updateGUI();
+  return hWind;
+}
+
+int sys_createWindow(void)
+{
+  int leftTopX, leftTopY, width, height;
+
+  if (argint(0, &leftTopX) < 0 || argint(1, &leftTopY) < 0 || argint(2, &width) < 0 || argint(3, &height) < 0)
+    return -1;
+
+  int hWind = acquireWindow();
+
+  if (hWind < 0)
+    return hWind;
+
+  windowLine[hWind].leftTopX = leftTopX;
+  windowLine[hWind].leftTopY = leftTopY;
+  windowLine[hWind].width = width;
+  windowLine[hWind].height = height;
+  safestrcpy(windowLine[hWind].caption, "New window", 10);
   windowLine[hWind].state = show;
   addWindow(hWind);  
   updateGUI();

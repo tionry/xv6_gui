@@ -21,11 +21,6 @@ main(void)
   kinit1(end, P2V(4*1024*1024)); // phys page allocator
   kvmalloc();      // kernel page table
   initWindow();
-
-createWindow(10, 10, 300, 400);
-createWindow(100, 200, 400, 200);
-createWindow(200, 400, 100, 400);
-
   mpinit();        // collect info about this machine
   lapicinit();
   seginit();       // set up segments

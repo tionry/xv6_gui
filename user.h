@@ -23,6 +23,8 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+int createWindow(int leftTopX, int leftTopY, int width, int height);
+void deleteWindow(int x);
 
 // ulib.c
 int stat(char*, struct stat*);
