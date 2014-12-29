@@ -58,6 +58,7 @@ typedef struct Widget
 
 typedef struct Window
 {
+  struct proc* proc;
   WindowState state;
   int leftTopX, leftTopY, width, height;
   char caption[MAX_STRING_NUM];

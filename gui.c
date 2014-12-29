@@ -27,6 +27,8 @@ void drawWindow()
   while (((int)p->next) != -1)
   {
     p = p->next;
+    switchuvm(p->proc);
+    switchkvm();
     if (p->state == show)
       for (i = 0; i < p->width; i++)
       {

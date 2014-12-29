@@ -123,6 +123,7 @@ int sys_createWindow(void)
   if (hWind < 0)
     return hWind;
 
+  windowLine[hWind].proc = proc;
   windowLine[hWind].leftTopX = leftTopX;
   windowLine[hWind].leftTopY = leftTopY;
   windowLine[hWind].width = width;
