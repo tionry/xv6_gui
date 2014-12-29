@@ -8,15 +8,14 @@ typedef struct BITMAP_FILE_HEADER {
 
 typedef struct BITMAP_INFO_HEADER {
 	unsigned int biSize;
-	unsigned int biWidth;
-	unsigned int biHeight;
+	int biWidth;
+	int biHeight;
 	unsigned short biPlanes;
 	unsigned short biBitCount;
 	unsigned int biCompression;
 	unsigned int biSizeImage;
-	unsigned int biXPelsPerMeter;
-	unsigned int biYPelsPerMeter;
+	int biXPelsPerMeter;
+	int biYPelsPerMeter;
 	unsigned int biCirUserd;
 	unsigned int biCirImportant;
 } BITMAP_INFO_HEADER;
-
