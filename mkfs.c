@@ -13,10 +13,10 @@
 
 #define static_assert(a, b) do { switch (0) case 0: case (a): ; } while (0)
 
-int nblocks = (995-LOGSIZE);
+int nblocks = (20446-LOGSIZE);
 int nlog = LOGSIZE;
 int ninodes = 200;
-int size = 1024;
+int size = 20480;
 
 int fsfd;
 struct superblock sb;
@@ -271,19 +271,39 @@ iappend(uint inum, void *xp, int n)
       }
       x = xint(din.addrs[fbn]);
     } else {
-      if(xint(din.addrs[NDIRECT]) == 0){
-        // printf("allocate indirect block\n");
-        din.addrs[NDIRECT] = xint(freeblock++);
-        usedblocks++;
+      if(fbn < NDIRECT + NINDIRECT){
+        if(xint(din.addrs[NDIRECT]) == 0){
+          // printf("allocate indirect block\n");
+          din.addrs[NDIRECT] = xint(freeblock++);
+          usedblocks++;
+        }
+        // printf("read indirect block\n");
+        rsect(xint(din.addrs[NDIRECT]), (char*)indirect);
+        if(indirect[fbn - NDIRECT] == 0){
+          indirect[fbn - NDIRECT] = xint(freeblock++);
+          usedblocks++;
+          wsect(xint(din.addrs[NDIRECT]), (char*)indirect);
+        }
+        x = xint(indirect[fbn-NDIRECT]);
+      } else {
+        if(xint(din.addrs[NDIRECT + 1]) == 0){
+          din.addrs[NDIRECT + 1] = xint(freeblock++);
+          usedblocks++;
+        }
+        rsect(xint(din.addrs[NDIRECT + 1]), (char*)indirect);
+        if(indirect[(fbn - NDIRECT - NINDIRECT) / NINDIRECT] == 0){
+          indirect[(fbn - NDIRECT - NINDIRECT) / NINDIRECT] = xint(freeblock++);
+          usedblocks++;
+          wsect(xint(din.addrs[NDIRECT + 1]), (char*)indirect);
+        }
+        rsect(xint(indirect[(fbn - NDIRECT - NINDIRECT) / NINDIRECT]), (char*)indirect);
+        if(indirect[(fbn - NDIRECT - NINDIRECT) % NINDIRECT] == 0){
+          indirect[(fbn - NDIRECT - NINDIRECT) % NINDIRECT] = xint(freeblock++);
+          usedblocks++;
+          wsect(xint(indirect[(fbn - NDIRECT - NINDIRECT) / NINDIRECT]), (char*)indirect);
+        }
+        x = xint(indirect[(fbn - NDIRECT - NINDIRECT) % NINDIRECT]);
       }
-      // printf("read indirect block\n");
-      rsect(xint(din.addrs[NDIRECT]), (char*)indirect);
-      if(indirect[fbn - NDIRECT] == 0){
-        indirect[fbn - NDIRECT] = xint(freeblock++);
-        usedblocks++;
-        wsect(xint(din.addrs[NDIRECT]), (char*)indirect);
-      }
-      x = xint(indirect[fbn-NDIRECT]);
     }
     n1 = min(n, (fbn + 1) * 512 - off);
     rsect(x, buf);

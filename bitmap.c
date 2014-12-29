@@ -1,22 +1,27 @@
-#include "gui.h"
+#include "types.h"
+#include "stat.h"
+#include "fcntl.h"
+#include "user.h"
+#include "x86.h"
+#include "uwindow.h" 
 #include "bitmap.h"
 
-void readBitmapHeader(FILE *bmpFile, BITMAP_FILE_HEADER *bmpFileHeader, BITMAP_INFO_HEADER *bmpInfoHeader)
+void readBitmapHeader(int bmpFile, BITMAP_FILE_HEADER *bmpFileHeader, BITMAP_INFO_HEADER *bmpInfoHeader)
 {
   // Read Bitmap file header
-  fread(bmpFileHeader, sizeof(BITMAP_FILE_HEADER), 1, bmpFile);
-
-  // Skip Bitmap file header
-  fseek(bmpFile, sizeof(BMPMAP_FILE_HEADER), 0);
+  read(bmpFile, bmpFileHeader, sizeof(BITMAP_FILE_HEADER));
 
   // Read Bitmap info header
-  fread(bmpInfoHeader, sizeof(BITMAP_INFO_HEADER), 1, bmpFile);
+  read(bmpFile, bmpInfoHeader, sizeof(BITMAP_INFO_HEADER));
 }
 
-int readBitmapFile(char *fileName, RGB *result, int *height, int *width);
+int readBitmapFile(char *fileName, RGB *result, int *height, int *width)
 {
-  FILE *bmpFile = fopen(fileName, "r");
-  if (bmpFile == NULL)
+  int i;
+  int j;
+
+  int bmpFile = open(fileName, 0);
+  if (bmpFile < 0)
   {
     return -1;
   }
@@ -29,16 +34,17 @@ int readBitmapFile(char *fileName, RGB *result, int *height, int *width);
   *height = bmpInfoHeader.biHeight;
   int column = *width;
   int row = *height;
+  char tmpBytes[3];
 
   result = (RGB *) malloc(sizeof(RGB) * column * row);
-  fseek(bmp, bmpFileHeader.bfOffbits, 0);
   for (i = 0; i < row; i++)
   {
     for (j = 0; j < column; j++)
     {
-      fread(result + i * row + j, 3, 1, bmp);
+      read(bmpFile, result + i * row + j, 3);
     }
-    fseek(bmp, (4 - (column % 4)), SEEK_CUR); // Add padding bytes
+    read(bmpFile, tmpBytes, (4 - (column % 4))); // Add padding bytes
   }
   return 0;
 }
+
