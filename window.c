@@ -45,27 +45,6 @@ void addWindow(int x)
   p->next = 0;
 }
 
-int sys_deleteWindow(void)
-{
-  int window;
-  if (argint(0, &window) < 0)
-    return -1;
-
-  WindowQueue *p = &windowQueue;
-  while (p->next != 0)
-  {
-    if (p->next->window == (Window*)window)
-    {
-      p->next->proc = 0;
-      p->next->window = 0;
-      p->next = p->next->next;
-      return 0;
-    }
-    p = p->next;
-  }
-  return -1;
-}
-
 int sys_createWindow(void)
 {
   int window;
@@ -82,5 +61,27 @@ int sys_createWindow(void)
   addWindow(hWind);
   updateGUI();
   return hWind;
+}
+
+int sys_deleteWindow(void)
+{
+  int window;
+  if (argint(0, &window) < 0)
+    return -1;
+
+  WindowQueue *p = &windowQueue;
+  while (p->next != 0)
+  {
+    if (p->next->window == (Window*)window)
+    {
+      p->next->proc = 0;
+      p->next->window = 0;
+      p->next = p->next->next;
+      updateGUI();
+      return 0;
+    }
+    p = p->next;
+  }
+  return -1;
 }
 

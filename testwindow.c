@@ -7,12 +7,16 @@ int main()
 {
   Window window;
   initWindow(&window);
-  window.leftTopX = 0;
-  window.leftTopY = 0;
-  window.width = 40;
-  window.height = 30;
+  window.leftTopX = 200;
+  window.leftTopY = 100;
+  window.width = 800;
+  window.height = 600;
   window.show = 1;
   createWindow(&window);
+  int i;
+  for (i = 0; i < 50000000; i++)
+    ;
+  deleteWindow(&window);
   exit();
 }
 
