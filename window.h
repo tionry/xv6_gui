@@ -3,13 +3,6 @@
 #define MAX_WIDGET_NUM 32
 #define MAX_STRING_NUM 256
 
-typedef enum WindowState
-{
-  none,
-  hide,
-  show
-} WindowState;
-
 typedef enum WidgetType
 {
   label,
@@ -44,10 +37,10 @@ typedef struct ImageView
 
 typedef union WidgetContext
 {
-  Label label;
-  TextBox textBox;
-  Button button;
-  ImageView imageView;
+  Label* label;
+  TextBox* textBox;
+  Button* button;
+  ImageView* imageView;
 } WidgetContext;
 
 typedef struct Widget
@@ -58,11 +51,17 @@ typedef struct Widget
 
 typedef struct Window
 {
-  struct proc* proc;
-  WindowState state;
+  int show;
   int leftTopX, leftTopY, width, height;
   char caption[MAX_STRING_NUM];
+  int widgetsNum;
   Widget widgets[MAX_WIDGET_NUM];
-  struct Window *next;
 } Window;
+
+typedef struct WindowQueue
+{
+  struct proc* proc;
+  Window *window;
+  struct WindowQueue *next;
+} WindowQueue;
 

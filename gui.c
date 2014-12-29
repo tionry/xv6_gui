@@ -10,7 +10,7 @@
 #include "bitmap.h"
 
 GUI_MODE_INFO GUI_INFO;
-extern Window windowQueue;
+extern WindowQueue windowQueue;
 
 void initGUI()
 {
@@ -22,29 +22,30 @@ void drawWindow()
   RGB *screen_temp = (RGB *)(GUI_INFO.PhysBasePtr + 0x3c0000);
 
   int i, j;
-  Window *p = &windowQueue;
+  WindowQueue *p = &windowQueue;
 
-  while (((int)p->next) != -1)
+  while (p->next != 0)
   {
     p = p->next;
     switchuvm(p->proc);
+    if (p->window != 0)
+      if (p->window->show == 1)
+        for (i = 0; i < p->window->width; i++)
+        {
+          for (j = 0; j < CAPTION_HEIGHT; j++)
+          {
+            screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].R = 0xFF;
+            screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].G = 0xFF;
+            screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].B = 0x00;
+          }
+          for (j = CAPTION_HEIGHT; j < p->window->height; j++)
+          {
+            screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].R = 0x00;
+            screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].G = 0xFF;
+            screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].B = 0x00;
+          }
+        }
     switchkvm();
-    if (p->state == show)
-      for (i = 0; i < p->width; i++)
-      {
-        for (j = 0; j < CAPTION_HEIGHT; j++)
-        {
-          screen_temp[(p->leftTopY + j) * SCREEN_WIDTH + p->leftTopX + i].R = 0xFF;
-          screen_temp[(p->leftTopY + j) * SCREEN_WIDTH + p->leftTopX + i].G = 0xFF;
-          screen_temp[(p->leftTopY + j) * SCREEN_WIDTH + p->leftTopX + i].B = 0x00;
-        }
-        for (j = CAPTION_HEIGHT; j < p->height; j++)
-        {
-          screen_temp[(p->leftTopY + j) * SCREEN_WIDTH + p->leftTopX + i].R = 0x00;
-          screen_temp[(p->leftTopY + j) * SCREEN_WIDTH + p->leftTopX + i].G = 0xFF;
-          screen_temp[(p->leftTopY + j) * SCREEN_WIDTH + p->leftTopX + i].B = 0x00;
-        }
-      }
   }
 }
 
@@ -62,7 +63,3 @@ void updateGUI()
     screen[i] = screen_temp[i];
 }
 
-void drawBitmap(char *filename, int leftTopX, int leftTopY)
-{
-  
-}

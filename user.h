@@ -1,5 +1,6 @@
 struct stat;
 struct rtcdate;
+struct Window;
 
 // system calls
 int fork(void);
@@ -23,8 +24,8 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
-int createWindow(int leftTopX, int leftTopY, int width, int height);
-void deleteWindow(int x);
+int createWindow(struct Window *window);
+void deleteWindow(struct Window *window);
 
 // ulib.c
 int stat(char*, struct stat*);
@@ -39,3 +40,7 @@ void* memset(void*, int, uint);
 void* malloc(uint);
 void free(void*);
 int atoi(const char*);
+
+// uwindow.c
+void initWindow(struct Window *window);
+
