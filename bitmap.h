@@ -1,21 +1,21 @@
 typedef struct BITMAP_FILE_HEADER {
-	unsigned short bfType;
-	unsigned int bfSize;
-	unsigned short bfReserved1;
-	unsigned short bfReserved2;
-	unsigned int btOffBits;
-} BITMAP_FILE_HEADER;
+	ushort bfType;
+	uint bfSize;
+	ushort bfReserved1;
+	ushort bfReserved2;
+	uint btOffBits;
+} __attribute__((packed)) BITMAP_FILE_HEADER;
 
 typedef struct BITMAP_INFO_HEADER {
-	unsigned int biSize;
+	uint biSize;
 	int biWidth;
 	int biHeight;
-	unsigned short biPlanes;
-	unsigned short biBitCount;
-	unsigned int biCompression;
-	unsigned int biSizeImage;
+	ushort biPlanes;
+	ushort biBitCount;
+	uint biCompression;
+	uint biSizeImage;
 	int biXPelsPerMeter;
 	int biYPelsPerMeter;
-	unsigned int biCirUserd;
-	unsigned int biCirImportant;
-} BITMAP_INFO_HEADER;
+	uint biCirUserd;
+	uint biCirImportant;
+} __attribute__((packed)) BITMAP_INFO_HEADER;

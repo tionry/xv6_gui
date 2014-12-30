@@ -18,7 +18,6 @@ void readBitmapHeader(int bmpFile, BITMAP_FILE_HEADER *bmpFileHeader, BITMAP_INF
 int readBitmapFile(char *fileName, RGB *result, int *height, int *width)
 {
   int i;
-  int j;
 
   int bmpFile = open(fileName, 0);
   if (bmpFile < 0)
@@ -30,25 +29,25 @@ int readBitmapFile(char *fileName, RGB *result, int *height, int *width)
   BITMAP_INFO_HEADER bmpInfoHeader;
   
   readBitmapHeader(bmpFile, &bmpFileHeader, &bmpInfoHeader);
-printf(1, "%d\n", bmpFileHeader.bfSize);
-printf(1, "%d\n", bmpFileHeader.bfReserved1);
-printf(1, "%d\n", bmpFileHeader.bfReserved2);
-return 0;
   *width = bmpInfoHeader.biWidth;
   *height = bmpInfoHeader.biHeight;
   int column = *width;
   int row = *height;
   char tmpBytes[3];
+  int rowBytes = column * sizeof(RGB);
 
-  result = (RGB *) malloc(sizeof(RGB) * column * row);
+  char *buf = (char *) malloc(sizeof(RGB) * column * row);
   for (i = 0; i < row; i++)
   {
-    for (j = 0; j < column; j++)
+    read(bmpFile, buf + i * rowBytes, rowBytes);
+
+    // Add padding bytes
+    if (rowBytes % 4 > 0)
     {
-      read(bmpFile, result + i * column + j, 3);
+      read(bmpFile, tmpBytes, 4 - (rowBytes % 4));
     }
-    read(bmpFile, tmpBytes, (4 - (column % 4))); // Add padding bytes
   }
+  result = (RGB *) buf;
   return 0;
 }
 
