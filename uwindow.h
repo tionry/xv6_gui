@@ -38,7 +38,7 @@ typedef struct Button
 typedef struct ImageView
 {
   int leftTopX, leftTopY, width, height;
-  struct RGB* image;
+  struct RGB image[10001];
 } ImageView;
 
 typedef union WidgetContext

@@ -50,7 +50,7 @@ void drawWindows()
           if (p->window->widgets[k].type == imageView)
             for (i = 0; i < p->window->widgets[k].context.imageView->width; i++)
               for (j = 0; j < p->window->widgets[k].context.imageView->height; j++)
-                screen_temp[(p->window->widgets[k].context.imageView->leftTopY + j) * SCREEN_WIDTH + p->window->widgets[k].context.imageView->leftTopX + i] = p->window->widgets[k].context.imageView->image[j * p->window->widgets[k].context.imageView->height + i];
+                screen_temp[(p->window->widgets[k].context.imageView->leftTopY + j) * SCREEN_WIDTH + p->window->widgets[k].context.imageView->leftTopX + i] = p->window->widgets[k].context.imageView->image[(p->window->widgets[k].context.imageView->width - j) * p->window->widgets[k].context.imageView->height + i];
       }
     switchkvm();
   }

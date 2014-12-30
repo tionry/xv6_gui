@@ -4,16 +4,17 @@
 #include "uwindow.h"
 #include "bitmap.h"
 
+Window window;
+ImageView image;
+
 int main()
 {
-  Window window;
   initWindow(&window);
   window.leftTopX = 0;
   window.leftTopY = 0;
   window.width = 1280;
   window.height = 1024;
   window.show = 1;
-  ImageView image;
   image.leftTopX = 100;
   image.leftTopY = 100;
   readBitmapFile("test.bmp", image.image, &image.width, &image.height);
