@@ -176,8 +176,8 @@ UPROGS=\
 	_wc\
 	_zombie\
 
-fs.img: mkfs README $(UPROGS)
-	./mkfs fs.img README $(UPROGS)
+fs.img: mkfs README test.bmp $(UPROGS)
+	./mkfs fs.img README test.bmp $(UPROGS)
 
 -include *.d
 

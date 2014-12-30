@@ -1,6 +1,7 @@
 struct stat;
 struct rtcdate;
 struct Window;
+struct RGB;
 
 // system calls
 int fork(void);
@@ -43,4 +44,7 @@ int atoi(const char*);
 
 // uwindow.c
 void initWindow(struct Window *window);
+
+// bitmap.c
+int readBitmapFile(char *fileName, struct RGB *result, int *height, int *width);
 

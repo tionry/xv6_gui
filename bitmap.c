@@ -30,6 +30,10 @@ int readBitmapFile(char *fileName, RGB *result, int *height, int *width)
   BITMAP_INFO_HEADER bmpInfoHeader;
   
   readBitmapHeader(bmpFile, &bmpFileHeader, &bmpInfoHeader);
+printf(1, "%d\n", bmpFileHeader.bfSize);
+printf(1, "%d\n", bmpFileHeader.bfReserved1);
+printf(1, "%d\n", bmpFileHeader.bfReserved2);
+return 0;
   *width = bmpInfoHeader.biWidth;
   *height = bmpInfoHeader.biHeight;
   int column = *width;
@@ -41,7 +45,7 @@ int readBitmapFile(char *fileName, RGB *result, int *height, int *width)
   {
     for (j = 0; j < column; j++)
     {
-      read(bmpFile, result + i * row + j, 3);
+      read(bmpFile, result + i * column + j, 3);
     }
     read(bmpFile, tmpBytes, (4 - (column % 4))); // Add padding bytes
   }

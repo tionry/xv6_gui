@@ -2,21 +2,25 @@
 #include "stat.h"
 #include "user.h"
 #include "uwindow.h"
+#include "bitmap.h"
 
 int main()
 {
   Window window;
   initWindow(&window);
-  window.leftTopX = 200;
-  window.leftTopY = 100;
-  window.width = 800;
-  window.height = 600;
+  window.leftTopX = 0;
+  window.leftTopY = 0;
+  window.width = 1280;
+  window.height = 1024;
   window.show = 1;
+  ImageView image;
+  image.leftTopX = 100;
+  image.leftTopY = 100;
+  readBitmapFile("test.bmp", image.image, &image.width, &image.height);
+  window.widgetsNum = 1;
+  window.widgets[0].type = imageView;
+  window.widgets[0].context.imageView = &image;
   createWindow(&window);
-  int i;
-  for (i = 0; i < 50000000; i++)
-    ;
-  deleteWindow(&window);
   exit();
 }
 
