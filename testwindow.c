@@ -17,7 +17,7 @@ int main()
   window.show = 1;
   image.leftTopX = 100;
   image.leftTopY = 100;
-  readBitmapFile("test.bmp", image.image, &image.width, &image.height);
+  readBitmapFile("test.bmp", image.image, &image.height, &image.width);
   window.widgetsNum = 1;
   window.widgets[0].type = imageView;
   window.widgets[0].context.imageView = &image;
