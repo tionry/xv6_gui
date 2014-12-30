@@ -235,15 +235,30 @@ balloc(int used)
 {
   uchar buf[512];
   int i;
+  int j = 0;
+  int temp;
 
   printf("balloc: first %d blocks have been allocated\n", used);
-  assert(used < 512*8);
-  bzero(buf, 512);
-  for(i = 0; i < used; i++){
-    buf[i/8] = buf[i/8] | (0x1 << (i%8));
+  //assert(used < 512*8);
+  while(used > 0)
+  {
+    bzero(buf, 512);
+    if (used > 4096)
+    {
+      temp = 4096;
+    }
+    else
+    {
+      temp = used;
+    }
+    for(i = 0; i < temp; i++){
+      buf[i/8] = buf[i/8] | (0x1 << (i%8));
+    }
+    used -= 4096;
+    printf("balloc: write bitmap block at sector %zu\n", ninodes/IPB + 3 + j);
+    wsect(ninodes / IPB + 3 + j, buf);
+    j++;
   }
-  printf("balloc: write bitmap block at sector %zu\n", ninodes/IPB + 3);
-  wsect(ninodes / IPB + 3, buf);
 }
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
@@ -256,6 +271,7 @@ iappend(uint inum, void *xp, int n)
   struct dinode din;
   char buf[512];
   uint indirect[NINDIRECT];
+  uint addr;
   uint x;
 
   rinode(inum, &din);
@@ -291,16 +307,16 @@ iappend(uint inum, void *xp, int n)
           usedblocks++;
         }
         rsect(xint(din.addrs[NDIRECT + 1]), (char*)indirect);
-        if(indirect[(fbn - NDIRECT - NINDIRECT) / NINDIRECT] == 0){
-          indirect[(fbn - NDIRECT - NINDIRECT) / NINDIRECT] = xint(freeblock++);
+        if((addr = indirect[(fbn - NDIRECT - NINDIRECT) / NINDIRECT]) == 0){
+          indirect[(fbn - NDIRECT - NINDIRECT) / NINDIRECT] = addr = xint(freeblock++);
           usedblocks++;
           wsect(xint(din.addrs[NDIRECT + 1]), (char*)indirect);
         }
-        rsect(xint(indirect[(fbn - NDIRECT - NINDIRECT) / NINDIRECT]), (char*)indirect);
+        rsect(xint(addr), (char*)indirect);
         if(indirect[(fbn - NDIRECT - NINDIRECT) % NINDIRECT] == 0){
           indirect[(fbn - NDIRECT - NINDIRECT) % NINDIRECT] = xint(freeblock++);
           usedblocks++;
-          wsect(xint(indirect[(fbn - NDIRECT - NINDIRECT) / NINDIRECT]), (char*)indirect);
+          wsect(xint(addr), (char*)indirect);
         }
         x = xint(indirect[(fbn - NDIRECT - NINDIRECT) % NINDIRECT]);
       }

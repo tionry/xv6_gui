@@ -31,8 +31,8 @@ int readBitmapFile(char *fileName, RGB *result, int *height, int *width)
   readBitmapHeader(bmpFile, &bmpFileHeader, &bmpInfoHeader);
   *width = bmpInfoHeader.biWidth;
   *height = bmpInfoHeader.biHeight;
-  int column = *width;
-  int row = *height;
+  int column = bmpInfoHeader.biWidth;
+  int row = bmpInfoHeader.biHeight;
   char tmpBytes[3];
   int rowBytes = column * sizeof(RGB);
 
