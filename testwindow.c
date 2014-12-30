@@ -6,6 +6,7 @@
 
 Window window;
 ImageView image;
+struct RGB temp[10001];
 
 int main()
 {
@@ -17,6 +18,7 @@ int main()
   window.show = 1;
   image.leftTopX = 100;
   image.leftTopY = 100;
+  image.image = temp;
   readBitmapFile("test.bmp", image.image, &image.height, &image.width);
   window.widgetsNum = 1;
   window.widgets[0].type = imageView;

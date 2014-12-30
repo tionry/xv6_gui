@@ -47,7 +47,6 @@ int readBitmapFile(char *fileName, RGB *result, int *height, int *width)
       read(bmpFile, tmpBytes, 4 - (rowBytes % 4));
     }
   }
-printf(1, "%d %d %d\n", result[0].B, result[0].G, result[0].R);
   return 0;
 }
 

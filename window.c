@@ -6,6 +6,7 @@
 #include "proc.h"
 #include "x86.h"
 #include "window.h"
+#include "gui.h"
 
 WindowQueue windowLine[MAX_WINDOW_NUM];
 WindowQueue windowQueue;
