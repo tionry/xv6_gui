@@ -11,16 +11,26 @@
 
 GUI_MODE_INFO GUI_INFO;
 extern WindowQueue windowQueue;
+RGB *screen, *screen_temp;
 
 void initGUI()
 {
   GUI_INFO = *((GUI_MODE_INFO *)(GUI_BUF << 4));
+  screen = (RGB *)GUI_INFO.PhysBasePtr;
+  screen_temp = (RGB *)(GUI_INFO.PhysBasePtr + 0x3c0000);
+}
+
+void drawImageView(ImageView *imageView)
+{
+  int i, j;
+
+  for (i = 0; i < imageView->width; i++)
+    for (j = 0; j < imageView->height; j++)
+      screen_temp[(imageView->leftTopY + j) * SCREEN_WIDTH + imageView->leftTopX + i] = imageView->image[(imageView->height - 1 - j) * imageView->width + i];
 }
 
 void drawWindows()
 {
-  RGB *screen_temp = (RGB *)(GUI_INFO.PhysBasePtr + 0x3c0000);
-
   int i, j, k;
   WindowQueue *p = &windowQueue;
 
@@ -33,24 +43,34 @@ void drawWindows()
       {
         for (i = 0; i < p->window->width; i++)
         {
-          for (j = 0; j < CAPTION_HEIGHT; j++)
+          if (p->window->hasCaption == 1)
           {
-            screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].R = 0x00;
-            screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].G = 0x00;
-            screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].B = 0x00;
+            for (j = 0; j < CAPTION_HEIGHT; j++)
+            {
+              screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].R = 0x00;
+              screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].G = 0x00;
+              screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].B = 0x00;
+            }
+            for (j = CAPTION_HEIGHT; j < p->window->height; j++)
+            {
+              screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].R = 0xbb;
+              screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].G = 0xbb;
+              screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].B = 0xbb;
+            }
           }
-          for (j = CAPTION_HEIGHT; j < p->window->height; j++)
+          else
           {
-            screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].R = 0xbb;
-            screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].G = 0xbb;
-            screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].B = 0xbb;
+            for (j = 0; j < p->window->height; j++)
+            {
+              screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].R = 0xbb;
+              screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].G = 0xbb;
+              screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].B = 0xbb;
+            }
           }
         }
         for (k = 0; k < p->window->widgetsNum; k++)
           if (p->window->widgets[k].type == imageView)
-            for (i = 0; i < p->window->widgets[k].context.imageView->width; i++)
-              for (j = 0; j < p->window->widgets[k].context.imageView->height; j++)
-                screen_temp[(p->window->widgets[k].context.imageView->leftTopY + j) * SCREEN_WIDTH + p->window->widgets[k].context.imageView->leftTopX + i] = p->window->widgets[k].context.imageView->image[(p->window->widgets[k].context.imageView->height - 1 - j) * p->window->widgets[k].context.imageView->width + i];
+            drawImageView(p->window->widgets[k].context.imageView);
       }
     switchkvm();
   }
@@ -58,8 +78,6 @@ void drawWindows()
 
 void updateGUI()
 {
-  RGB *screen = (RGB *)GUI_INFO.PhysBasePtr;
-  RGB *screen_temp = (RGB *)(GUI_INFO.PhysBasePtr + 0x3c0000);
   int totalPels = SCREEN_WIDTH * SCREEN_HEIGHT;
   int i;
 

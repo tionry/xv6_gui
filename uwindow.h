@@ -58,6 +58,7 @@ typedef struct Widget
 typedef struct Window
 {
   int show;
+  int hasCaption;
   int leftTopX, leftTopY, width, height;
   char caption[MAX_STRING_NUM];
   int widgetsNum;

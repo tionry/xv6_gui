@@ -16,10 +16,11 @@ int main()
   window.width = 1280;
   window.height = 1024;
   window.show = 1;
-  image.leftTopX = 100;
-  image.leftTopY = 100;
+  window.hasCaption = 0;
+  image.leftTopX = 0;
+  image.leftTopY = 0;
   image.image = temp;
-  readBitmapFile("test.bmp", image.image, &image.height, &image.width);
+  readBitmapFile("desktop_background.bmp", image.image, &image.height, &image.width);
   window.widgetsNum = 1;
   window.widgets[0].type = imageView;
   window.widgets[0].context.imageView = &image;

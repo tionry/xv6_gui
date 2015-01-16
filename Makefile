@@ -160,6 +160,7 @@ mkfs: mkfs.c fs.h
 
 UPROGS=\
 	_cat\
+	_desktop\
 	_echo\
 	_forktest\
 	_grep\
@@ -171,13 +172,12 @@ UPROGS=\
 	_rm\
 	_sh\
 	_stressfs\
-	_testwindow\
 	_usertests\
 	_wc\
 	_zombie\
 
-fs.img: mkfs README test.bmp $(UPROGS)
-	./mkfs fs.img README test.bmp $(UPROGS)
+fs.img: mkfs README desktop_background.bmp $(UPROGS)
+	./mkfs fs.img README desktop_background.bmp $(UPROGS)
 
 -include *.d
 
