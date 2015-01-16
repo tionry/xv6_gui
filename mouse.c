@@ -33,7 +33,7 @@ void mouseinit()
 
 void moveMousePosition(int x, int y)
 {
-	setMousePostion(mouse_info.x_position + x, mouse_info.y_position + y);
+	setMousePosition(mouse_info.x_position + x, mouse_info.y_position + y);
 }
 
 void setMousePosition(int x, int y)
