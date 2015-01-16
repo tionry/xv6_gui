@@ -56,12 +56,11 @@ int sys_createWindow(void)
   int hWind = acquireWindow();
   if (hWind < 0)
     return hWind;
-
   windowLine[hWind].proc = proc;
   windowLine[hWind].window = (Window *)window;
   addWindow(hWind);
   switchkvm();
-  updateGUI();
+  updateWindow();
   switchuvm(proc);
   return hWind;
 }
@@ -81,7 +80,7 @@ int sys_deleteWindow(void)
       p->next->window = 0;
       p->next = p->next->next;
       switchkvm();
-      updateGUI();
+      updateWindow();
       switchuvm(proc);
       return 0;
     }
