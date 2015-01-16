@@ -28,6 +28,7 @@ main(void)
   picinit();       // interrupt controller
   ioapicinit();    // another interrupt controller
   consoleinit();   // I/O devices & their interrupts
+  mouseinit();
   uartinit();      // serial port
   pinit();         // process table
   tvinit();        // trap vectors
@@ -70,7 +71,6 @@ pde_t entrypgdir[];  // For entry.S
 static void
 startothers(void)
 {
-
   extern uchar _binary_entryother_start[], _binary_entryother_size[];
   uchar *code;
   struct cpu *c;
