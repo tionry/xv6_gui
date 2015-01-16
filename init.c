@@ -5,12 +5,13 @@
 #include "user.h"
 #include "fcntl.h"
 
-char *argv[] = { "sh", 0 };
+char *argv_sh[] = { "sh", 0 };
+char *argv_desktop[] = { "desktop", 0 };
 
 int
 main(void)
 {
-  int pid, wpid;
+  int pid_sh, pid_desktop, wpid;
 
   if(open("console", O_RDWR) < 0){
     mknod("console", 1, 1);
@@ -21,17 +22,28 @@ main(void)
 
   for(;;){
     printf(1, "init: starting sh\n");
-    pid = fork();
-    if(pid < 0){
+    pid_sh = fork();
+    if(pid_sh < 0){
       printf(1, "init: fork failed\n");
       exit();
     }
-    if(pid == 0){
-      exec("sh", argv);
+    if(pid_sh == 0){
+      exec("sh", argv_sh);
       printf(1, "init: exec sh failed\n");
       exit();
     }
-    while((wpid=wait()) >= 0 && wpid != pid)
+    printf(1, "init: starting desktop\n");
+    pid_desktop = fork();
+    if (pid_desktop < 0){
+      printf(1, "init: fork failed\n");
+      exit();
+    }
+    if (pid_desktop == 0){
+      exec("desktop", argv_desktop);
+      printf(1, "init: exec desktop failed\n");
+      exit();
+    }
+    while((wpid=wait()) >= 0 && wpid != pid_sh && wpid != pid_desktop)
       printf(1, "zombie!\n");
   }
 }

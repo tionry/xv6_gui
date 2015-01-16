@@ -8,7 +8,7 @@ Window window;
 ImageView image;
 struct RGB temp[1310720];
 
-int main()
+int main(void)
 {
   initWindow(&window);
   window.leftTopX = 0;
@@ -25,6 +25,6 @@ int main()
   window.widgets[0].type = imageView;
   window.widgets[0].context.imageView = &image;
   createWindow(&window);
-  exit();
+  while (1) ;
 }
 
