@@ -6,8 +6,8 @@
 #include "gui.h"
 #include "mouse.h"
 
-static struct spinlock mouse_lock;
-static struct mouseinfo mouse_info;
+struct spinlock mouse_lock;
+struct mouseinfo mouse_info;
 //origin info
 static int state = 1;
 static int left_down = 0;
@@ -48,6 +48,7 @@ void setMousePosition(int x, int y)
 		y = SCREEN_HEIGHT;
 	mouse_info.x_position = x;
 	mouse_info.y_position = y;
+	updateMouse();
 }
 
 void mouseint(uint tick)

@@ -8,9 +8,11 @@
 #include "gui.h"
 #include "window.h"
 #include "bitmap.h"
+#include "mouse.h"
 
 GUI_MODE_INFO GUI_INFO;
 extern WindowQueue windowQueue;
+extern struct mouseinfo mouse_info;
 RGB *screen, *screen_temp;
 
 void initGUI()
@@ -76,7 +78,20 @@ void drawWindows()
   }
 }
 
-void updateGUI()
+void drawMouse()
+{
+  int i, j;
+
+  for (i = 0; i < 10; i++)
+    for (j = 0; j < 20; j++)
+    {
+      screen[(mouse_info.y_position + j) * SCREEN_WIDTH + mouse_info.x_position + i].R = 0x00;
+      screen[(mouse_info.y_position + j) * SCREEN_WIDTH + mouse_info.x_position + i].G = 0x00;
+      screen[(mouse_info.y_position + j) * SCREEN_WIDTH + mouse_info.x_position + i].B = 0x00;
+    }
+}
+
+void updateWindow()
 {
   int totalPels = SCREEN_WIDTH * SCREEN_HEIGHT;
   
@@ -85,5 +100,14 @@ void updateGUI()
   drawWindows();
   sti();
   memmove(screen, screen_temp, sizeof(RGB) * totalPels);
+  drawMouse();
+}
+
+void updateMouse()
+{
+  int totalPels = SCREEN_WIDTH * SCREEN_HEIGHT;
+
+  memmove(screen, screen_temp, sizeof(RGB) * totalPels);
+  drawMouse();
 }
 
