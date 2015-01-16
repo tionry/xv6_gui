@@ -6,7 +6,7 @@
 
 Window window;
 ImageView image;
-struct RGB temp[10001];
+struct RGB temp[1310720];
 
 int main()
 {
