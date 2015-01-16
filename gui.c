@@ -79,12 +79,9 @@ void drawWindows()
 void updateGUI()
 {
   int totalPels = SCREEN_WIDTH * SCREEN_HEIGHT;
-  int i;
 
   memset(screen_temp, 0xff, sizeof(RGB) * totalPels);
   drawWindows();
-
-  for (i = 0; i < totalPels; i++)
-    screen[i] = screen_temp[i];
+  memmove(screen, screen_temp, sizeof(RGB) * totalPels);
 }
 
