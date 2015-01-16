@@ -56,7 +56,6 @@ int sys_createWindow(void)
   int hWind = acquireWindow();
   if (hWind < 0)
     return hWind;
-
   windowLine[hWind].proc = proc;
   windowLine[hWind].window = (Window *)window;
   addWindow(hWind);
