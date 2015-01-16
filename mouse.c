@@ -16,11 +16,12 @@ static int x_sign = 0;
 static int y_sign = 0;
 static int x_overflow = 0;
 static int y_overflow = 0;
+static int counter = 0;
 
 void mouseinit()
 {
-	outb(0x64, 0xa8);
-  	outb(0x64, 0xd4);
+       outb(0x64, 0xa8);
+       outb(0x64, 0xd4);
   	outb(0x60, 0xf4);
   	outb(0x64, 0x60);
   	outb(0x60, 0x47);
@@ -58,7 +59,7 @@ void mouseint(uint tick)
   	ch = inb(0x64);
   	if ((ch & 0x01) == 0)
   	{
-    		//cprintf("no data\n");
+    	 	// cprintf("no data\n");
     		state = 1;
     		return;
   	}
@@ -79,9 +80,11 @@ void mouseint(uint tick)
     		y_sign = (ch & 0x20) ? 1 : 0;
     		x_overflow = (ch & 0x40) ? 1 : 0;
     		y_overflow = (ch & 0x80) ? 1 : 0;
-    		// cprintf("mouse_down: left_down=%d, right_down=%d\n", left_down, right_down);
-    		// cprintf("move direction: x_sign=%d, y_sign=%d\n", x_sign, y_sign);
-    		// cprintf("overflow: x_overflow = %d, y_overflow = %d\n",x_overflow,  y_overflow);
+
+              cprintf("Counter: %d\n", counter++);
+    		cprintf("mouse_down: left_down=%d, right_down=%d\n", left_down, right_down);
+    		cprintf("move direction: x_sign=%d, y_sign=%d\n", x_sign, y_sign);
+    		cprintf("overflow: x_overflow = %d, y_overflow = %d\n",x_overflow,  y_overflow);
     		state = 2;
     		release(&mouse_lock);
     		return;
@@ -91,7 +94,7 @@ void mouseint(uint tick)
     		dis = ch;
     		if (x_sign == 1)
       			dis = ch - 256;
-    		//cprintf("x_movement: %d\n", dis);
+    		cprintf("x_movement: %d\n", dis);
     		state = 3;
     		release(&mouse_lock);
     		moveMousePosition(dis, 0);
@@ -103,7 +106,7 @@ void mouseint(uint tick)
     		if (y_sign == 1)
       		dis = ch - 256;
     		dis = - dis;
-    		//cprintf("y_movement: %d\n", dis);
+    		cprintf("y_movement: %d\n", dis);
     		state = 1;
     		release(&mouse_lock);
     		moveMousePosition(0, dis);
