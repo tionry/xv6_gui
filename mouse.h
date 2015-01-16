@@ -1,8 +1,8 @@
 typedef struct mouseinfo
 {
-	int x_position;
-	int y_position;
-	int event;
+  int x_position;
+  int y_position;
+  int event;
 }mouseinfo;
 
 //define events
