@@ -194,8 +194,9 @@ void            deleteWindow(int x);
 //mouse.c
 void            mouseinit();
 void            mouseint();
-void            moveMousePosition(int x, int y);
-void            setMousePosition(int x, int y);
+void            moveMousePosition(int x, int y, int isdraw);
+void            setMousePosition(int x, int y, int isdraw);
+void            updateMouseEvent();
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))

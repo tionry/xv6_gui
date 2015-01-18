@@ -82,13 +82,20 @@ void drawMouse()
 {
   int i, j;
 
-  for (i = 0; i < 10; i++)
-    for (j = 0; j < 20; j++)
+  for (j = 0; j < 10; j++)
+    for (i = 0; i < j; i++)
     {
       screen[(mouse_info.y_position + j) * SCREEN_WIDTH + mouse_info.x_position + i].R = 0x00;
       screen[(mouse_info.y_position + j) * SCREEN_WIDTH + mouse_info.x_position + i].G = 0x00;
       screen[(mouse_info.y_position + j) * SCREEN_WIDTH + mouse_info.x_position + i].B = 0x00;
     }
+  for (j = 10; j < 15; j++)
+    for (i = 0; i < (14 - j) ; i++)
+    {
+      screen[(mouse_info.y_position + j) * SCREEN_WIDTH + mouse_info.x_position + i].R = 0x00;
+      screen[(mouse_info.y_position + j) * SCREEN_WIDTH + mouse_info.x_position + i].G = 0x00;
+      screen[(mouse_info.y_position + j) * SCREEN_WIDTH + mouse_info.x_position + i].B = 0x00;
+    } 
 }
 
 void updateWindow()
@@ -105,9 +112,9 @@ void updateWindow()
 
 void updateMouse()
 {
-  int totalPels = SCREEN_WIDTH * SCREEN_HEIGHT;
+  //int totalPels = SCREEN_WIDTH * SCREEN_HEIGHT;
 
-  memmove(screen, screen_temp, sizeof(RGB) * totalPels);
+  //memmove(screen, screen_temp, sizeof(RGB) * totalPels);
   drawMouse();
 }
 
