@@ -33,18 +33,18 @@ void mouseinit()
   outb(0x64, 0x60);
   outb(0x60, 0x47);
   cprintf("mouse initialized.\n");
-  setMousePosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1);
+  setMousePosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
   initlock(&mouse_lock, "mouse");
   picenable(IRQ_MOUSE);
   ioapicenable(IRQ_MOUSE, 0);
 }
 
-void moveMousePosition(int x, int y, int isdraw)
+void moveMousePosition(int x, int y)
 {
-  setMousePosition(mouse_info.x_position + x, mouse_info.y_position + y, isdraw);
+  setMousePosition(mouse_info.x_position + x, mouse_info.y_position + y);
 }
 
-void setMousePosition(int x, int y, int isdraw)
+void setMousePosition(int x, int y)
 {
   if (x < 0)
     x = 0;
@@ -56,8 +56,7 @@ void setMousePosition(int x, int y, int isdraw)
     y = SCREEN_HEIGHT;
   mouse_info.x_position = x;
   mouse_info.y_position = y;
-  if (isdraw)
-    updateMouse();
+  updateMouse();
 }
 
 void updateMouseEvent(uint tick)
@@ -179,6 +178,6 @@ void mouseint(uint tick)
     release(&mouse_lock);
     //cprintf("x: %d, y: %d\n", mouse_info.x_position, mouse_info.y_position);
     updateMouseEvent(tick);
-    moveMousePosition(dis_x, dis_y,isdraw);
+    moveMousePosition(dis_x, dis_y);
   }
 }

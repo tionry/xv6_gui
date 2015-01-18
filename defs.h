@@ -194,8 +194,8 @@ void            deleteWindow(int x);
 //mouse.c
 void            mouseinit();
 void            mouseint();
-void            moveMousePosition(int x, int y, int isdraw);
-void            setMousePosition(int x, int y, int isdraw);
+void            moveMousePosition(int x, int y);
+void            setMousePosition(int x, int y);
 void            updateMouseEvent();
 
 // number of elements in fixed-size array
