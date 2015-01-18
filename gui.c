@@ -14,6 +14,7 @@ GUI_MODE_INFO GUI_INFO;
 extern WindowQueue windowQueue;
 extern struct mouseinfo mouse_info;
 RGB *screen, *screen_temp;
+static struct RGB temp_color;
 
 void initGUI()
 {
@@ -49,9 +50,25 @@ void drawIconView(IconView *iconView)
         screen_temp[(iconView->leftTopY + j) * SCREEN_WIDTH + iconView->leftTopX + i] = iconView->image[(iconView->height - 1 - j) * iconView->width + i];
 }
 
+void drawPoint(int x, int y)
+{
+  if (x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT)
+    return;
+  screen_temp[y* SCREEN_WIDTH + x].R = temp_color.R;
+  screen_temp[y * SCREEN_WIDTH + x].G = temp_color.G;
+  screen_temp[y * SCREEN_WIDTH + x].B = temp_color.B;
+}
+
+void setColor(int R, int G, int B)
+{
+  temp_color.R = R;
+  temp_color.G = G;
+  temp_color.B = B;
+}
+
 void drawWindow(Window *window)
 {
-  int i, j;
+  int i, j, k;
 
   for (i = 0; i < window->width; i++)
   {
@@ -59,26 +76,91 @@ void drawWindow(Window *window)
     {
       for (j = 0; j < CAPTION_HEIGHT; j++)
       {
-        screen_temp[(window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + i].R = 0x00;
-        screen_temp[(window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + i].G = 0x00;
-        screen_temp[(window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + i].B = 0x00;
+        setColor(0x00, 0x00, 0x33);
+        drawPoint(window->leftTopX+i, window->leftTopY + j);
       }
-      for (j = CAPTION_HEIGHT; j < window->height; j++)
+      for (j = CAPTION_HEIGHT; j < CAPTION_HEIGHT + MENU_HEIGHT; j++)
       {
-        screen_temp[(window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + i].R = 0xbb;
-        screen_temp[(window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + i].G = 0xbb;
-        screen_temp[(window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + i].B = 0xbb;
+        setColor(0xcc, 0xcc, 0xff);
+        drawPoint(window->leftTopX+i, window->leftTopY + j);
+      }
+      for (j = CAPTION_HEIGHT + MENU_HEIGHT; j < CAPTION_HEIGHT + MENU_HEIGHT + 2; j++)
+      {
+        setColor(0x66, 0x66, 0x66);
+        drawPoint(window->leftTopX+i, window->leftTopY + j);
+      }
+      for (j = CAPTION_HEIGHT + MENU_HEIGHT + 2; j < window->height; j++)
+      {
+        setColor(0xff, 0xff, 0xff);
+        drawPoint(window->leftTopX+i, window->leftTopY + j);
       }
     }
     else
     {
       for (j = 0; j < window->height; j++)
       {
-        screen_temp[(window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + i].R = 0xbb;
-        screen_temp[(window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + i].G = 0xbb;
-        screen_temp[(window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + i].B = 0xbb;
+        setColor(0xbb, 0xbb, 0xbb);
+        drawPoint(window->leftTopX+i, window->leftTopY + j);
       }
     }
+  }
+  //draw border
+  for (i = 0; i < BORDER_WIDTH; i++)
+    for (j = CAPTION_HEIGHT+MENU_HEIGHT; j <= window->height - BORDER_WIDTH; j++)
+    {
+      if (i == BORDER_WIDTH - 1)
+        setColor(0x66, 0x66, 0x66);
+      else
+         setColor(0xcc, 0xcc, 0xcc);
+      drawPoint(window->leftTopX+i, window->leftTopY + j);
+    }
+  for (i = window->width - BORDER_WIDTH; i < window->width; i++)
+    for (j = CAPTION_HEIGHT + MENU_HEIGHT; j <= window->height - BORDER_WIDTH; j++)
+    {
+      if (i == window->width - BORDER_WIDTH)
+        setColor(0x66, 0x66, 0x66);
+      else
+         setColor(0xcc, 0xcc, 0xcc);
+      drawPoint(window->leftTopX+i, window->leftTopY + j);
+    }  
+  for (i = 0; i < window->width; i++)
+    for (j = window->height - BORDER_WIDTH; j < window->height; j++)
+    {
+       if (j == window->height-BORDER_WIDTH)
+       {
+        if (i < BORDER_WIDTH || i > window->width - BORDER_WIDTH)
+          continue;
+        setColor(0x66, 0x66, 0x66);
+       }
+      else
+        setColor(0xcc, 0xcc, 0xcc);
+      drawPoint(window->leftTopX+i, window->leftTopY + j);
+    }
+
+  setColor(0xff, 0xff, 0xff);
+  for (i = 0 ; i < window->width; i++)
+  {
+    j = 0;
+    drawPoint(window->leftTopX+i, window->leftTopY + j);
+    j = window->height - 1;
+    drawPoint(window->leftTopX+i, window->leftTopY + j);
+  }
+  for (j = 0; j < window->height; j++)
+  {
+    i = 0;
+    drawPoint(window->leftTopX+i, window->leftTopY + j);
+    i = window->width - 1;
+    drawPoint(window->leftTopX+i, window->leftTopY + j);
+  }
+  //draw close
+  for (i = 0; i < 10; i++)
+  {
+    j = 10 + i;
+    for (k = 0; k < 2; k++)
+    {
+      drawPoint(window->leftTopX + window->width - 30 + i + k, window->leftTopY + j);
+      drawPoint(window->leftTopX + window->width - 21 - i + k, window->leftTopY + j);
+    }  
   }
 }
 

@@ -1,7 +1,10 @@
 #define GUI_BUF        0x9000
 #define SCREEN_WIDTH   1280
 #define SCREEN_HEIGHT  1024
-#define CAPTION_HEIGHT 20
+#define CAPTION_HEIGHT 30
+#define MENU_HEIGHT 60
+#define BORDER_WIDTH 6
+
 
 #ifndef __ASSEMBLER__
 
