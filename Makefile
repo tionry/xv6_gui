@@ -178,8 +178,8 @@ UPROGS=\
 	_wc\
 	_zombie\
 
-fs.img: mkfs README desktop_background.bmp $(UPROGS)
-	./mkfs fs.img README desktop_background.bmp $(UPROGS)
+fs.img: mkfs README desktop_background.bmp folder.bmp file.bmp $(UPROGS)
+	./mkfs fs.img README desktop_background.bmp folder.bmp file.bmp $(UPROGS)
 
 -include *.d
 

@@ -22,6 +22,14 @@ void initGUI()
   screen_temp = (RGB *)(GUI_INFO.PhysBasePtr + 0x3c0000);
 }
 
+int isAlpha(RGB color)
+{
+  if ((color.R == color.G) && (color.R == color.B) && (color.R == 0x00))
+    return 1;
+  else
+    return 0;
+}
+
 void drawImageView(ImageView *imageView)
 {
   int i, j;
@@ -29,6 +37,16 @@ void drawImageView(ImageView *imageView)
   for (i = 0; i < imageView->width; i++)
     for (j = 0; j < imageView->height; j++)
       screen_temp[(imageView->leftTopY + j) * SCREEN_WIDTH + imageView->leftTopX + i] = imageView->image[(imageView->height - 1 - j) * imageView->width + i];
+}
+
+void drawIconView(IconView *iconView)
+{
+  int i, j;
+
+  for (i = 0; i < iconView->width; i++)
+    for (j = 0; j < iconView->height; j++)
+      if (isAlpha(iconView->image[(iconView->height - 1 - j) * iconView->width + i]) == 0)
+        screen_temp[(iconView->leftTopY + j) * SCREEN_WIDTH + iconView->leftTopX + i] = iconView->image[(iconView->height - 1 - j) * iconView->width + i];
 }
 
 void drawWindow(Window *window)
@@ -83,6 +101,9 @@ void drawWindows()
           {
           case imageView:
             drawImageView(p->window->widgets[k].context.imageView);
+            break;
+          case iconView:
+            drawIconView(p->window->widgets[k].context.iconView);
             break;
           default:
             break;
