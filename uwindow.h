@@ -14,7 +14,8 @@ typedef enum WidgetType
   label,
   textBox,
   button,
-  imageView
+  imageView,
+  iconView
 } WidgetType;
 
 typedef struct Label
@@ -41,12 +42,20 @@ typedef struct ImageView
   struct RGB *image;
 } ImageView;
 
+typedef struct IconView
+{
+  int leftTopX, leftTopY, width, height;
+  struct RGB* image;
+  char text[MAX_STRING_NUM];
+} IconView;
+
 typedef union WidgetContext
 {
   Label* label;
   TextBox* textBox;
   Button* button;
   ImageView* imageView;
+  IconView* iconView;
 } WidgetContext;
 
 typedef struct Widget

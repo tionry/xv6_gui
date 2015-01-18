@@ -31,9 +31,42 @@ void drawImageView(ImageView *imageView)
       screen_temp[(imageView->leftTopY + j) * SCREEN_WIDTH + imageView->leftTopX + i] = imageView->image[(imageView->height - 1 - j) * imageView->width + i];
 }
 
+void drawWindow(Window *window)
+{
+  int i, j;
+
+  for (i = 0; i < window->width; i++)
+  {
+    if (window->hasCaption == 1)
+    {
+      for (j = 0; j < CAPTION_HEIGHT; j++)
+      {
+        screen_temp[(window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + i].R = 0x00;
+        screen_temp[(window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + i].G = 0x00;
+        screen_temp[(window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + i].B = 0x00;
+      }
+      for (j = CAPTION_HEIGHT; j < window->height; j++)
+      {
+        screen_temp[(window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + i].R = 0xbb;
+        screen_temp[(window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + i].G = 0xbb;
+        screen_temp[(window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + i].B = 0xbb;
+      }
+    }
+    else
+    {
+      for (j = 0; j < window->height; j++)
+      {
+        screen_temp[(window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + i].R = 0xbb;
+        screen_temp[(window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + i].G = 0xbb;
+        screen_temp[(window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + i].B = 0xbb;
+      }
+    }
+  }
+}
+
 void drawWindows()
 {
-  int i, j, k;
+  int k;
   WindowQueue *p = &windowQueue;
 
   cli();
@@ -44,36 +77,16 @@ void drawWindows()
     if (p->window != 0)
       if (p->window->show == 1)
       {
-        for (i = 0; i < p->window->width; i++)
-        {
-          if (p->window->hasCaption == 1)
-          {
-            for (j = 0; j < CAPTION_HEIGHT; j++)
-            {
-              screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].R = 0x00;
-              screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].G = 0x00;
-              screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].B = 0x00;
-            }
-            for (j = CAPTION_HEIGHT; j < p->window->height; j++)
-            {
-              screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].R = 0xbb;
-              screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].G = 0xbb;
-              screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].B = 0xbb;
-            }
-          }
-          else
-          {
-            for (j = 0; j < p->window->height; j++)
-            {
-              screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].R = 0xbb;
-              screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].G = 0xbb;
-              screen_temp[(p->window->leftTopY + j) * SCREEN_WIDTH + p->window->leftTopX + i].B = 0xbb;
-            }
-          }
-        }
+        drawWindow(p->window);
         for (k = 0; k < p->window->widgetsNum; k++)
-          if (p->window->widgets[k].type == imageView)
+          switch (p->window->widgets[k].type)
+          {
+          case imageView:
             drawImageView(p->window->widgets[k].context.imageView);
+            break;
+          default:
+            break;
+          }
       }
   }
   switchuvm(proc);
