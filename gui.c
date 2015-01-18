@@ -36,6 +36,7 @@ void drawWindows()
   int i, j, k;
   WindowQueue *p = &windowQueue;
 
+  cli();
   while (p->next != 0)
   {
     p = p->next;
@@ -74,8 +75,9 @@ void drawWindows()
           if (p->window->widgets[k].type == imageView)
             drawImageView(p->window->widgets[k].context.imageView);
       }
-    switchkvm();
   }
+  switchuvm(proc);
+  sti();
 }
 
 void drawMouse()
@@ -103,9 +105,7 @@ void updateWindow()
   int totalPels = SCREEN_WIDTH * SCREEN_HEIGHT;
   
   memset(screen_temp, 0xff, sizeof(RGB) * totalPels);
-  cli();
   drawWindows();
-  sti();
   memmove(screen, screen_temp, sizeof(RGB) * totalPels);
   drawMouse();
 }
