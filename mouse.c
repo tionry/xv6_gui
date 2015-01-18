@@ -15,7 +15,7 @@ static int x_sign = 0;
 static int y_sign = 0;
 static int x_overflow = 0;
 static int y_overflow = 0;
-static int counter = 0;
+//static int counter = 0;
 static int dis_x = 0 , dis_y = 0;
 
 //mouse event
@@ -122,7 +122,6 @@ void updateMouseEvent(uint tick)
 void mouseint(uint tick)
 {
   uint ch;
-  int isdraw = 0;
 
   ch = inb(0x64);
   if ((ch & 0x01) == 0)
@@ -178,12 +177,8 @@ void mouseint(uint tick)
     //cprintf("y_movement: %d\n", dis);
     to_read = READ_MOUSE_INFO;
     release(&mouse_lock);
-    if (counter % 5 == 0)
-      isdraw = 1;
-    else
-      isdraw = 0;
     //cprintf("x: %d, y: %d\n", mouse_info.x_position, mouse_info.y_position);
     updateMouseEvent(tick);
-    moveMousePosition(dis_x/2, dis_y/2,isdraw);
+    moveMousePosition(dis_x, dis_y,isdraw);
   }
 }

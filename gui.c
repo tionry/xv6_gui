@@ -80,24 +80,47 @@ void drawWindows()
   sti();
 }
 
+void removeMouse()
+{
+  int i, j, x, y;
+  
+  x  = mouse_info.last_draw_x;
+  y = mouse_info.last_draw_y;
+  for (j = 0; j < MOUSE_HEIGHT; j++)
+    for (i = 0; i < MOUSE_WIDTH; i++)
+      if (x + i <= SCREEN_WIDTH)
+      {
+        screen[(y + j) * SCREEN_WIDTH + x + i].R = screen_temp[(y + j) * SCREEN_WIDTH + x + i].R;
+        screen[(y + j) * SCREEN_WIDTH + x + i].G = screen_temp[(y + j) * SCREEN_WIDTH + x + i].G;
+        screen[(y + j) * SCREEN_WIDTH + x + i].B = screen_temp[(y + j) * SCREEN_WIDTH + x + i].B;
+      }
+}
+
 void drawMouse()
 {
-  int i, j;
-
-  for (j = 0; j < 10; j++)
+  int i, j,x,y;
+  
+  removeMouse();
+  x = mouse_info.x_position;
+  y = mouse_info.y_position;
+  for (j = 0; j < MOUSE_HEIGHT / 2; j++)
     for (i = 0; i < j; i++)
-    {
-      screen[(mouse_info.y_position + j) * SCREEN_WIDTH + mouse_info.x_position + i].R = 0x00;
-      screen[(mouse_info.y_position + j) * SCREEN_WIDTH + mouse_info.x_position + i].G = 0x00;
-      screen[(mouse_info.y_position + j) * SCREEN_WIDTH + mouse_info.x_position + i].B = 0x00;
-    }
-  for (j = 10; j < 15; j++)
-    for (i = 0; i < (14 - j) ; i++)
-    {
-      screen[(mouse_info.y_position + j) * SCREEN_WIDTH + mouse_info.x_position + i].R = 0x00;
-      screen[(mouse_info.y_position + j) * SCREEN_WIDTH + mouse_info.x_position + i].G = 0x00;
-      screen[(mouse_info.y_position + j) * SCREEN_WIDTH + mouse_info.x_position + i].B = 0x00;
-    } 
+      if (x + i <= SCREEN_WIDTH)
+      {
+        screen[(y + j) * SCREEN_WIDTH + x + i].R = 0x00;
+        screen[(y + j) * SCREEN_WIDTH + x + i].G = 0x00;
+        screen[(y + j) * SCREEN_WIDTH + x + i].B = 0x00;
+      }
+  for (j = MOUSE_HEIGHT / 2; j < MOUSE_HEIGHT / 2 + MOUSE_HEIGHT / 4; j++)
+    for (i = 0; i < (MOUSE_HEIGHT / 2 + MOUSE_HEIGHT / 4 - 1 - j) ; i++)
+      if (x + i <= SCREEN_WIDTH)
+      {
+        screen[(y + j) * SCREEN_WIDTH + x + i].R = 0x00;
+        screen[(y + j) * SCREEN_WIDTH + x + i].G = 0x00;
+        screen[(y + j) * SCREEN_WIDTH + x + i].B = 0x00;
+      } 
+    mouse_info.last_draw_x = mouse_info.x_position;
+    mouse_info.last_draw_y = mouse_info.y_position;
 }
 
 void updateWindow()

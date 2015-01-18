@@ -2,8 +2,13 @@ typedef struct mouseinfo
 {
   int x_position;
   int y_position;
+  int last_draw_x;
+  int last_draw_y;
   int event;
 }mouseinfo;
+
+#define MOUSE_WIDTH 10
+#define MOUSE_HEIGHT 20
 
 //read info
 #define READ_MOUSE_INFO 1
