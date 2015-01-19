@@ -388,7 +388,7 @@ void drawMouse()
             if (i == 0 || i == j-1 || (j == MOUSE_HEIGHT / 2 - 1 && i >= MOUSE_WIDTH / 2))
               drawPoint(t, 0xff, 0xff, 0xff);
             else
-              drawPoint(t, 0xff, 0xff, 0xff);
+              drawPoint(t, 0x00, 0x00, 0x00);
             t++;
           }   
       }
@@ -406,7 +406,7 @@ void drawMouse()
             if (i == 0 || i == MOUSE_WIDTH + MOUSE_WIDTH / 2 - 2 - j)
               drawPoint(t, 0xff, 0xff, 0xff);
             else
-              drawPoint(t, 0xff, 0xff, 0xff);
+              drawPoint(t, 0x00, 0x00, 0x00);
             t++;
           }
       } 
