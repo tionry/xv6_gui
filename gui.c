@@ -118,40 +118,6 @@ void drawWindow(Window *window)
     {
       for (j = 0; j < CAPTION_HEIGHT; j++)
       {
-        if (i < 10 && j < 10)
-        {
-          if (i == 0 && j < 10) 
-            continue;
-          if (i == 1 && j < 8)
-            continue;
-          if (i == 2 && j < 6)
-            continue;
-          if (i == 3 && j < 5)
-            continue;
-          if (i == 4 && j < 4)
-            continue;
-          if ((i == 5  || i == 6) && j < 3)
-            continue;
-          if ((i == 7 || i == 8) && j < 2)
-            continue;
-        }
-        if (window->width - i < 10 && j < 10)
-        {
-          if (i == window->width - 1 && j < 10) 
-            continue;
-          if (i == window->width - 2 && j < 8)
-            continue;
-          if (i == window->width - 3 && j < 6)
-            continue;
-          if (i == window->width - 4 && j < 5)
-            continue;
-          if (i == window->width - 5 && j < 4)
-            continue;
-          if ((i == window->width - 6  || i == window->width - 7) && j < 3)
-            continue;
-          if ((i == window->width - 8 || i == window->width - 9) && j < 2)
-            continue;
-        }
         setColor(145, 210, 228);
         drawPoint(window->leftTopX+i, window->leftTopY + j);
       }
@@ -192,83 +158,49 @@ void drawWindow(Window *window)
   {
     for (j = window->height - BORDER_WIDTH - 1; j < window->height; j++)
     {
-      if (i < 10 && window->height - j< 10) 
-      {
-          if (i == 0 && window->height - j < 10) 
-            continue;
-          if (i == 1 && window->height - j < 8)
-            continue;
-          if (i == 2 && window->height - j < 6)
-            continue;
-          if (i == 3 && window->height - j < 5)
-            continue;
-          if (i == 4 && window->height - j < 4)
-            continue;
-          if ((i == 5  || i == 6) && window->height - j < 3)
-            continue;
-          if ((i == 7 || i == 8) && window->height - j < 2)
-            continue;
-      }
-     if (window->width - i < 10 && window->height - j< 10) 
-      {
-          if (window->width - i == 1 && window->height - j < 10) 
-            continue;
-          if (window->width - i == 2 && window->height - j < 8)
-            continue;
-          if (window->width - i == 3 && window->height - j < 6)
-            continue;
-          if (window->width - i == 4 && window->height - j < 5)
-            continue;
-          if (window->width - i == 5 && window->height - j < 4)
-            continue;
-          if ((window->width - i == 6  || window->width - i == 7) && window->height - j < 3)
-            continue;
-          if ((window->width - i == 8  || window->width - i == 9) && window->height - j < 2)
-            continue;
-      }
       drawPoint(window->leftTopX+i, window->leftTopY + j);
     }
   }
 
   //draw shadow
-  // setColor(0xcc, 0xcc, 0xcc);
-  // for (i = 0 ; i < window->width; i++)
-  // {
-  //   if (i < 10 || window->width - i < 10)
-  //     continue;
-  //   j = 0;
-  //   drawPoint(window->leftTopX+i, window->leftTopY + j);
-  //   j = window->height - 1;
-  //   drawPoint(window->leftTopX+i, window->leftTopY + j);
-  // }
-  // for (j = 0; j < window->height; j++)
-  // {
-  //   if (j < 10 || window->height - j < 10)
-  //     continue;
-  //   i = 0;
-  //   drawPoint(window->leftTopX+i, window->leftTopY + j);
-  //   i = window->width - 1;
-  //   drawPoint(window->leftTopX+i, window->leftTopY + j);
-  // }
-  // setColor(0xff, 0xff, 0xff);
-  // for (i = -1 ; i < window->width+1; i++)
-  // {
-  //    if (i < 10 || window->width - i < 10)
-  //     continue;
-  //   j = -1;
-  //   drawPoint(window->leftTopX+i, window->leftTopY + j);
-  //   j = window->height ;
-  //   drawPoint(window->leftTopX+i, window->leftTopY + j);
-  // }
-  // for (j = -1; j < window->height+1; j++)
-  // {
-  //   if (j < 10 || window->height - j < 10)
-  //     continue;
-  //   i = -1;
-  //   drawPoint(window->leftTopX+i, window->leftTopY + j);
-  //   i = window->width;
-  //   drawPoint(window->leftTopX+i, window->leftTopY + j);
-  // }
+  setColor(0xcc, 0xcc, 0xcc);
+  for (i = 0 ; i < window->width; i++)
+  {
+    if (i < 10 || window->width - i < 10)
+      continue;
+    j = 0;
+    drawPoint(window->leftTopX+i, window->leftTopY + j);
+    j = window->height - 1;
+    drawPoint(window->leftTopX+i, window->leftTopY + j);
+  }
+  for (j = 0; j < window->height; j++)
+  {
+    if (j < 10 || window->height - j < 10)
+      continue;
+    i = 0;
+    drawPoint(window->leftTopX+i, window->leftTopY + j);
+    i = window->width - 1;
+    drawPoint(window->leftTopX+i, window->leftTopY + j);
+  }
+  setColor(0xff, 0xff, 0xff);
+  for (i = -1 ; i < window->width+1; i++)
+  {
+     if (i < 10 || window->width - i < 10)
+      continue;
+    j = -1;
+    drawPoint(window->leftTopX+i, window->leftTopY + j);
+    j = window->height ;
+    drawPoint(window->leftTopX+i, window->leftTopY + j);
+  }
+  for (j = -1; j < window->height+1; j++)
+  {
+    if (j < 10 || window->height - j < 10)
+      continue;
+    i = -1;
+    drawPoint(window->leftTopX+i, window->leftTopY + j);
+    i = window->width;
+    drawPoint(window->leftTopX+i, window->leftTopY + j);
+  }
   //draw close
   setColor(0x00, 0x00, 0x00);
   for (i = 0; i < 10; i++)
