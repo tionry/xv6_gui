@@ -9,6 +9,7 @@
 #include "window.h"
 #include "bitmap.h"
 #include "mouse.h"
+#include "character.h"
 
 GUI_MODE_INFO GUI_INFO;
 extern WindowQueue windowQueue;
@@ -118,6 +119,47 @@ void drawIconView(IconView *iconView)
       t1++;
       t2++;
     }
+  }
+}
+
+int draw_character(unsigned int x, unsigned int y, char ch,struct RGB *color)
+{
+  //cprintf("hehe");
+  int ord = ch - 0x20;
+  if(ord > 94 || ord < 0)
+    return -1;
+
+  int i, j;
+  int draw_flag = 1;
+  i = 0;
+  RGB *t;
+  while(draw_flag == 1 && i < CHARACTER_WIDTH)
+  { 
+    for(j = 0; j < CHARACTER_HEIGHT; j++)
+    {
+      if(character[ord][j][i] == 0)
+        continue;
+      else
+      {
+        t = screen_temp + (y + j) * SCREEN_HEIGHT + x + i;
+        t->R = color->R;
+        t->G = color->G;
+        t->B = color->B;
+        cprintf("d");
+      }
+    }    
+    i++;
+  }
+  return (i);
+}
+
+void drawCharacters(int x,int y, char *str,struct RGB *color)
+{
+  int i;
+  int pos_x = 0, pos_y = 0;
+  for(i = 0; i < strlen(str); ++i)
+  {
+    pos_x += draw_character(x + pos_x, y + pos_y, str[i], color);
   }
 }
 
