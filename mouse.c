@@ -5,6 +5,7 @@
 #include "spinlock.h"
 #include "gui.h"
 #include "mouse.h"
+#include "window.h"
 
 struct spinlock mouse_lock;
 struct mouseinfo mouse_info;
@@ -21,9 +22,11 @@ static int dis_x = 0 , dis_y = 0;
 //mouse event
 static int left_btn_down = 0;
 static int right_btn_down = 0;
-//static int mouse_moved = 0;
 static int last_tick = -20;
 static int event = 0;
+
+extern WindowQueue windowQueue;
+extern WindowQueue *lastWindow;
 
 void mouseinit()
 {
@@ -42,6 +45,111 @@ void mouseinit()
 void moveMousePosition(int x, int y)
 {
   setMousePosition(mouse_info.x_position + x, mouse_info.y_position + y);
+}
+
+int inWindowRange(Window window, int x, int y)
+{
+  if (x >= window.leftTopX && x < window.leftTopX + window.width && y >= window.leftTopY && y < window.leftTopY + window.height)
+    return 1;
+  return 0;
+}
+
+int inWidgetRange(Widget widget, int x, int y)
+{
+  int leftTopX, leftTopY, width, height;
+  if (widget.type == iconView)
+  {
+    leftTopX = widget.context.iconView->leftTopX;
+    leftTopY = widget.context.iconView->leftTopY;
+    width = widget.context.iconView->width;
+    height = widget.context.iconView->height;
+    if (x >= leftTopX && x < leftTopX + width && y >= leftTopY && y < leftTopY + height)
+    {
+      return 1;
+    }
+  }
+  return 0;
+}
+
+Window* getClickedWindow()
+{
+  WindowQueue *p = lastWindow;
+  Window pwindow;
+  int x = mouse_info.x_position;
+  int y = mouse_info.y_position;
+  //get clicked window
+  while (p)
+  {
+    pwindow = *(p->window);
+    if (inWindowRange(pwindow, x, y))
+    {
+      return (p->window);
+    }
+    p = p->prev;
+  }
+  return 0;
+}
+
+Widget* getClickedWidget(Window* pwindow)
+{
+  int x = mouse_info.x_position;
+  int y = mouse_info.y_position;
+  int i;
+  Widget pwidget;
+  for (i = 0; i < pwindow->widgetsNum; i++)
+  {
+    pwidget = pwindow->widgets[i];
+    if (inWidgetRange(pwidget, x, y))
+    {
+      return(&(pwindow->widgets[i]));
+    }
+  }
+  return 0;
+}
+
+void handleLeftClick()
+{
+  Window *pwindow;
+  Widget *pwidget;
+  pwindow = getClickedWindow();
+  if (pwindow)
+  {
+    pwidget = getClickedWidget(pwindow);
+    if (pwidget)
+    {
+      cprintf("hit.\n");
+    }
+  }
+}
+
+void handleLeftDoubleClick()
+{
+  Window *pwindow;
+  Widget *pwidget;
+  pwindow = getClickedWindow();
+  if (pwindow)
+  {
+    pwidget = getClickedWidget(pwindow);
+    if (pwidget)
+    {
+      cprintf("open file.\n");
+    }
+  }
+}
+
+void handleRightClick()
+{
+  Window *pwindow;
+  Widget *pwidget;
+  pwindow = getClickedWindow();
+  if (pwindow)
+  {
+    pwidget = getClickedWidget(pwindow);
+    if (pwidget)
+    {
+      cprintf("show menu.\n");
+    }
+  }
 }
 
 void setMousePosition(int x, int y)
@@ -109,13 +217,22 @@ void updateMouseEvent(uint tick)
   }
   mouse_info.event = event;
   if (event == LEFT_CLICK)
-    cprintf("LEFT_CLICK\n");
+  {
+    handleLeftClick();
+    //cprintf("LEFT_CLICK\n");
+  }
   if (event == LEFT_DOUBLE_CLICK)
-    cprintf("LEFT_DOUBLE_CLICK\n");
-  if (event == MOUSE_DRAGGING)
-    cprintf("MOUSE_DRAGGING\n");
+  {
+    handleLeftDoubleClick();
+    //cprintf("LEFT_DOUBLE_CLICK\n");
+  }
+  // if (event == MOUSE_DRAGGING)
+  //   cprintf("MOUSE_DRAGGING\n");
   if (event == RIGHT_CLICK)
-    cprintf("RIGHT_CLICK\n");
+  {
+    handleRightClick();
+    //cprintf("RIGHT_CLICK\n");
+  }
 }
 
 void mouseint(uint tick)
