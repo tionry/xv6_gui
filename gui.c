@@ -179,7 +179,7 @@ void drawWindow(Window *window)
   }
   for (j = CAPTION_HEIGHT; j <= window->height - BORDER_WIDTH; j++)
   {
-    t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
+    t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + window->width - BORDER_WIDTH;
     for (i = window->width - BORDER_WIDTH; i < window->width; i++)
     {
       t->R = 145;
@@ -239,7 +239,7 @@ void drawWindow(Window *window)
     t->G = 0xcc;
     t->B = 0xcc;
   }
-  t = screen_temp + (window->leftTopY - 1) * SCREEN_WIDTH + window->leftTopX;
+  t = screen_temp + (window->leftTopY - 1) * SCREEN_WIDTH + window->leftTopX - 1;
   for (i = -1 ; i < window->width+1; i++)
   {
     if (i < 10 || window->width - i < 10)
@@ -252,7 +252,7 @@ void drawWindow(Window *window)
     t->B = 0xff;
     t++;
   }
-  t = screen_temp + (window->leftTopY + window->height) * SCREEN_WIDTH + window->leftTopX;
+  t = screen_temp + (window->leftTopY + window->height) * SCREEN_WIDTH + window->leftTopX - 1;
   for (i = -1 ; i < window->width+1; i++)
   {
     if (i < 10 || window->width - i < 10)
