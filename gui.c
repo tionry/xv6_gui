@@ -31,6 +31,48 @@ int isAlpha(RGB color)
     return 0;
 }
 
+void drawLabel(Label *label)
+{
+  int i, j, t;
+
+  for (i = 0; i < label->width; i++)
+    for (j = 0; j < label->height; j++)
+    {
+      t = (label->leftTopY + j) * SCREEN_WIDTH + label->leftTopX + i;
+      screen_temp[t].R = 0xc8;
+      screen_temp[t].G = 0xc8;
+      screen_temp[t].B = 0xc8;
+    }
+}
+
+void drawTextBox(TextBox *textBox)
+{
+  int i, j, t;
+
+  for (i = 0; i < textBox->width; i++)
+    for (j = 0; j < textBox->height; j++)
+    {
+      t = (textBox->leftTopY + j) * SCREEN_WIDTH + textBox->leftTopX + i;
+      screen_temp[t].R = 0xff;
+      screen_temp[t].G = 0xff;
+      screen_temp[t].B = 0xff;
+    }
+}
+
+void drawButton(Button *button)
+{
+  int i, j, t;
+
+  for (i = 0; i < button->width; i++)
+    for (j = 0; j < button->height; j++)
+    {
+      t = (button->leftTopY + j) * SCREEN_WIDTH + button->leftTopX + i;
+      screen_temp[t].R = 0xc8;
+      screen_temp[t].G = 0xc8;
+      screen_temp[t].B = 0xc8;
+    }
+}
+
 void drawImageView(ImageView *imageView)
 {
   int i, j;
@@ -257,6 +299,15 @@ void drawWindows()
         for (k = 0; k < p->window->widgetsNum; k++)
           switch (p->window->widgets[k].type)
           {
+          case label:
+            drawLabel(p->window->widgets[k].context.label);
+            break;
+          case textBox:
+            drawTextBox(p->window->widgets[k].context.textBox);
+            break;
+          case button:
+            drawButton(p->window->widgets[k].context.button);
+            break;
           case imageView:
             drawImageView(p->window->widgets[k].context.imageView);
             break;
