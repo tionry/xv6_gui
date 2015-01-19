@@ -30,18 +30,20 @@ int main(void)
   for (i = 0; i < 3; i++)
   {
     icon[i].leftTopX = 50;
-    icon[i].leftTopY = 50 + i * 120;
+    icon[i].leftTopY = 50 + i * 140;
     icon[i].image = folder[i];
     readBitmapFile("folder.bmp", icon[i].image, &icon[i].height, &icon[i].width);
+    strcpy(icon[i].text, "folder");
     window.widgets[i + 1].type = iconView;
     window.widgets[i + 1].context.iconView = &icon[i];
   }
   for (i = 3; i < 5; i++)
   {
     icon[i].leftTopX = 50;
-    icon[i].leftTopY = 50 + i * 120;
+    icon[i].leftTopY = 50 + i * 140;
     icon[i].image = folder[i];
     readBitmapFile("file.bmp", icon[i].image, &icon[i].height, &icon[i].width);
+    strcpy(icon[i].text, "file");
     window.widgets[i + 1].type = iconView;
     window.widgets[i + 1].context.iconView = &icon[i];
   }

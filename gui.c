@@ -31,6 +31,42 @@ inline int isAlpha(RGB *color)
     return 0;
 }
 
+int draw_character(int x, int y, char ch, unsigned char R, unsigned char G, unsigned char B)
+{
+  int i, j;
+  RGB *t;
+  int ord = ch - 0x20;
+
+  if(ord > 94 || ord < 0)
+    return -1;
+  for (j = 0; j < CHARACTER_HEIGHT; j++)
+  {
+    t = screen_temp + (y + j) * SCREEN_WIDTH + x;
+    for (i = 0; i < CHARACTER_WIDTH; i++)
+    {
+      if (character[ord][j][i] == 1)
+      {
+        t->R = R;
+        t->G = G;
+        t->B = B;
+      }
+      t++;
+    }
+  }
+  return (i);
+}
+
+void drawCharacters(int x, int y, char *str, unsigned char R, unsigned char G, unsigned char B)
+{
+  int pos_x = 0;
+
+  while (*str != '\0')
+  {
+    pos_x += draw_character(x + pos_x, y, *str, R, G, B);
+    str++;
+  }
+}
+
 void drawLabel(Label *label)
 {
   int i, j;
@@ -120,43 +156,7 @@ void drawIconView(IconView *iconView)
       t2++;
     }
   }
-  
-}
-
-int draw_character(int x, int y, char ch, unsigned char R, unsigned char G, unsigned char B)
-{
-  int i, j;
-  RGB *t;
-  int ord = ch - 0x20;
-
-  if(ord > 94 || ord < 0)
-    return -1;
-  for (j = 0; j < CHARACTER_HEIGHT; j++)
-  {
-    t = screen_temp + (y + j) * SCREEN_WIDTH + x;
-    for (i = 0; i < CHARACTER_WIDTH; i++)
-    {
-      if (character[ord][j][i] == 1)
-      {
-        t->R = R;
-        t->G = G;
-        t->B = B;
-      }
-      t++;
-    }
-  }
-  return (i);
-}
-
-void drawCharacters(int x, int y, char *str, unsigned char R, unsigned char G, unsigned char B)
-{
-  int pos_x = 0;
-
-  while (*str != '\0')
-  {
-    pos_x += draw_character(x + pos_x, y, *str, R, G, B);
-    str++;
-  }
+  drawCharacters(iconView->leftTopX + 10, iconView->leftTopY + iconView->height + 5, iconView->text, 0, 0, 0);
 }
 
 void drawWindow(Window *window)
