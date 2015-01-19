@@ -74,5 +74,6 @@ typedef struct WindowQueue
   struct proc* proc;
   Window *window;
   struct WindowQueue *next;
+  struct WindowQueue *prev;
 } WindowQueue;
 

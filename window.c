@@ -21,10 +21,12 @@ void initWindow()
     windowLine[i].proc = 0;
     windowLine[i].window = 0;
     windowLine[i].next = 0;
+    windowLine[i].prev = 0;
   }
   windowQueue.proc = 0;
   windowQueue.window = 0;
   windowQueue.next = 0;
+  windowQueue.prev = 0;
   lastWindow = &windowQueue;
 }
 
@@ -41,10 +43,13 @@ int acquireWindow()
 void addWindow(int x)
 {
   WindowQueue *p = &windowQueue;
+  WindowQueue *q;
   while (p->next != 0)
     p = p->next;
+  q = p;
   p->next = &windowLine[x];
   p = p->next;
+  p->prev = q;
   p->next = 0;
   lastWindow = &windowLine[x];
 }
@@ -82,6 +87,8 @@ int sys_deleteWindow(void)
       if (p->next == lastWindow)
         lastWindow = p;
       p->next = p->next->next;
+      if (p->next)
+        p->next->prev = p;
       updateBackWindows();
       return 0;
     }
