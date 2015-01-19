@@ -3,7 +3,7 @@
 #define SCREEN_HEIGHT  1024
 #define CAPTION_HEIGHT 30
 #define MENU_HEIGHT 60
-#define BORDER_WIDTH 6
+#define BORDER_WIDTH 10
 
 
 #ifndef __ASSEMBLER__
