@@ -227,29 +227,17 @@ void drawWindow(Window *window)
   t = screen_temp + window->leftTopY * SCREEN_WIDTH + window->leftTopX;
   for (i = 0 ; i < window->width; i++)
   {
-    if (i < 10 || window->width - i < 10)
-    {
-      t++;
-      continue;
-    }
     drawPoint(t, 0xcc, 0xcc, 0xcc);
     t++;
   }
   t = screen_temp + (window->leftTopY + window->height - 1) * SCREEN_WIDTH + window->leftTopX;
   for (i = 0 ; i < window->width; i++)
   {
-    if (i < 10 || window->width - i < 10)
-    {
-      t++;
-      continue;
-    }
     drawPoint(t, 0xcc, 0xcc, 0xcc);
     t++;
   }
   for (j = 0; j < window->height; j++)
   {
-    if (j < 10 || window->height - j < 10)
-      continue;
     t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
     drawPoint(t, 0xcc, 0xcc, 0xcc);
     t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + window->width - 1;
@@ -258,29 +246,17 @@ void drawWindow(Window *window)
   t = screen_temp + (window->leftTopY - 1) * SCREEN_WIDTH + window->leftTopX - 1;
   for (i = -1 ; i < window->width+1; i++)
   {
-    if (i < 10 || window->width - i < 10)
-    {
-      t++;
-      continue;
-    }
     drawPoint(t, 0xff, 0xff, 0xff);
     t++;
   }
   t = screen_temp + (window->leftTopY + window->height) * SCREEN_WIDTH + window->leftTopX - 1;
   for (i = -1 ; i < window->width+1; i++)
   {
-    if (i < 10 || window->width - i < 10)
-    {
-      t++;
-      continue;
-    }
     drawPoint(t, 0xff, 0xff, 0xff);
     t++;
   }
   for (j = -1; j < window->height + 1; j++)
   {
-    if (j < 10 || window->height - j < 10)
-      continue;
     t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX - 1;
     drawPoint(t, 0xff, 0xff, 0xff);
     t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + window->width;
