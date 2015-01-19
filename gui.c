@@ -323,6 +323,28 @@ void drawBackWindows()
   sti();
 }
 
+void removeLastWindow()
+{
+  int i, j;
+  RGB *t1, *t2;
+
+  cli();
+  switchuvm(lastWindow->proc);
+  for (j = 0; j < lastWindow->window->height; j++)
+  {
+    t1 = screen_temp2 + (lastWindow->window->last_leftTopY + j) * SCREEN_WIDTH + lastWindow->window->last_leftTopX;
+    t2 = screen_temp1 + (lastWindow->window->last_leftTopY + j) * SCREEN_WIDTH + lastWindow->window->last_leftTopX;
+    for (i = 0; i < lastWindow->window->width; i++)
+    {
+      *t1 = *t2;
+      t1++;
+      t2++;
+    }
+  }
+  switchuvm(proc);
+  sti();
+}
+
 void drawLastWindow()
 {
   int k;
@@ -355,6 +377,8 @@ void drawLastWindow()
           break;
         }
     }
+  lastWindow->window->last_leftTopX = lastWindow->window->leftTopX;
+  lastWindow->window->last_leftTopY = lastWindow->window->leftTopY;
   switchuvm(proc);
   sti();
 }
@@ -470,7 +494,7 @@ void updateLastWindow()
 {
   int totalPels = SCREEN_WIDTH * SCREEN_HEIGHT;
 
-  //removeLastWindow();
+  removeLastWindow();
   drawLastWindow();
   memmove(screen, screen_temp2, sizeof(RGB) * totalPels);
   drawMouse();

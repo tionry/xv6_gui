@@ -62,6 +62,7 @@ typedef struct Window
 {
   int show;
   int hasCaption;
+  int last_leftTopX, last_leftTopY;
   int leftTopX, leftTopY, width, height;
   char caption[MAX_STRING_NUM];
   int widgetsNum;
