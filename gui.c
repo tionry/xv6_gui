@@ -460,24 +460,20 @@ void updateBackWindows()
 
   memset(screen_temp1, 0x00, sizeof(RGB) * totalPels);
   drawBackWindows();
+  memmove(screen_temp2, screen_temp1, sizeof(RGB) * totalPels);
+  drawLastWindow();
+  memmove(screen, screen_temp2, sizeof(RGB) * totalPels);
+  drawMouse();
 }
 
 void updateLastWindow()
 {
   int totalPels = SCREEN_WIDTH * SCREEN_HEIGHT;
-  
-  memmove(screen_temp2, screen_temp1, sizeof(RGB) * totalPels);
+
+  //removeLastWindow();
   drawLastWindow();
-}
-
-void updateWindows()
-{
-  int totalPels = SCREEN_WIDTH * SCREEN_HEIGHT;
-
-  updateBackWindows();
-  updateLastWindow();
   memmove(screen, screen_temp2, sizeof(RGB) * totalPels);
-  drawMouse(); 
+  drawMouse();
 }
 
 void updateMouse()

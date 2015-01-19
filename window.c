@@ -62,7 +62,7 @@ int sys_createWindow(void)
   windowLine[hWind].proc = proc;
   windowLine[hWind].window = (Window *)window;
   addWindow(hWind);
-  updateWindows();
+  updateBackWindows();
   return hWind;
 }
 
@@ -82,7 +82,7 @@ int sys_deleteWindow(void)
       if (p->next == lastWindow)
         lastWindow = p;
       p->next = p->next->next;
-      updateWindows();
+      updateBackWindows();
       return 0;
     }
     p = p->next;

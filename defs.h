@@ -55,7 +55,8 @@ int             writei(struct inode*, char*, uint, uint);
 
 // gui.c
 void            initGUI();
-void            updateWindows();
+void            updateBackWindows();
+void 		updateLastWindow();
 void		updateMouse();
 void drawBitmap(char *filename, int leftTopX, int leftTopY);
 
