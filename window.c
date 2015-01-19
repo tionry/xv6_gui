@@ -10,6 +10,7 @@
 
 WindowQueue windowLine[MAX_WINDOW_NUM];
 WindowQueue windowQueue;
+Window *lastWindow;
 
 void initWindow()
 {
@@ -24,6 +25,7 @@ void initWindow()
   windowQueue.proc = 0;
   windowQueue.window = 0;
   windowQueue.next = 0;
+  lastWindow = 0;
 }
 
 int acquireWindow()

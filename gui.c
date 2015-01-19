@@ -12,9 +12,8 @@
 
 GUI_MODE_INFO GUI_INFO;
 extern WindowQueue windowQueue;
-extern struct mouseinfo mouse_info;
+extern mouseinfo mouse_info;
 RGB *screen, *screen_temp;
-static struct RGB temp_color;
 
 void initGUI()
 {
@@ -23,9 +22,9 @@ void initGUI()
   screen_temp = (RGB *)(GUI_INFO.PhysBasePtr + 0x3c0000);
 }
 
-int isAlpha(RGB color)
+inline int isAlpha(RGB *color)
 {
-  if ((color.R == color.G) && (color.R == color.B) && (color.R == 0x00))
+  if ((color->R == color->G) && (color->R == color->B) && (color->R == 0x00))
     return 1;
   else
     return 0;
@@ -33,184 +32,271 @@ int isAlpha(RGB color)
 
 void drawLabel(Label *label)
 {
-  int i, j, t;
+  int i, j;
+  RGB *t;
 
-  for (i = 0; i < label->width; i++)
-    for (j = 0; j < label->height; j++)
+  for (j = 0; j < label->height; j++)
+  {
+    t = screen_temp + (label->leftTopY + j) * SCREEN_WIDTH + label->leftTopX;
+    for (i = 0; i < label->width; i++)
     {
-      t = (label->leftTopY + j) * SCREEN_WIDTH + label->leftTopX + i;
-      screen_temp[t].R = 0xc8;
-      screen_temp[t].G = 0xc8;
-      screen_temp[t].B = 0xc8;
+      t->R = 0xc8;
+      t->G = 0xc8;
+      t->B = 0xc8;
+      t++;
     }
+  }
 }
 
 void drawTextBox(TextBox *textBox)
 {
-  int i, j, t;
+  int i, j;
+  RGB *t;
 
-  for (i = 0; i < textBox->width; i++)
-    for (j = 0; j < textBox->height; j++)
+  for (j = 0; j < textBox->height; j++)
+  {
+    t = screen_temp + (textBox->leftTopY + j) * SCREEN_WIDTH + textBox->leftTopX;
+    for (i = 0; i < textBox->width; i++)
     {
-      t = (textBox->leftTopY + j) * SCREEN_WIDTH + textBox->leftTopX + i;
-      screen_temp[t].R = 0xff;
-      screen_temp[t].G = 0xff;
-      screen_temp[t].B = 0xff;
+      t->R = 0xff;
+      t->G = 0xff;
+      t->B = 0xff;
+      t++;
     }
+  }
 }
 
 void drawButton(Button *button)
 {
-  int i, j, t;
+  int i, j;
+  RGB *t;
 
-  for (i = 0; i < button->width; i++)
-    for (j = 0; j < button->height; j++)
+  for (j = 0; j < button->height; j++)
+  {
+    t = screen_temp + (button->leftTopY + j) * SCREEN_WIDTH + button->leftTopX;
+    for (i = 0; i < button->width; i++)
     {
-      t = (button->leftTopY + j) * SCREEN_WIDTH + button->leftTopX + i;
-      screen_temp[t].R = 0xc8;
-      screen_temp[t].G = 0xc8;
-      screen_temp[t].B = 0xc8;
+      t->R = 0xc8;
+      t->G = 0xc8;
+      t->B = 0xc8;
+      t++;
     }
+  }
 }
 
 void drawImageView(ImageView *imageView)
 {
   int i, j;
+  RGB *t1, *t2;
 
-  for (i = 0; i < imageView->width; i++)
-    for (j = 0; j < imageView->height; j++)
-      screen_temp[(imageView->leftTopY + j) * SCREEN_WIDTH + imageView->leftTopX + i] = imageView->image[(imageView->height - 1 - j) * imageView->width + i];
+  for (j = 0; j < imageView->height; j++)
+  {
+    t1 = screen_temp + (imageView->leftTopY + j) * SCREEN_WIDTH + imageView->leftTopX;
+    t2 = imageView->image + (imageView->height - 1 - j) * imageView->width;
+    for (i = 0; i < imageView->width; i++)
+    {
+      *t1 = *t2;
+      t1++;
+      t2++;
+    }
+  }
 }
 
 void drawIconView(IconView *iconView)
 {
   int i, j;
+  RGB *t1, *t2;
 
-  for (i = 0; i < iconView->width; i++)
-    for (j = 0; j < iconView->height; j++)
-      if (isAlpha(iconView->image[(iconView->height - 1 - j) * iconView->width + i]) == 0)
-        screen_temp[(iconView->leftTopY + j) * SCREEN_WIDTH + iconView->leftTopX + i] = iconView->image[(iconView->height - 1 - j) * iconView->width + i];
-}
-
-void drawPoint(int x, int y)
-{
-  if (x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT)
-    return;
-  screen_temp[y* SCREEN_WIDTH + x].R = temp_color.R;
-  screen_temp[y * SCREEN_WIDTH + x].G = temp_color.G;
-  screen_temp[y * SCREEN_WIDTH + x].B = temp_color.B;
-}
-
-void setColor(int R, int G, int B)
-{
-  temp_color.R = R;
-  temp_color.G = G;
-  temp_color.B = B;
+  for (j = 0; j < iconView->height; j++)
+  {
+    t1 = screen_temp + (iconView->leftTopY + j) * SCREEN_WIDTH + iconView->leftTopX;
+    t2 = iconView->image + (iconView->height - 1 - j) * iconView->width;
+    for (i = 0; i < iconView->width; i++)
+    {
+      if (isAlpha(t2) == 0)
+        *t1 = *t2;
+      t1++;
+      t2++;
+    }
+  }
 }
 
 void drawWindow(Window *window)
 {
   int i, j, k;
-
-  for (i = 0; i < window->width; i++)
+  RGB *t;
+  
+  if (window->hasCaption == 1)
   {
-    if (window->hasCaption == 1)
+    for (j = 0; j < CAPTION_HEIGHT; j++)
     {
-      for (j = 0; j < CAPTION_HEIGHT; j++)
+      t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
+      for (i = 0; i < window->width; i++)
       {
-        setColor(145, 210, 228);
-        drawPoint(window->leftTopX+i, window->leftTopY + j);
+        t->R = 145;
+        t->G = 210;
+        t->B = 228;
+        t++;
       }
-      for (j = CAPTION_HEIGHT; j < window->height - BORDER_WIDTH; j++)
-      {
-        setColor(0xff, 0xff, 0xff);
-        drawPoint(window->leftTopX+i,window->leftTopY + j);
-      }
-      // for (j = CAPTION_HEIGHT + MENU_HEIGHT; j < CAPTION_HEIGHT + MENU_HEIGHT + 2; j++)
-      // {
-      //   setColor(0x66, 0x66, 0x66);
-      //   drawPoint(window->leftTopX+i, window->leftTopY + j);
-      // }
-      // for (j = CAPTION_HEIGHT + MENU_HEIGHT + 2; j < window->height; j++)
-      // {
-      //   setColor(0xff, 0xff, 0xff);
-      //   drawPoint(window->leftTopX+i, window->leftTopY + j);
-      // }
     }
-    else
+    for (j = CAPTION_HEIGHT; j < window->height - BORDER_WIDTH; j++)
     {
-      for (j = 0; j < window->height; j++)
+      t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
+      for (i = 0; i < window->width; i++)
       {
-        setColor(0xbb, 0xbb, 0xbb);
-        drawPoint(window->leftTopX+i, window->leftTopY + j);
+        t->R = 0xff;
+        t->G = 0xff;
+        t->B = 0xff;
+        t++;
+      }
+    }
+  }
+  else
+  {
+    for (j = 0; j < window->height; j++)
+    {
+      t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
+      for (i = 0; i < window->width; i++)
+      {
+        t->R = 0xff;
+        t->G = 0xff;
+        t->B = 0xff;
+        t++;
       }
     }
   }
   //draw border
-  setColor(145, 210, 228);
-  for (i = 0; i < BORDER_WIDTH; i++)
-    for (j = CAPTION_HEIGHT; j <= window->height - BORDER_WIDTH; j++)
-      drawPoint(window->leftTopX+i, window->leftTopY + j);
-  for (i = window->width - BORDER_WIDTH; i < window->width; i++)
-    for (j = CAPTION_HEIGHT; j <= window->height - BORDER_WIDTH; j++)
-      drawPoint(window->leftTopX+i, window->leftTopY + j);
-  for (i = 0; i < window->width; i++)
+  for (j = CAPTION_HEIGHT; j <= window->height - BORDER_WIDTH; j++)
   {
-    for (j = window->height - BORDER_WIDTH - 1; j < window->height; j++)
+    t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
+    for (i = 0; i < BORDER_WIDTH; i++)
     {
-      drawPoint(window->leftTopX+i, window->leftTopY + j);
+      t->R = 145;
+      t->G = 210;
+      t->B = 228;
+      t++;
     }
   }
-
+  for (j = CAPTION_HEIGHT; j <= window->height - BORDER_WIDTH; j++)
+  {
+    t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
+    for (i = window->width - BORDER_WIDTH; i < window->width; i++)
+    {
+      t->R = 145;
+      t->G = 210;
+      t->B = 228;
+      t++;
+    }
+  }
+  for (j = window->height - BORDER_WIDTH - 1; j < window->height; j++)
+  {
+    t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
+    for (i = 0; i < window->width; i++)
+    {
+      t->R = 145;
+      t->G = 210;
+      t->B = 228;
+      t++;
+    }
+  }
   //draw shadow
-  setColor(0xcc, 0xcc, 0xcc);
+  t = screen_temp + window->leftTopY * SCREEN_WIDTH + window->leftTopX;
   for (i = 0 ; i < window->width; i++)
   {
     if (i < 10 || window->width - i < 10)
+    {
+      t++;
       continue;
-    j = 0;
-    drawPoint(window->leftTopX+i, window->leftTopY + j);
-    j = window->height - 1;
-    drawPoint(window->leftTopX+i, window->leftTopY + j);
+    }
+    t->R = 0xcc;
+    t->G = 0xcc;
+    t->B = 0xcc;
+    t++;
+  }
+  t = screen_temp + (window->leftTopY + window->height - 1) * SCREEN_WIDTH + window->leftTopX;
+  for (i = 0 ; i < window->width; i++)
+  {
+    if (i < 10 || window->width - i < 10)
+    {
+      t++;
+      continue;
+    }
+    t->R = 0xcc;
+    t->G = 0xcc;
+    t->B = 0xcc;
+    t++;
   }
   for (j = 0; j < window->height; j++)
   {
     if (j < 10 || window->height - j < 10)
       continue;
-    i = 0;
-    drawPoint(window->leftTopX+i, window->leftTopY + j);
-    i = window->width - 1;
-    drawPoint(window->leftTopX+i, window->leftTopY + j);
+    t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
+    t->R = 0xcc;
+    t->G = 0xcc;
+    t->B = 0xcc;
+    t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + window->width - 1;
+    t->R = 0xcc;
+    t->G = 0xcc;
+    t->B = 0xcc;
   }
-  setColor(0xff, 0xff, 0xff);
+  t = screen_temp + (window->leftTopY - 1) * SCREEN_WIDTH + window->leftTopX;
   for (i = -1 ; i < window->width+1; i++)
   {
-     if (i < 10 || window->width - i < 10)
+    if (i < 10 || window->width - i < 10)
+    {
+      t++;
       continue;
-    j = -1;
-    drawPoint(window->leftTopX+i, window->leftTopY + j);
-    j = window->height ;
-    drawPoint(window->leftTopX+i, window->leftTopY + j);
+    }
+    t->R = 0xff;
+    t->G = 0xff;
+    t->B = 0xff;
+    t++;
   }
-  for (j = -1; j < window->height+1; j++)
+  t = screen_temp + (window->leftTopY + window->height) * SCREEN_WIDTH + window->leftTopX;
+  for (i = -1 ; i < window->width+1; i++)
+  {
+    if (i < 10 || window->width - i < 10)
+    {
+      t++;
+      continue;
+    }
+    t->R = 0xff;
+    t->G = 0xff;
+    t->B = 0xff;
+    t++;
+  }
+  for (j = -1; j < window->height + 1; j++)
   {
     if (j < 10 || window->height - j < 10)
       continue;
-    i = -1;
-    drawPoint(window->leftTopX+i, window->leftTopY + j);
-    i = window->width;
-    drawPoint(window->leftTopX+i, window->leftTopY + j);
+    t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX - 1;
+    t->R = 0xff;
+    t->G = 0xff;
+    t->B = 0xff;
+    t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + window->width;
+    t->R = 0xff;
+    t->G = 0xff;
+    t->B = 0xff;
   }
   //draw close
-  setColor(0x00, 0x00, 0x00);
   for (i = 0; i < 10; i++)
   {
-    j = 10 + i;
+    t = screen_temp + (window->leftTopY + 10 + i) * SCREEN_WIDTH + window->leftTopX + window->width - BORDER_WIDTH - 10 + i;
     for (k = 0; k < 2; k++)
     {
-      drawPoint(window->leftTopX + window->width - BORDER_WIDTH - 10 + i + k, window->leftTopY + j);
-      drawPoint(window->leftTopX + window->width - BORDER_WIDTH - 1 - i + k, window->leftTopY + j);
-    }  
+      t->R = 0x00;
+      t->G = 0x00;
+      t->B = 0x00;
+      t++;
+    }
+    t = screen_temp + (window->leftTopY + 10 + i) * SCREEN_WIDTH + window->leftTopX + window->width - BORDER_WIDTH - 1 - i;
+    for (k = 0; k < 2; k++)
+    {
+      t->R = 0x00;
+      t->G = 0x00;
+      t->B = 0x00;
+      t++;
+    }
   }
 }
 
@@ -258,63 +344,110 @@ void drawWindows()
 void removeMouse()
 {
   int i, j, x, y;
-  
-  x  = mouse_info.last_draw_x;
+  RGB *t1, *t2;
+    
+  x = mouse_info.last_draw_x;
   y = mouse_info.last_draw_y;
   for (j = 0; j < MOUSE_HEIGHT; j++)
-    for (i = 0; i < MOUSE_WIDTH; i++)
-      if (x + i <= SCREEN_WIDTH && y + j <= SCREEN_HEIGHT)
-      {
-        screen[(y + j) * SCREEN_WIDTH + x + i].R = screen_temp[(y + j) * SCREEN_WIDTH + x + i].R;
-        screen[(y + j) * SCREEN_WIDTH + x + i].G = screen_temp[(y + j) * SCREEN_WIDTH + x + i].G;
-        screen[(y + j) * SCREEN_WIDTH + x + i].B = screen_temp[(y + j) * SCREEN_WIDTH + x + i].B;
-      }
+    if (y + j >= SCREEN_HEIGHT)
+      break;
+    else
+    {
+      t1 = screen + (y + j) * SCREEN_WIDTH + x;
+      t2 = screen_temp + (y + j) * SCREEN_WIDTH + x;
+      for (i = 0; i < MOUSE_WIDTH; i++)
+        if (x + i >= SCREEN_WIDTH)
+          break;
+        else
+        {
+          *t1 = *t2;
+          t1++;
+          t2++;
+        }
+    }
 }
 
 void drawMouse()
 {
-  int i, j,x,y;
+  int i, j, x, y;
+  RGB *t;
   
-  removeMouse();
   x = mouse_info.x_position;
   y = mouse_info.y_position;
   if (mouse_info.event == MOUSE_DRAGGING)
   {
     for (j = 0; j < MOUSE_HEIGHT / 2; j++)
-      for (i = 0; i < MOUSE_WIDTH; i++ )
-       if (x + i <= SCREEN_WIDTH && y + j <= SCREEN_HEIGHT)
-        {
-          screen[(y + j) * SCREEN_WIDTH + x + i].R = 0xff;
-          screen[(y + j) * SCREEN_WIDTH + x + i].G = 0xff;
-          screen[(y + j) * SCREEN_WIDTH + x + i].B = 0xff;
-        } 
+      if (y + j >= SCREEN_HEIGHT)
+        break;
+      else
+      {
+        t = screen + (y + j) * SCREEN_WIDTH + x;
+        for (i = 0; i < MOUSE_WIDTH; i++)
+          if (x + i >= SCREEN_WIDTH)
+            break;
+          else
+          {
+            t->R = 0xff;
+            t->G = 0xff;
+            t->B = 0xff;
+            t++;
+          }
+      } 
   }
   else
   {
     for (j = 0; j < MOUSE_HEIGHT / 2; j++)
-      for (i = 0; i < j; i++)
-        if (x + i <= SCREEN_WIDTH && y + j <= SCREEN_HEIGHT)
-        {
-          if (i == 0 || i == j-1 || (j == MOUSE_HEIGHT / 2 - 1 && i >= MOUSE_WIDTH / 2))
-            setColor(0xff, 0xff, 0xff);
+      if (y + j >= SCREEN_HEIGHT)
+        break;
+      else
+      {
+        t = screen + (y + j) * SCREEN_WIDTH + x;
+        for (i = 0; i < j; i++)
+          if (x + i >= SCREEN_WIDTH)
+            break;
           else
-            setColor(0x00, 0x00, 0x00);
-          screen[(y+j) * SCREEN_WIDTH + x + i].R = temp_color.R;
-          screen[(y+j) * SCREEN_WIDTH + x + i].G = temp_color.G;
-          screen[(y+j) * SCREEN_WIDTH + x + i].B = temp_color.B;
-        }
+          {
+            if (i == 0 || i == j-1 || (j == MOUSE_HEIGHT / 2 - 1 && i >= MOUSE_WIDTH / 2))
+            {
+              t->R = 0xff;
+              t->G = 0xff;
+              t->B = 0xff;
+            }
+            else
+            {
+              t->R = 0x00;
+              t->G = 0x00;
+              t->B = 0x00;
+            }
+            t++;
+          }   
+      }
     for (j = MOUSE_HEIGHT / 2; j < MOUSE_HEIGHT / 2 + MOUSE_HEIGHT / 4; j++)
-      for (i = 0; i < (MOUSE_WIDTH + MOUSE_WIDTH / 2 - 1 - j) ; i++)
-        if (x + i <= SCREEN_WIDTH && y + j <= SCREEN_HEIGHT)
-        {
-          if (i == 0 || i == MOUSE_WIDTH + MOUSE_WIDTH / 2 - 2 - j)
-            setColor(0xff, 0xff, 0xff);
+      if (y + j >= SCREEN_HEIGHT)
+        break;
+      else
+      {
+        t = screen + (y + j) * SCREEN_WIDTH + x;
+        for (i = 0; i < (MOUSE_WIDTH + MOUSE_WIDTH / 2 - 1 - j) ; i++)
+          if (x + i >= SCREEN_WIDTH)
+            break;
           else
-            setColor(0x00, 0x00, 0x00);
-          screen[(y + j) * SCREEN_WIDTH + x + i].R = temp_color.R;
-          screen[(y + j) * SCREEN_WIDTH + x + i].G = temp_color.G;
-          screen[(y + j) * SCREEN_WIDTH + x + i].B = temp_color.B;
-        } 
+          {
+            if (i == 0 || i == MOUSE_WIDTH + MOUSE_WIDTH / 2 - 2 - j)
+            {
+              t->R = 0xff;
+              t->G = 0xff;
+              t->B = 0xff;
+            }
+            else
+            {
+              t->R = 0x00;
+              t->G = 0x00;
+              t->B = 0x00;
+            }
+            t++;
+          }
+      } 
   }
 
   mouse_info.last_draw_x = mouse_info.x_position;
@@ -333,6 +466,7 @@ void updateWindow()
 
 void updateMouse()
 {
+  removeMouse();
   drawMouse();
 }
 
