@@ -123,7 +123,7 @@ void drawIconView(IconView *iconView)
   
 }
 
-int draw_character(unsigned int x, unsigned int y, char ch, char R, char G, char B)
+int draw_character(int x, int y, char ch, unsigned char R, unsigned char G, unsigned char B)
 {
   int i, j;
   RGB *t;
@@ -148,7 +148,7 @@ int draw_character(unsigned int x, unsigned int y, char ch, char R, char G, char
   return (i);
 }
 
-void drawCharacters(int x, int y, char *str, char R, char G, char B)
+void drawCharacters(int x, int y, char *str, unsigned char R, unsigned char G, unsigned char B)
 {
   int pos_x = 0;
 
