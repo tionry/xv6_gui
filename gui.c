@@ -31,7 +31,14 @@ inline int isAlpha(RGB *color)
     return 0;
 }
 
-int draw_character(int x, int y, char ch, unsigned char R, unsigned char G, unsigned char B)
+void drawPoint(RGB* color, unsigned char R, unsigned char G, unsigned char B)
+{
+  color->R = R;
+  color->G = G;
+  color->B = B;
+}
+
+int drawCharacter(int x, int y, char ch, unsigned char R, unsigned char G, unsigned char B)
 {
   int i, j;
   RGB *t;
@@ -45,11 +52,7 @@ int draw_character(int x, int y, char ch, unsigned char R, unsigned char G, unsi
     for (i = 0; i < CHARACTER_WIDTH; i++)
     {
       if (character[ord][j][i] == 1)
-      {
-        t->R = R;
-        t->G = G;
-        t->B = B;
-      }
+        drawPoint(t, R, G, B);
       t++;
     }
   }
@@ -62,7 +65,7 @@ void drawCharacters(int x, int y, char *str, unsigned char R, unsigned char G, u
 
   while (*str != '\0')
   {
-    pos_x += draw_character(x + pos_x, y, *str, R, G, B);
+    pos_x += drawCharacter(x + pos_x, y, *str, R, G, B);
     str++;
   }
 }
@@ -77,9 +80,7 @@ void drawLabel(Label *label)
     t = screen_temp + (label->leftTopY + j) * SCREEN_WIDTH + label->leftTopX;
     for (i = 0; i < label->width; i++)
     {
-      t->R = 0xc8;
-      t->G = 0xc8;
-      t->B = 0xc8;
+      drawPoint(t, 0xc8, 0xc8, 0xc8);
       t++;
     }
   }
@@ -95,9 +96,7 @@ void drawTextBox(TextBox *textBox)
     t = screen_temp + (textBox->leftTopY + j) * SCREEN_WIDTH + textBox->leftTopX;
     for (i = 0; i < textBox->width; i++)
     {
-      t->R = 0xff;
-      t->G = 0xff;
-      t->B = 0xff;
+      drawPoint(t, 0xff, 0xff, 0xff);
       t++;
     }
   }
@@ -113,9 +112,7 @@ void drawButton(Button *button)
     t = screen_temp + (button->leftTopY + j) * SCREEN_WIDTH + button->leftTopX;
     for (i = 0; i < button->width; i++)
     {
-      t->R = 0xc8;
-      t->G = 0xc8;
-      t->B = 0xc8;
+      drawPoint(t, 0xc8, 0xc8, 0xc8);
       t++;
     }
   }
@@ -171,9 +168,7 @@ void drawWindow(Window *window)
       t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
       for (i = 0; i < window->width; i++)
       {
-        t->R = 145;
-        t->G = 210;
-        t->B = 228;
+        drawPoint(t, 145, 210, 228);
         t++;
       }
     }
@@ -183,9 +178,7 @@ void drawWindow(Window *window)
       t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
       for (i = 0; i < window->width; i++)
       {
-        t->R = 0xff;
-        t->G = 0xff;
-        t->B = 0xff;
+        drawPoint(t, 0xff, 0xff, 0xff);
         t++;
       }
     }
@@ -197,9 +190,7 @@ void drawWindow(Window *window)
       t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
       for (i = 0; i < window->width; i++)
       {
-        t->R = 0xff;
-        t->G = 0xff;
-        t->B = 0xff;
+        drawPoint(t, 0xff, 0xff, 0xff);
         t++;
       }
     }
@@ -210,9 +201,7 @@ void drawWindow(Window *window)
     t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
     for (i = 0; i < BORDER_WIDTH; i++)
     {
-      t->R = 145;
-      t->G = 210;
-      t->B = 228;
+      drawPoint(t, 145, 210, 228);
       t++;
     }
   }
@@ -221,9 +210,7 @@ void drawWindow(Window *window)
     t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + window->width - BORDER_WIDTH;
     for (i = window->width - BORDER_WIDTH; i < window->width; i++)
     {
-      t->R = 145;
-      t->G = 210;
-      t->B = 228;
+      drawPoint(t, 145, 210, 228);
       t++;
     }
   }
@@ -232,9 +219,7 @@ void drawWindow(Window *window)
     t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
     for (i = 0; i < window->width; i++)
     {
-      t->R = 145;
-      t->G = 210;
-      t->B = 228;
+      drawPoint(t, 145, 210, 228);
       t++;
     }
   }
@@ -247,9 +232,7 @@ void drawWindow(Window *window)
       t++;
       continue;
     }
-    t->R = 0xcc;
-    t->G = 0xcc;
-    t->B = 0xcc;
+    drawPoint(t, 0xcc, 0xcc, 0xcc);
     t++;
   }
   t = screen_temp + (window->leftTopY + window->height - 1) * SCREEN_WIDTH + window->leftTopX;
@@ -260,9 +243,7 @@ void drawWindow(Window *window)
       t++;
       continue;
     }
-    t->R = 0xcc;
-    t->G = 0xcc;
-    t->B = 0xcc;
+    drawPoint(t, 0xcc, 0xcc, 0xcc);
     t++;
   }
   for (j = 0; j < window->height; j++)
@@ -270,13 +251,9 @@ void drawWindow(Window *window)
     if (j < 10 || window->height - j < 10)
       continue;
     t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
-    t->R = 0xcc;
-    t->G = 0xcc;
-    t->B = 0xcc;
+    drawPoint(t, 0xcc, 0xcc, 0xcc);
     t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + window->width - 1;
-    t->R = 0xcc;
-    t->G = 0xcc;
-    t->B = 0xcc;
+    drawPoint(t, 0xcc, 0xcc, 0xcc);
   }
   t = screen_temp + (window->leftTopY - 1) * SCREEN_WIDTH + window->leftTopX - 1;
   for (i = -1 ; i < window->width+1; i++)
@@ -286,9 +263,7 @@ void drawWindow(Window *window)
       t++;
       continue;
     }
-    t->R = 0xff;
-    t->G = 0xff;
-    t->B = 0xff;
+    drawPoint(t, 0xff, 0xff, 0xff);
     t++;
   }
   t = screen_temp + (window->leftTopY + window->height) * SCREEN_WIDTH + window->leftTopX - 1;
@@ -299,9 +274,7 @@ void drawWindow(Window *window)
       t++;
       continue;
     }
-    t->R = 0xff;
-    t->G = 0xff;
-    t->B = 0xff;
+    drawPoint(t, 0xff, 0xff, 0xff);
     t++;
   }
   for (j = -1; j < window->height + 1; j++)
@@ -309,13 +282,9 @@ void drawWindow(Window *window)
     if (j < 10 || window->height - j < 10)
       continue;
     t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX - 1;
-    t->R = 0xff;
-    t->G = 0xff;
-    t->B = 0xff;
+    drawPoint(t, 0xff, 0xff, 0xff);
     t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + window->width;
-    t->R = 0xff;
-    t->G = 0xff;
-    t->B = 0xff;
+    drawPoint(t, 0xff, 0xff, 0xff);
   }
   //draw close
   for (i = 0; i < 10; i++)
@@ -323,17 +292,13 @@ void drawWindow(Window *window)
     t = screen_temp + (window->leftTopY + 10 + i) * SCREEN_WIDTH + window->leftTopX + window->width - BORDER_WIDTH - 10 + i;
     for (k = 0; k < 2; k++)
     {
-      t->R = 0x00;
-      t->G = 0x00;
-      t->B = 0x00;
+      drawPoint(t, 0x00, 0x00, 0x00);
       t++;
     }
     t = screen_temp + (window->leftTopY + 10 + i) * SCREEN_WIDTH + window->leftTopX + window->width - BORDER_WIDTH - 1 - i;
     for (k = 0; k < 2; k++)
     {
-      t->R = 0x00;
-      t->G = 0x00;
-      t->B = 0x00;
+      drawPoint(t, 0x00, 0x00, 0x00);
       t++;
     }
   }
@@ -426,9 +391,7 @@ void drawMouse()
             break;
           else
           {
-            t->R = 0xff;
-            t->G = 0xff;
-            t->B = 0xff;
+            drawPoint(t, 0xff, 0xff, 0xff);
             t++;
           }
       } 
@@ -447,17 +410,9 @@ void drawMouse()
           else
           {
             if (i == 0 || i == j-1 || (j == MOUSE_HEIGHT / 2 - 1 && i >= MOUSE_WIDTH / 2))
-            {
-              t->R = 0xff;
-              t->G = 0xff;
-              t->B = 0xff;
-            }
+              drawPoint(t, 0xff, 0xff, 0xff);
             else
-            {
-              t->R = 0x00;
-              t->G = 0x00;
-              t->B = 0x00;
-            }
+              drawPoint(t, 0xff, 0xff, 0xff);
             t++;
           }   
       }
@@ -473,17 +428,9 @@ void drawMouse()
           else
           {
             if (i == 0 || i == MOUSE_WIDTH + MOUSE_WIDTH / 2 - 2 - j)
-            {
-              t->R = 0xff;
-              t->G = 0xff;
-              t->B = 0xff;
-            }
+              drawPoint(t, 0xff, 0xff, 0xff);
             else
-            {
-              t->R = 0x00;
-              t->G = 0x00;
-              t->B = 0x00;
-            }
+              drawPoint(t, 0xff, 0xff, 0xff);
             t++;
           }
       } 
