@@ -124,42 +124,37 @@ void drawIconView(IconView *iconView)
 
 int draw_character(unsigned int x, unsigned int y, char ch,struct RGB *color)
 {
-  //cprintf("hehe");
+  int i, j;
+  RGB *t;
   int ord = ch - 0x20;
+
   if(ord > 94 || ord < 0)
     return -1;
-
-  int i, j;
-  int draw_flag = 1;
-  i = 0;
-  RGB *t;
-  while(draw_flag == 1 && i < CHARACTER_WIDTH)
-  { 
-    for(j = 0; j < CHARACTER_HEIGHT; j++)
+  for (j = 0; j < CHARACTER_HEIGHT; j++)
+  {
+    t = screen_temp + (y + j) * SCREEN_WIDTH + x;
+    for (i = 0; i < CHARACTER_WIDTH; i++)
     {
-      if(character[ord][j][i] == 0)
-        continue;
-      else
+      if (character[ord][j][i] == 1)
       {
-        t = screen_temp + (y + j) * SCREEN_HEIGHT + x + i;
         t->R = color->R;
         t->G = color->G;
         t->B = color->B;
-        cprintf("d");
       }
-    }    
-    i++;
+      t++;
+    }
   }
   return (i);
 }
 
 void drawCharacters(int x,int y, char *str,struct RGB *color)
 {
-  int i;
-  int pos_x = 0, pos_y = 0;
-  for(i = 0; i < strlen(str); ++i)
+  int pos_x = 0;
+
+  while (*str != '\0')
   {
-    pos_x += draw_character(x + pos_x, y + pos_y, str[i], color);
+    pos_x += draw_character(x + pos_x, y, *str, color);
+    str++;
   }
 }
 
@@ -181,6 +176,8 @@ void drawWindow(Window *window)
         t++;
       }
     }
+    t->R = t->G = t->B = 0x00;
+    drawCharacters(window->leftTopX + 10, window->leftTopY + 5, window->caption, t);
     for (j = CAPTION_HEIGHT; j < window->height - BORDER_WIDTH; j++)
     {
       t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;

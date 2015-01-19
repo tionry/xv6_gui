@@ -13,6 +13,7 @@ int main(void)
   window.height = 400;
   window.show = 1;
   window.hasCaption = 1;
+  strcpy(window.caption, "Explorer");
   createWindow(&window);
   exit();
 }
