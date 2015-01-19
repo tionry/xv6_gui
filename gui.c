@@ -13,14 +13,16 @@
 
 GUI_MODE_INFO GUI_INFO;
 extern WindowQueue windowQueue;
+extern WindowQueue *lastWindow;
 extern mouseinfo mouse_info;
-RGB *screen, *screen_temp;
+RGB *screen, *screen_temp1, *screen_temp2;
 
 void initGUI()
 {
   GUI_INFO = *((GUI_MODE_INFO *)(GUI_BUF << 4));
   screen = (RGB *)GUI_INFO.PhysBasePtr;
-  screen_temp = (RGB *)(GUI_INFO.PhysBasePtr + 0x3c0000);
+  screen_temp1 = (RGB *)(GUI_INFO.PhysBasePtr + 0x3c0000);
+  screen_temp2 = (RGB *)(GUI_INFO.PhysBasePtr + 0x780000);
 }
 
 inline int isAlpha(RGB *color)
@@ -38,7 +40,7 @@ void drawPoint(RGB* color, unsigned char R, unsigned char G, unsigned char B)
   color->B = B;
 }
 
-int drawCharacter(int x, int y, char ch, unsigned char R, unsigned char G, unsigned char B)
+int drawCharacter(RGB *buf, int x, int y, char ch, unsigned char R, unsigned char G, unsigned char B)
 {
   int i, j;
   RGB *t;
@@ -48,7 +50,7 @@ int drawCharacter(int x, int y, char ch, unsigned char R, unsigned char G, unsig
     return -1;
   for (j = 0; j < CHARACTER_HEIGHT; j++)
   {
-    t = screen_temp + (y + j) * SCREEN_WIDTH + x;
+    t = buf + (y + j) * SCREEN_WIDTH + x;
     for (i = 0; i < CHARACTER_WIDTH; i++)
     {
       if (character[ord][j][i] == 1)
@@ -59,25 +61,25 @@ int drawCharacter(int x, int y, char ch, unsigned char R, unsigned char G, unsig
   return (i);
 }
 
-void drawCharacters(int x, int y, char *str, unsigned char R, unsigned char G, unsigned char B)
+void drawCharacters(RGB *buf, int x, int y, char *str, unsigned char R, unsigned char G, unsigned char B)
 {
   int pos_x = 0;
 
   while (*str != '\0')
   {
-    pos_x += drawCharacter(x + pos_x, y, *str, R, G, B);
+    pos_x += drawCharacter(buf, x + pos_x, y, *str, R, G, B);
     str++;
   }
 }
 
-void drawLabel(Label *label)
+void drawLabel(RGB *buf, Label *label)
 {
   int i, j;
   RGB *t;
 
   for (j = 0; j < label->height; j++)
   {
-    t = screen_temp + (label->leftTopY + j) * SCREEN_WIDTH + label->leftTopX;
+    t = buf + (label->leftTopY + j) * SCREEN_WIDTH + label->leftTopX;
     for (i = 0; i < label->width; i++)
     {
       drawPoint(t, 0xc8, 0xc8, 0xc8);
@@ -86,14 +88,14 @@ void drawLabel(Label *label)
   }
 }
 
-void drawTextBox(TextBox *textBox)
+void drawTextBox(RGB *buf, TextBox *textBox)
 {
   int i, j;
   RGB *t;
 
   for (j = 0; j < textBox->height; j++)
   {
-    t = screen_temp + (textBox->leftTopY + j) * SCREEN_WIDTH + textBox->leftTopX;
+    t = buf + (textBox->leftTopY + j) * SCREEN_WIDTH + textBox->leftTopX;
     for (i = 0; i < textBox->width; i++)
     {
       drawPoint(t, 0xff, 0xff, 0xff);
@@ -102,14 +104,14 @@ void drawTextBox(TextBox *textBox)
   }
 }
 
-void drawButton(Button *button)
+void drawButton(RGB *buf, Button *button)
 {
   int i, j;
   RGB *t;
 
   for (j = 0; j < button->height; j++)
   {
-    t = screen_temp + (button->leftTopY + j) * SCREEN_WIDTH + button->leftTopX;
+    t = buf + (button->leftTopY + j) * SCREEN_WIDTH + button->leftTopX;
     for (i = 0; i < button->width; i++)
     {
       drawPoint(t, 0xc8, 0xc8, 0xc8);
@@ -118,14 +120,14 @@ void drawButton(Button *button)
   }
 }
 
-void drawImageView(ImageView *imageView)
+void drawImageView(RGB *buf, ImageView *imageView)
 {
   int i, j;
   RGB *t1, *t2;
 
   for (j = 0; j < imageView->height; j++)
   {
-    t1 = screen_temp + (imageView->leftTopY + j) * SCREEN_WIDTH + imageView->leftTopX;
+    t1 = buf + (imageView->leftTopY + j) * SCREEN_WIDTH + imageView->leftTopX;
     t2 = imageView->image + (imageView->height - 1 - j) * imageView->width;
     for (i = 0; i < imageView->width; i++)
     {
@@ -136,14 +138,14 @@ void drawImageView(ImageView *imageView)
   }
 }
 
-void drawIconView(IconView *iconView)
+void drawIconView(RGB *buf, IconView *iconView)
 {
   int i, j;
   RGB *t1, *t2;
 
   for (j = 0; j < iconView->height; j++)
   {
-    t1 = screen_temp + (iconView->leftTopY + j) * SCREEN_WIDTH + iconView->leftTopX;
+    t1 = buf + (iconView->leftTopY + j) * SCREEN_WIDTH + iconView->leftTopX;
     t2 = iconView->image + (iconView->height - 1 - j) * iconView->width;
     for (i = 0; i < iconView->width; i++)
     {
@@ -153,10 +155,10 @@ void drawIconView(IconView *iconView)
       t2++;
     }
   }
-  drawCharacters(iconView->leftTopX + 10, iconView->leftTopY + iconView->height + 5, iconView->text, 0, 0, 0);
+  drawCharacters(buf, iconView->leftTopX + 10, iconView->leftTopY + iconView->height + 5, iconView->text, 0, 0, 0);
 }
 
-void drawWindow(Window *window)
+void drawWindow(RGB *buf, Window *window)
 {
   int i, j, k;
   RGB *t;
@@ -165,17 +167,17 @@ void drawWindow(Window *window)
   {
     for (j = 0; j < CAPTION_HEIGHT; j++)
     {
-      t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
+      t = buf + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
       for (i = 0; i < window->width; i++)
       {
         drawPoint(t, 145, 210, 228);
         t++;
       }
     }
-    drawCharacters(window->leftTopX + 10, window->leftTopY + 5, window->caption, 0, 0, 0);
+    drawCharacters(buf, window->leftTopX + 10, window->leftTopY + 5, window->caption, 0, 0, 0);
     for (j = CAPTION_HEIGHT; j < window->height - BORDER_WIDTH; j++)
     {
-      t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
+      t = buf + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
       for (i = 0; i < window->width; i++)
       {
         drawPoint(t, 0xff, 0xff, 0xff);
@@ -187,7 +189,7 @@ void drawWindow(Window *window)
   {
     for (j = 0; j < window->height; j++)
     {
-      t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
+      t = buf + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
       for (i = 0; i < window->width; i++)
       {
         drawPoint(t, 0xff, 0xff, 0xff);
@@ -198,7 +200,7 @@ void drawWindow(Window *window)
   //draw border
   for (j = CAPTION_HEIGHT; j <= window->height - BORDER_WIDTH; j++)
   {
-    t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
+    t = buf + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
     for (i = 0; i < BORDER_WIDTH; i++)
     {
       drawPoint(t, 145, 210, 228);
@@ -207,7 +209,7 @@ void drawWindow(Window *window)
   }
   for (j = CAPTION_HEIGHT; j <= window->height - BORDER_WIDTH; j++)
   {
-    t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + window->width - BORDER_WIDTH;
+    t = buf + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + window->width - BORDER_WIDTH;
     for (i = window->width - BORDER_WIDTH; i < window->width; i++)
     {
       drawPoint(t, 145, 210, 228);
@@ -216,7 +218,7 @@ void drawWindow(Window *window)
   }
   for (j = window->height - BORDER_WIDTH - 1; j < window->height; j++)
   {
-    t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
+    t = buf + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
     for (i = 0; i < window->width; i++)
     {
       drawPoint(t, 145, 210, 228);
@@ -224,13 +226,13 @@ void drawWindow(Window *window)
     }
   }
   //draw shadow
-  t = screen_temp + window->leftTopY * SCREEN_WIDTH + window->leftTopX;
+  t = buf + window->leftTopY * SCREEN_WIDTH + window->leftTopX;
   for (i = 0 ; i < window->width; i++)
   {
     drawPoint(t, 0xcc, 0xcc, 0xcc);
     t++;
   }
-  t = screen_temp + (window->leftTopY + window->height - 1) * SCREEN_WIDTH + window->leftTopX;
+  t = buf + (window->leftTopY + window->height - 1) * SCREEN_WIDTH + window->leftTopX;
   for (i = 0 ; i < window->width; i++)
   {
     drawPoint(t, 0xcc, 0xcc, 0xcc);
@@ -238,18 +240,18 @@ void drawWindow(Window *window)
   }
   for (j = 0; j < window->height; j++)
   {
-    t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
+    t = buf + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
     drawPoint(t, 0xcc, 0xcc, 0xcc);
-    t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + window->width - 1;
+    t = buf + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + window->width - 1;
     drawPoint(t, 0xcc, 0xcc, 0xcc);
   }
-  t = screen_temp + (window->leftTopY - 1) * SCREEN_WIDTH + window->leftTopX - 1;
+  t = buf + (window->leftTopY - 1) * SCREEN_WIDTH + window->leftTopX - 1;
   for (i = -1 ; i < window->width+1; i++)
   {
     drawPoint(t, 0xff, 0xff, 0xff);
     t++;
   }
-  t = screen_temp + (window->leftTopY + window->height) * SCREEN_WIDTH + window->leftTopX - 1;
+  t = buf + (window->leftTopY + window->height) * SCREEN_WIDTH + window->leftTopX - 1;
   for (i = -1 ; i < window->width+1; i++)
   {
     drawPoint(t, 0xff, 0xff, 0xff);
@@ -257,21 +259,21 @@ void drawWindow(Window *window)
   }
   for (j = -1; j < window->height + 1; j++)
   {
-    t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX - 1;
+    t = buf + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX - 1;
     drawPoint(t, 0xff, 0xff, 0xff);
-    t = screen_temp + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + window->width;
+    t = buf + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + window->width;
     drawPoint(t, 0xff, 0xff, 0xff);
   }
   //draw close
   for (i = 0; i < 10; i++)
   {
-    t = screen_temp + (window->leftTopY + 10 + i) * SCREEN_WIDTH + window->leftTopX + window->width - BORDER_WIDTH - 10 + i;
+    t = buf + (window->leftTopY + 10 + i) * SCREEN_WIDTH + window->leftTopX + window->width - BORDER_WIDTH - 10 + i;
     for (k = 0; k < 2; k++)
     {
       drawPoint(t, 0x00, 0x00, 0x00);
       t++;
     }
-    t = screen_temp + (window->leftTopY + 10 + i) * SCREEN_WIDTH + window->leftTopX + window->width - BORDER_WIDTH - 1 - i;
+    t = buf + (window->leftTopY + 10 + i) * SCREEN_WIDTH + window->leftTopX + window->width - BORDER_WIDTH - 1 - i;
     for (k = 0; k < 2; k++)
     {
       drawPoint(t, 0x00, 0x00, 0x00);
@@ -280,43 +282,79 @@ void drawWindow(Window *window)
   }
 }
 
-void drawWindows()
+void drawBackWindows()
 {
   int k;
   WindowQueue *p = &windowQueue;
 
   cli();
-  while (p->next != 0)
+  while (p->next != lastWindow)
   {
     p = p->next;
     switchuvm(p->proc);
     if (p->window != 0)
       if (p->window->show == 1)
       {
-        drawWindow(p->window);
+        drawWindow(screen_temp1, p->window);
         for (k = 0; k < p->window->widgetsNum; k++)
           switch (p->window->widgets[k].type)
           {
           case label:
-            drawLabel(p->window->widgets[k].context.label);
+            drawLabel(screen_temp1, p->window->widgets[k].context.label);
             break;
           case textBox:
-            drawTextBox(p->window->widgets[k].context.textBox);
+            drawTextBox(screen_temp1, p->window->widgets[k].context.textBox);
             break;
           case button:
-            drawButton(p->window->widgets[k].context.button);
+            drawButton(screen_temp1, p->window->widgets[k].context.button);
             break;
           case imageView:
-            drawImageView(p->window->widgets[k].context.imageView);
+            drawImageView(screen_temp1, p->window->widgets[k].context.imageView);
             break;
           case iconView:
-            drawIconView(p->window->widgets[k].context.iconView);
+            drawIconView(screen_temp1, p->window->widgets[k].context.iconView);
             break;
           default:
             break;
           }
       }
   }
+  switchuvm(proc);
+  sti();
+}
+
+void drawLastWindow()
+{
+  int k;
+
+  cli();
+  switchuvm(lastWindow->proc);
+  if (lastWindow->window != 0)
+    if (lastWindow->window->show == 1)
+    {
+      drawWindow(screen_temp2, lastWindow->window);
+      for (k = 0; k < lastWindow->window->widgetsNum; k++)
+        switch (lastWindow->window->widgets[k].type)
+        {
+        case label:
+          drawLabel(screen_temp2, lastWindow->window->widgets[k].context.label);
+          break;
+        case textBox:
+          drawTextBox(screen_temp2, lastWindow->window->widgets[k].context.textBox);
+          break;
+        case button:
+          drawButton(screen_temp2, lastWindow->window->widgets[k].context.button);
+          break;
+        case imageView:
+          drawImageView(screen_temp2, lastWindow->window->widgets[k].context.imageView);
+          break;
+        case iconView:
+          drawIconView(screen_temp2, lastWindow->window->widgets[k].context.iconView);
+          break;
+        default:
+          break;
+        }
+    }
   switchuvm(proc);
   sti();
 }
@@ -334,7 +372,7 @@ void removeMouse()
     else
     {
       t1 = screen + (y + j) * SCREEN_WIDTH + x;
-      t2 = screen_temp + (y + j) * SCREEN_WIDTH + x;
+      t2 = screen_temp2 + (y + j) * SCREEN_WIDTH + x;
       for (i = 0; i < MOUSE_WIDTH; i++)
         if (x + i >= SCREEN_WIDTH)
           break;
@@ -416,14 +454,30 @@ void drawMouse()
   mouse_info.last_draw_y = mouse_info.y_position;
 }
 
-void updateWindow()
+void updateBackWindows()
+{
+  int totalPels = SCREEN_WIDTH * SCREEN_HEIGHT;
+
+  memset(screen_temp1, 0x00, sizeof(RGB) * totalPels);
+  drawBackWindows();
+}
+
+void updateLastWindow()
 {
   int totalPels = SCREEN_WIDTH * SCREEN_HEIGHT;
   
-  memset(screen_temp, 0xff, sizeof(RGB) * totalPels);
-  drawWindows();
-  memmove(screen, screen_temp, sizeof(RGB) * totalPels);
-  drawMouse();
+  memmove(screen_temp2, screen_temp1, sizeof(RGB) * totalPels);
+  drawLastWindow();
+}
+
+void updateWindows()
+{
+  int totalPels = SCREEN_WIDTH * SCREEN_HEIGHT;
+
+  updateBackWindows();
+  updateLastWindow();
+  memmove(screen, screen_temp2, sizeof(RGB) * totalPels);
+  drawMouse(); 
 }
 
 void updateMouse()

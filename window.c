@@ -10,7 +10,7 @@
 
 WindowQueue windowLine[MAX_WINDOW_NUM];
 WindowQueue windowQueue;
-Window *lastWindow;
+WindowQueue *lastWindow;
 
 void initWindow()
 {
@@ -25,7 +25,7 @@ void initWindow()
   windowQueue.proc = 0;
   windowQueue.window = 0;
   windowQueue.next = 0;
-  lastWindow = 0;
+  lastWindow = &windowQueue;
 }
 
 int acquireWindow()
@@ -46,6 +46,7 @@ void addWindow(int x)
   p->next = &windowLine[x];
   p = p->next;
   p->next = 0;
+  lastWindow = &windowLine[x];
 }
 
 int sys_createWindow(void)
@@ -61,7 +62,7 @@ int sys_createWindow(void)
   windowLine[hWind].proc = proc;
   windowLine[hWind].window = (Window *)window;
   addWindow(hWind);
-  updateWindow();
+  updateWindows();
   return hWind;
 }
 
@@ -78,8 +79,10 @@ int sys_deleteWindow(void)
     {
       p->next->proc = 0;
       p->next->window = 0;
+      if (p->next == lastWindow)
+        lastWindow = p;
       p->next = p->next->next;
-      updateWindow();
+      updateWindows();
       return 0;
     }
     p = p->next;
