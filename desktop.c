@@ -26,26 +26,12 @@ fmtname(char *path)
   return p;
 }
 
-void onDoubleClick(void)
+void iconOnLeftDoubleClick(Widget *widget)
 {
   if (fork() == 0)
   {
     exec(argv[0], argv);
     exit();
-  }
-}
-
-void onDoubleClickHandler(void)
-{
-  f = onDoubleClick;
-}
-
-void handleEvent()
-{
-  if (f != 0)
-  {
-    f();
-    f = 0;
   }
 }
 
@@ -91,7 +77,8 @@ ls(char *path)
     icon[i].leftTopX = 50 + (i / 6) * 140;
     icon[i].leftTopY = 50 + (i % 6) * 140;
     icon[i].image = folder[i];
-    icon[i].onDoubleClick = onDoubleClickHandler;
+    icon[i].onLeftDoubleClickHandler.triggered = 0;
+    icon[i].onLeftDoubleClickHandler.handlerFunction = iconOnLeftDoubleClick;
     switch (st.type)
     {
       case T_DIR:
@@ -128,6 +115,6 @@ int main(void)
   ls(".");
 
   createWindow(&window);
-  while (1) handleEvent();
+  while (1) handleEvent(&window);
 }
 

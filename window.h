@@ -12,6 +12,14 @@ typedef enum WidgetType
   iconView
 } WidgetType;
 
+typedef struct Widget Widget;
+
+typedef struct Handler
+{
+  int triggered;
+  void (*handlerFunction)(Widget *widget);
+} Handler;
+
 typedef struct Label
 {
   int leftTopX, leftTopY, width, height;
@@ -41,7 +49,7 @@ typedef struct IconView
   int leftTopX, leftTopY, width, height;
   struct RGB* image;
   char text[MAX_STRING_NUM];
-  void (*onDoubleClick)(void);
+  Handler onLeftDoubleClickHandler;
 } IconView;
 
 typedef union WidgetContext

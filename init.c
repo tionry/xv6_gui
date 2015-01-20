@@ -5,13 +5,13 @@
 #include "user.h"
 #include "fcntl.h"
 
-char *argv_sh[] = { "sh", 0 };
+//char *argv_sh[] = { "sh", 0 };
 char *argv_desktop[] = { "desktop", 0 };
 
 int
 main(void)
 {
-  int pid_sh, pid_desktop, wpid;
+  int pid_desktop, wpid;
 
   if(open("console", O_RDWR) < 0){
     mknod("console", 1, 1);
@@ -21,17 +21,17 @@ main(void)
   dup(0);  // stderr
 
   for(;;){
-    printf(1, "init: starting sh\n");
-    pid_sh = fork();
-    if(pid_sh < 0){
-      printf(1, "init: fork failed\n");
-      exit();
-    }
-    if(pid_sh == 0){
-      exec("sh", argv_sh);
-      printf(1, "init: exec sh failed\n");
-      exit();
-    }
+//    printf(1, "init: starting sh\n");
+//    pid_sh = fork();
+//    if(pid_sh < 0){
+//      printf(1, "init: fork failed\n");
+//      exit();
+//    }
+//    if(pid_sh == 0){
+//      exec("sh", argv_sh);
+//      printf(1, "init: exec sh failed\n");
+//      exit();
+//    }
     printf(1, "init: starting desktop\n");
     pid_desktop = fork();
     if (pid_desktop < 0){
@@ -43,7 +43,8 @@ main(void)
       printf(1, "init: exec desktop failed\n");
       exit();
     }
-    while((wpid=wait()) >= 0 && wpid != pid_sh && wpid != pid_desktop)
+    while((wpid=wait()) >= 0 && wpid != pid_desktop)
       printf(1, "zombie!\n");
   }
 }
+

@@ -83,6 +83,7 @@ WindowQueue* getClickedWindowQueue()
   //get clicked window
   while (p)
   {
+    switchuvm(p->proc);
     if (inWindowRange(p->window, x, y))
     {
       return (p);
@@ -111,6 +112,8 @@ void handleLeftClick()
 {
   WindowQueue *pwindowQueue;
   Widget *pwidget;
+
+  cli();
   pwindowQueue = getClickedWindowQueue();
   if (pwindowQueue)
   {
@@ -120,12 +123,19 @@ void handleLeftClick()
       cprintf("hit.\n");
     }
   }
+  if (proc == 0)
+    switchkvm();
+  else
+    switchuvm(proc);
+  sti();
 }
 
 void handleLeftDoubleClick()
 {
   WindowQueue *pwindowQueue;
   Widget *pwidget;
+
+  cli();
   pwindowQueue = getClickedWindowQueue();
   if (pwindowQueue)
   {
@@ -134,27 +144,25 @@ void handleLeftDoubleClick()
       switch (pwidget->type)
       {
       case iconView:
-cprintf("start\n");
-        cli();
-        switchuvm(pwindowQueue->proc);
-        pwidget->context.iconView->onDoubleClick();
-        if (proc == 0)
-          switchkvm();
-        else
-          switchuvm(proc);
-        sti();
-cprintf("end\n");
+        pwidget->context.iconView->onLeftDoubleClickHandler.triggered = 1;
         break;
       default:
         break;
       }
   }
+  if (proc == 0)
+    switchkvm();
+  else
+    switchuvm(proc);
+  sti();
 }
 
 void handleRightClick()
 {
   WindowQueue *pwindowQueue;
   Widget *pwidget;
+
+  cli();
   pwindowQueue = getClickedWindowQueue();
   if (pwindowQueue)
   {
@@ -164,6 +172,11 @@ void handleRightClick()
       cprintf("show menu.\n");
     }
   }
+  if (proc == 0)
+    switchkvm();
+  else
+    switchuvm(proc);
+  sti();
 }
 
 void setMousePosition(int x, int y)
