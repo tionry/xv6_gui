@@ -166,6 +166,7 @@ UPROGS=\
 	_explorer\
 	_forktest\
 	_grep\
+	_imageviewer\
 	_init\
 	_kill\
 	_ln\

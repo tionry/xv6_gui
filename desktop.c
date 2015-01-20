@@ -10,7 +10,6 @@ ImageView image;
 IconView icon[20];
 struct RGB temp[1310720];
 struct RGB folder[20][10000];
-char *argv[] = { "explorer", 0 };
 void (*f)(void) = 0;
 
 char*
@@ -28,9 +27,10 @@ fmtname(char *path)
 
 void iconOnLeftDoubleClick(Widget *widget)
 {
+  char *argv[] = { "file.bmp", 0 };
   if (fork() == 0)
   {
-    exec(argv[0], argv);
+    exec("imageviewer", argv);
     exit();
   }
 }

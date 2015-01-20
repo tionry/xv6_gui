@@ -1,6 +1,9 @@
 #define MAX_WINDOW_NUM 32
 #define MAX_WIDGET_NUM 32
 #define MAX_STRING_NUM 256
+#define CAPTION_HEIGHT 30
+#define MENU_HEIGHT 60
+#define BORDER_WIDTH 10
 
 typedef struct RGB
 {
