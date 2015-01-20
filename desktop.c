@@ -7,10 +7,9 @@
 
 Window window;
 ImageView image;
-IconView icon[20];
+IconView icon[50];
 struct RGB temp[1310720];
-struct RGB folder[20][10000];
-char *argv[] = { "explorer", 0 };
+struct RGB folder[50][10000];
 void (*f)(void) = 0;
 
 char*
@@ -26,13 +25,51 @@ fmtname(char *path)
   return p;
 }
 
+void suffix(char *t, char *s)
+{
+  int point = 0;
+
+  while (*s != 0)
+  {
+    if (*s == '.')
+      point = 1;
+    s++;
+  }
+  if (point == 0)
+  {
+    strcpy(t, "");
+    return;
+  }
+  while (*s != '.')
+    s--;
+  s++;
+  strcpy(t, s);
+}
+
 void iconOnLeftDoubleClick(Widget *widget)
 {
-  if (fork() == 0)
+  char *s = widget->context.iconView->text;
+  char *argv[] = { s, 0 };
+  char t[256];
+
+  suffix(t, s);
+  if (strcmp(t, "") == 0)
   {
-    exec(argv[0], argv);
-    exit();
+    if (fork() == 0)
+    {
+      exec(argv[0], argv);
+      exit();
+    }
   }
+  else
+    if (strcmp(t, "bmp") == 0)
+    {
+      if (fork() == 0)
+      {
+        exec("imageviewer", argv);
+        exit();
+      }
+    }
 }
 
 void
@@ -70,10 +107,11 @@ ls(char *path)
       continue;
     }
     tmpName = fmtname(buf);
-    if (strcmp(tmpName, ".") == 0 || strcmp(tmpName, "..") == 0)
+    if (strcmp(tmpName, ".") == 0 || strcmp(tmpName, "..") == 0 || st.type == T_DEV)
     {
       continue;
     }
+    memset(icon + i, 0, sizeof(IconView));
     icon[i].leftTopX = 50 + (i / 6) * 140;
     icon[i].leftTopY = 50 + (i % 6) * 140;
     icon[i].image = folder[i];
@@ -98,13 +136,14 @@ ls(char *path)
 
 int main(void)
 {
-  initWindow(&window);
+  memset(&window, 0, sizeof(Window));
   window.leftTopX = 0;
   window.leftTopY = 0;
   window.width = 1280;
   window.height = 1024;
   window.show = 1;
   window.hasCaption = 0;
+  memset(&image, 0, sizeof(ImageView));
   image.leftTopX = 0;
   image.leftTopY = 0;
   image.image = temp;

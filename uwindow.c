@@ -5,11 +5,6 @@
 #include "x86.h"
 #include "uwindow.h"
 
-void initWindow(Window *window)
-{
-  memset(window, 0, sizeof(Window));
-}
-
 void handleEvent(Window *window)
 {
   int i;

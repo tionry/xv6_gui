@@ -10,7 +10,7 @@ RGB temp[100];
 int main(void)
 {
   int i, j;
-  initWindow(&window);
+  memset(&window, 0, sizeof(Window));
   window.leftTopX = 100;
   window.leftTopY = 100;
   window.width = 600;

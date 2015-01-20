@@ -43,7 +43,6 @@ void free(void*);
 int atoi(const char*);
 
 // uwindow.c
-void initWindow(struct Window *window);
 void handleEvent(struct Window *window);
 
 // bitmap.c

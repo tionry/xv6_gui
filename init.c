@@ -39,7 +39,7 @@ main(void)
       exit();
     }
     if (pid_desktop == 0){
-      exec("desktop", argv_desktop);
+      exec(argv_desktop[0], argv_desktop);
       printf(1, "init: exec desktop failed\n");
       exit();
     }
