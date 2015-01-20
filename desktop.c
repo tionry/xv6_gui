@@ -50,7 +50,7 @@ void iconOnLeftDoubleClick(Widget *widget)
   char *s = widget->context.iconView->text;
   char *argv[] = { s, 0 };
   char t[256];
-printf(1, "%s\n", s);
+
   suffix(t, s);
   if (strcmp(t, "") == 0)
   {

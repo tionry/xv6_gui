@@ -113,14 +113,14 @@ void drawCharacters(RGB *buf, int x, int y, char *str, unsigned char R, unsigned
   }
 }
 
-void drawLabel(RGB *buf, Label *label)
+void drawLabel(RGB *buf, Label *label, Window *window)
 {
   int i, j;
   RGB *t;
 
   for (j = 0; j < label->height; j++)
   {
-    t = buf + (label->leftTopY + j) * SCREEN_WIDTH + label->leftTopX;
+    t = buf + (window->leftTopY + label->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + label->leftTopX;
     for (i = 0; i < label->width; i++)
     {
       drawPoint(t, 0xc8, 0xc8, 0xc8);
@@ -129,14 +129,14 @@ void drawLabel(RGB *buf, Label *label)
   }
 }
 
-void drawTextBox(RGB *buf, TextBox *textBox)
+void drawTextBox(RGB *buf, TextBox *textBox, Window *window)
 {
   int i, j;
   RGB *t;
 
   for (j = 0; j < textBox->height; j++)
   {
-    t = buf + (textBox->leftTopY + j) * SCREEN_WIDTH + textBox->leftTopX;
+    t = buf + (window->leftTopY + textBox->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + textBox->leftTopX;
     for (i = 0; i < textBox->width; i++)
     {
       drawPoint(t, 0xff, 0xff, 0xff);
@@ -145,14 +145,14 @@ void drawTextBox(RGB *buf, TextBox *textBox)
   }
 }
 
-void drawButton(RGB *buf, Button *button)
+void drawButton(RGB *buf, Button *button, Window *window)
 {
   int i, j;
   RGB *t;
 
   for (j = 0; j < button->height; j++)
   {
-    t = buf + (button->leftTopY + j) * SCREEN_WIDTH + button->leftTopX;
+    t = buf + (window->leftTopY + button->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + button->leftTopX;
     for (i = 0; i < button->width; i++)
     {
       drawPoint(t, 0xc8, 0xc8, 0xc8);
@@ -161,14 +161,14 @@ void drawButton(RGB *buf, Button *button)
   }
 }
 
-void drawImageView(RGB *buf, ImageView *imageView)
+void drawImageView(RGB *buf, ImageView *imageView, Window *window)
 {
   int i, j;
   RGB *t1, *t2;
 
   for (j = 0; j < imageView->height; j++)
   {
-    t1 = buf + (imageView->leftTopY + j) * SCREEN_WIDTH + imageView->leftTopX;
+    t1 = buf + (window->leftTopY + imageView->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + imageView->leftTopX;
     t2 = imageView->image + (imageView->height - 1 - j) * imageView->width;
     for (i = 0; i < imageView->width; i++)
     {
@@ -179,14 +179,14 @@ void drawImageView(RGB *buf, ImageView *imageView)
   }
 }
 
-void drawIconView(RGB *buf, IconView *iconView)
+void drawIconView(RGB *buf, IconView *iconView, Window *window)
 {
   int i, j, len;
   RGB *t1, *t2;
 
   for (j = 0; j < iconView->height; j++)
   {
-    t1 = buf + (iconView->leftTopY + j) * SCREEN_WIDTH + iconView->leftTopX;
+    t1 = buf + (window->leftTopY + iconView->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + iconView->leftTopX;
     t2 = iconView->image + (iconView->height - 1 - j) * iconView->width;
     for (i = 0; i < iconView->width; i++)
     {
@@ -197,7 +197,7 @@ void drawIconView(RGB *buf, IconView *iconView)
     }
   }
   len = strlen(iconView->text);
-  drawCharacters(buf, iconView->leftTopX + iconView->width / 2 - len * 9 / 2, iconView->leftTopY + iconView->height + 5, iconView->text, 0, 0, 0);
+  drawCharacters(buf, window->leftTopX + iconView->leftTopX + iconView->width / 2 - len * 9 / 2, window->leftTopY + iconView->leftTopY + iconView->height + 5, iconView->text, 0, 0, 0);
 }
 
 void drawWindow(RGB *buf, Window *window)
@@ -343,19 +343,19 @@ void drawBackWindows()
           switch (p->window->widgets[k].type)
           {
           case label:
-            drawLabel(screen_temp1, p->window->widgets[k].context.label);
+            drawLabel(screen_temp1, p->window->widgets[k].context.label, p->window);
             break;
           case textBox:
-            drawTextBox(screen_temp1, p->window->widgets[k].context.textBox);
+            drawTextBox(screen_temp1, p->window->widgets[k].context.textBox, p->window);
             break;
           case button:
-            drawButton(screen_temp1, p->window->widgets[k].context.button);
+            drawButton(screen_temp1, p->window->widgets[k].context.button, p->window);
             break;
           case imageView:
-            drawImageView(screen_temp1, p->window->widgets[k].context.imageView);
+            drawImageView(screen_temp1, p->window->widgets[k].context.imageView, p->window);
             break;
           case iconView:
-            drawIconView(screen_temp1, p->window->widgets[k].context.iconView);
+            drawIconView(screen_temp1, p->window->widgets[k].context.iconView, p->window);
             break;
           default:
             break;
@@ -408,19 +408,19 @@ void drawLastWindow()
         switch (lastWindow->window->widgets[k].type)
         {
         case label:
-          drawLabel(screen_temp2, lastWindow->window->widgets[k].context.label);
+          drawLabel(screen_temp2, lastWindow->window->widgets[k].context.label, lastWindow->window);
           break;
         case textBox:
-          drawTextBox(screen_temp2, lastWindow->window->widgets[k].context.textBox);
+          drawTextBox(screen_temp2, lastWindow->window->widgets[k].context.textBox, lastWindow->window);
           break;
         case button:
-          drawButton(screen_temp2, lastWindow->window->widgets[k].context.button);
+          drawButton(screen_temp2, lastWindow->window->widgets[k].context.button, lastWindow->window);
           break;
         case imageView:
-          drawImageView(screen_temp2, lastWindow->window->widgets[k].context.imageView);
+          drawImageView(screen_temp2, lastWindow->window->widgets[k].context.imageView, lastWindow->window);
           break;
         case iconView:
-          drawIconView(screen_temp2, lastWindow->window->widgets[k].context.iconView);
+          drawIconView(screen_temp2, lastWindow->window->widgets[k].context.iconView, lastWindow->window);
           break;
         default:
           break;

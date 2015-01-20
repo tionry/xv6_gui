@@ -22,11 +22,11 @@ int main(int argc, char *argv[])
   {
     memset(&image, 0, sizeof(ImageView));
     image.image = temp;
-printf(1, "%s\n", argv[0]);
     readBitmapFile(argv[0], image.image, &image.height, &image.width);
-printf(1, "%d %d\n", image.width, image.height);
-    image.leftTopX = window.leftTopX + (window.width >> 1) - (image.width >> 1);
-    image.leftTopY = window.leftTopY + (window.height >> 1) - (image.height >> 1);
+    if ((image.width > window.width) || (image.height > window.height))
+      exit();
+    image.leftTopX = (window.width >> 1) - (image.width >> 1);
+    image.leftTopY = (window.height >> 1) - (image.height >> 1);
     window.widgets[0].type = imageView;
     window.widgets[0].context.imageView = &image;
     window.widgetsNum = 1;

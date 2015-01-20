@@ -21,8 +21,8 @@ int main(void)
 
   //add "X"
   RGB *t;
-  image.leftTopX = window.leftTopX+window.width - 20;
-  image.leftTopY = window.leftTopY+10;
+  image.leftTopX = window.width - 20;
+  image.leftTopY = 10;
   image.width = 10;
   image.height = 10;
   image.image = temp;
