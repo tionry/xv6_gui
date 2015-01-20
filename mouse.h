@@ -23,4 +23,3 @@ typedef struct mouseinfo
 #define RIGHT_CLICK 5
 #define LEFT_DOUBLE_CLICK 6
 #define MOUSE_DRAGGING 7
-
