@@ -11,6 +11,7 @@
 WindowQueue windowLine[MAX_WINDOW_NUM];
 WindowQueue windowQueue;
 WindowQueue *lastWindow;
+ImageView closeTag;
 
 void initWindow()
 {
@@ -96,4 +97,3 @@ int sys_deleteWindow(void)
   }
   return -1;
 }
-

@@ -178,7 +178,7 @@ void drawIconView(RGB *buf, IconView *iconView)
 
 void drawWindow(RGB *buf, Window *window)
 {
-  int i, j, k, len;
+  int i, j, len;
   RGB *t;
   
   if (window->hasCaption == 1)
@@ -284,21 +284,21 @@ void drawWindow(RGB *buf, Window *window)
     drawPoint(t, 0xff, 0xff, 0xff);
   }
   //draw close
-  for (i = 0; i < 10; i++)
-  {
-    t = buf + (window->leftTopY + 10 + i) * SCREEN_WIDTH + window->leftTopX + window->width - BORDER_WIDTH - 10 + i;
-    for (k = 0; k < 2; k++)
-    {
-      drawPoint(t, 0x00, 0x00, 0x00);
-      t++;
-    }
-    t = buf + (window->leftTopY + 10 + i) * SCREEN_WIDTH + window->leftTopX + window->width - BORDER_WIDTH - 1 - i;
-    for (k = 0; k < 2; k++)
-    {
-      drawPoint(t, 0x00, 0x00, 0x00);
-      t++;
-    }
-  }
+  // for (i = 0; i < 10; i++)
+  // {
+  //   t = buf + (window->leftTopY + 10 + i) * SCREEN_WIDTH + window->leftTopX + window->width - BORDER_WIDTH - 10 + i;
+  //   for (k = 0; k < 2; k++)
+  //   {
+  //     drawPoint(t, 0x00, 0x00, 0x00);
+  //     t++;
+  //   }
+  //   t = buf + (window->leftTopY + 10 + i) * SCREEN_WIDTH + window->leftTopX + window->width - BORDER_WIDTH - 1 - i;
+  //   for (k = 0; k < 2; k++)
+  //   {
+  //     drawPoint(t, 0x00, 0x00, 0x00);
+  //     t++;
+  //   }
+  // }
 }
 
 void drawBackWindows()
