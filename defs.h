@@ -10,6 +10,7 @@ struct stat;
 struct superblock;
 struct RGB;
 struct Window;
+struct WindowQueue;
 
 // bio.c
 void            binit(void);
@@ -193,6 +194,7 @@ void            initWindow();
 int               createWindow(int leftTopX, int leftTopY, int width, int height);
 void            deleteWindow(int x);
 void            moveWindow(struct Window *window, int fx, int fy, int tx, int ty, int isdraw);
+void            reorderQueue(struct WindowQueue *q);
 
 //mouse.c
 void            mouseinit();

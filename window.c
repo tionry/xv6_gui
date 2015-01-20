@@ -117,3 +117,20 @@ void moveWindow(Window *window, int fx, int fy, int tx, int ty, int isdraw)
     updateLastWindow();
 }
 
+void reorderQueue(WindowQueue *q)
+{
+  WindowQueue *p = lastWindow;
+  while (p)
+  {
+    if (p == q)
+      break;
+    p = p->prev;
+  }
+  p->prev->next = p->next;
+  p->next->prev = p->prev;
+  lastWindow->next = q;
+  q->prev = lastWindow;
+  q->next = 0;
+  lastWindow = q;
+  updateBackWindows();
+}

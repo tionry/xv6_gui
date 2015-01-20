@@ -35,7 +35,7 @@ static int drag_state = 0;
 static WindowQueue *pwque;
 extern WindowQueue windowQueue;
 extern WindowQueue *lastWindow;
-
+extern WindowQueue windowLine[MAX_WINDOW_NUM];
 
 void mouseinit()
 {
@@ -117,6 +117,8 @@ void handleLeftClick()
   pwindowQueue = getClickedWindowQueue();
   if (pwindowQueue)
   {
+    if (pwindowQueue != lastWindow && pwindowQueue != &windowLine[0])
+      reorderQueue(pwindowQueue);
     pwidget = getClickedWidget(pwindowQueue->window);
     if (pwidget)
     {
@@ -211,6 +213,8 @@ void handleMouseDrag()
     if (pwque)
     {
       drag_state = 1;
+      if (pwque != lastWindow && pwque != &windowLine[0])
+        reorderQueue(pwque);
     }
     else
       drag_state = 2;
@@ -329,6 +333,8 @@ void updateMouseEvent(uint tick, int x, int y)
   }
   if (event == 0)
   {
+    if (drag_state == 1)
+      updateLastWindow();
     drag_state = 0;
   }
 }
