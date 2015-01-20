@@ -203,6 +203,7 @@ WindowQueue* getDraggedWindowQueue()
 
 void handleMouseDrag()
 {
+  cli();
   if (drag_state == 0)
   {
     pwque = getDraggedWindowQueue();
@@ -216,12 +217,15 @@ void handleMouseDrag()
   else
   if (drag_state == 1)
   {
-    cprintf("move\n");
+    cprintf("move : from (%d, %d) to (%d, %d)\n", mouse_info.x_position, mouse_info.y_position, down_pos_x, down_pos_y);
+    switchuvm(pwque->proc);
+    moveWindow(pwque->window, mouse_info.x_position, mouse_info.y_position, down_pos_x, down_pos_y);
   }
+  if (proc == 0)
+    switchkvm();
   else
-  {
-    return;
-  }
+    switchuvm(proc);
+  sti();
 }
 
 void moveMousePosition(int x, int y)
@@ -317,7 +321,7 @@ void updateMouseEvent(uint tick, int x, int y)
     handleRightClick();
     //cprintf("RIGHT_CLICK\n");
   }
-  if (event = 0)
+  if (event == 0)
   {
     drag_state = 0;
   }

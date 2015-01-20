@@ -97,3 +97,22 @@ int sys_deleteWindow(void)
   }
   return -1;
 }
+
+void moveWindow(Window *window, int fx, int fy, int tx, int ty)
+{
+  int dx = tx - fx;
+  int dy = ty - fy;
+  if (window->leftTopX + dx < 0)
+    dx = -window->leftTopX;
+  if (window->leftTopY + dy < 0)
+    dy = -window->leftTopY;
+  if (window->leftTopX + window->width + dx >= SCREEN_WIDTH)
+    dx = SCREEN_WIDTH - (window->leftTopX + window->width);
+  if (window->leftTopY + window->height + dy >= SCREEN_HEIGHT)
+    dy = SCREEN_HEIGHT - (window->leftTopY + window->height);
+  window->leftTopX += dx;
+  window->leftTopY += dy;
+  cprintf("dx = %d, dy = %d\n",  window->leftTopX,  window->leftTopY);
+  if (dx || dy) 
+    updateLastWindow();
+}
