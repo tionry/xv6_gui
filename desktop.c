@@ -10,7 +10,6 @@ ImageView image;
 IconView icon[50];
 struct RGB temp[1310720];
 struct RGB folder[50][10000];
-void (*f)(void) = 0;
 
 char*
 fmtname(char *path)
