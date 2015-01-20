@@ -145,7 +145,7 @@ void drawTextBox(RGB *buf, TextBox *textBox, Window *window)
   }
   for(j = 0;j < 18;j ++)
   {
-    t = buf + (window->leftTopY + textBox->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + textBox->leftTopX + cursor;
+    t = buf + (window->leftTopY + textBox->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + textBox->leftTopX + textBox->cursor;
   }
 }
 
