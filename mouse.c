@@ -20,7 +20,8 @@ static int x_sign = 0;
 static int y_sign = 0;
 static int x_overflow = 0;
 static int y_overflow = 0;
-//static int counter = 0;
+static int counter = 0;
+static int isdraw = 0;
 static int dis_x = 0 , dis_y = 0;
 
 //mouse event
@@ -217,9 +218,14 @@ void handleMouseDrag()
   else
   if (drag_state == 1)
   {
-    cprintf("move : from (%d, %d) to (%d, %d)\n", mouse_info.x_position, mouse_info.y_position, down_pos_x, down_pos_y);
+    //cprintf("move : from (%d, %d) to (%d, %d)\n", mouse_info.x_position, mouse_info.y_position, down_pos_x, down_pos_y);
     switchuvm(pwque->proc);
-    moveWindow(pwque->window, mouse_info.x_position, mouse_info.y_position, down_pos_x, down_pos_y);
+    counter = (counter + 1) % 20;
+    if (counter == 0)
+      isdraw = 1;
+    else
+      isdraw = 0;
+    moveWindow(pwque->window, mouse_info.x_position, mouse_info.y_position, down_pos_x, down_pos_y, isdraw);
   }
   if (proc == 0)
     switchkvm();

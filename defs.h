@@ -192,7 +192,7 @@ void            clearpteu(pde_t *pgdir, char *uva);
 void            initWindow();
 int               createWindow(int leftTopX, int leftTopY, int width, int height);
 void            deleteWindow(int x);
-void            moveWindow(struct Window *window, int fx, int fy, int tx, int ty);
+void            moveWindow(struct Window *window, int fx, int fy, int tx, int ty, int isdraw);
 
 //mouse.c
 void            mouseinit();
