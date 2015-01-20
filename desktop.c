@@ -25,14 +25,51 @@ fmtname(char *path)
   return p;
 }
 
+void suffix(char *t, char *s)
+{
+  int point = 0;
+
+  while (*s != 0)
+  {
+    if (*s == '.')
+      point = 1;
+    s++;
+  }
+  if (point == 0)
+  {
+    strcpy(t, "");
+    return;
+  }
+  while (*s != '.')
+    s--;
+  s++;
+  strcpy(t, s);
+}
+
 void iconOnLeftDoubleClick(Widget *widget)
 {
-  char *argv[] = { "file.bmp", 0 };
-  if (fork() == 0)
+  char *s = widget->context.iconView->text;
+  char *argv[] = { s, 0 };
+  char t[256];
+
+  suffix(t, s);
+  if (strcmp(t, "") == 0)
   {
-    exec("imageviewer", argv);
-    exit();
+    if (fork() == 0)
+    {
+      exec(argv[0], argv);
+      exit();
+    }
   }
+  else
+    if (strcmp(t, "bmp") == 0)
+    {
+      if (fork() == 0)
+      {
+        exec("imageviewer", argv);
+        exit();
+      }
+    }
 }
 
 void

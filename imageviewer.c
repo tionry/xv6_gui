@@ -6,11 +6,10 @@
 
 Window window;
 ImageView image;
-struct RGB temp[10000];
+struct RGB temp[1310720];
 
 int main(int argc, char *argv[])
 {
-printf(1, "%s\n", argv[0]);
   memset(&window, 0, sizeof(Window));
   window.leftTopX = 300;
   window.leftTopY = 200;
@@ -22,7 +21,6 @@ printf(1, "%s\n", argv[0]);
   image.leftTopY = window.leftTopY + CAPTION_HEIGHT + 10;
   image.image = temp;
   readBitmapFile(argv[0], image.image, &image.height, &image.width);
-printf(1, "%d %d\n", image.width, image.height);
   window.widgets[0].type = imageView;
   window.widgets[0].context.imageView = &image;
   window.widgetsNum = 1;
