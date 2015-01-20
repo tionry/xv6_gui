@@ -1,5 +1,9 @@
 #include "types.h"
 #include "defs.h"
+#include "param.h"
+#include "memlayout.h"
+#include "mmu.h"
+#include "proc.h"
 #include "traps.h"
 #include "x86.h"
 #include "spinlock.h"
@@ -47,22 +51,22 @@ void moveMousePosition(int x, int y)
   setMousePosition(mouse_info.x_position + x, mouse_info.y_position + y);
 }
 
-int inWindowRange(Window window, int x, int y)
+int inWindowRange(Window *window, int x, int y)
 {
-  if (x >= window.leftTopX && x < window.leftTopX + window.width && y >= window.leftTopY && y < window.leftTopY + window.height)
+  if (x >= window->leftTopX && x < window->leftTopX + window->width && y >= window->leftTopY && y < window->leftTopY + window->height)
     return 1;
   return 0;
 }
 
-int inWidgetRange(Widget widget, int x, int y)
+int inWidgetRange(Widget* widget, int x, int y)
 {
   int leftTopX, leftTopY, width, height;
-  if (widget.type == iconView)
+  if (widget->type == iconView)
   {
-    leftTopX = widget.context.iconView->leftTopX;
-    leftTopY = widget.context.iconView->leftTopY;
-    width = widget.context.iconView->width;
-    height = widget.context.iconView->height;
+    leftTopX = widget->context.iconView->leftTopX;
+    leftTopY = widget->context.iconView->leftTopY;
+    width = widget->context.iconView->width;
+    height = widget->context.iconView->height;
     if (x >= leftTopX && x < leftTopX + width && y >= leftTopY && y < leftTopY + height)
     {
       return 1;
@@ -71,19 +75,17 @@ int inWidgetRange(Widget widget, int x, int y)
   return 0;
 }
 
-Window* getClickedWindow()
+WindowQueue* getClickedWindowQueue()
 {
   WindowQueue *p = lastWindow;
-  Window pwindow;
   int x = mouse_info.x_position;
   int y = mouse_info.y_position;
   //get clicked window
   while (p)
   {
-    pwindow = *(p->window);
-    if (inWindowRange(pwindow, x, y))
+    if (inWindowRange(p->window, x, y))
     {
-      return (p->window);
+      return (p);
     }
     p = p->prev;
   }
@@ -95,13 +97,11 @@ Widget* getClickedWidget(Window* pwindow)
   int x = mouse_info.x_position;
   int y = mouse_info.y_position;
   int i;
-  Widget pwidget;
   for (i = 0; i < pwindow->widgetsNum; i++)
   {
-    pwidget = pwindow->widgets[i];
-    if (inWidgetRange(pwidget, x, y))
+    if (inWidgetRange(pwindow->widgets + i, x, y))
     {
-      return(&(pwindow->widgets[i]));
+      return(pwindow->widgets + i);
     }
   }
   return 0;
@@ -109,12 +109,12 @@ Widget* getClickedWidget(Window* pwindow)
 
 void handleLeftClick()
 {
-  Window *pwindow;
+  WindowQueue *pwindowQueue;
   Widget *pwidget;
-  pwindow = getClickedWindow();
-  if (pwindow)
+  pwindowQueue = getClickedWindowQueue();
+  if (pwindowQueue)
   {
-    pwidget = getClickedWidget(pwindow);
+    pwidget = getClickedWidget(pwindowQueue->window);
     if (pwidget)
     {
       cprintf("hit.\n");
@@ -124,27 +124,41 @@ void handleLeftClick()
 
 void handleLeftDoubleClick()
 {
-  Window *pwindow;
+  WindowQueue *pwindowQueue;
   Widget *pwidget;
-  pwindow = getClickedWindow();
-  if (pwindow)
+  pwindowQueue = getClickedWindowQueue();
+  if (pwindowQueue)
   {
-    pwidget = getClickedWidget(pwindow);
+    pwidget = getClickedWidget(pwindowQueue->window);
     if (pwidget)
-    {
-      cprintf("open file.\n");
-    }
+      switch (pwidget->type)
+      {
+      case iconView:
+        cli();
+        switchuvm(pwindowQueue->proc);
+        cprintf("enter\n");
+        pwidget->context.iconView->onDoubleClick();
+        cprintf("check\n");
+        if (proc == 0)
+          switchkvm();
+        else
+          switchuvm(proc);
+        sti();
+        break;
+      default:
+        break;
+      }
   }
 }
 
 void handleRightClick()
 {
-  Window *pwindow;
+  WindowQueue *pwindowQueue;
   Widget *pwidget;
-  pwindow = getClickedWindow();
-  if (pwindow)
+  pwindowQueue = getClickedWindowQueue();
+  if (pwindowQueue)
   {
-    pwidget = getClickedWidget(pwindow);
+    pwidget = getClickedWidget(pwindowQueue->window);
     if (pwidget)
     {
       cprintf("show menu.\n");

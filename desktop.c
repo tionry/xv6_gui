@@ -10,6 +10,7 @@ ImageView image;
 IconView icon[20];
 struct RGB temp[1310720];
 struct RGB folder[20][10000];
+char *argv[] = { "explorer", 0 };
 
 char*
 fmtname(char *path)
@@ -22,6 +23,15 @@ fmtname(char *path)
   p++;
 
   return p;
+}
+
+void onDoubleClickHandler(void)
+{
+  if (fork() == 0)
+  {
+    exec(argv[0], argv);
+    exit();
+  }
 }
 
 void
@@ -66,6 +76,7 @@ ls(char *path)
     icon[i].leftTopX = 50 + (i / 6) * 140;
     icon[i].leftTopY = 50 + (i % 6) * 140;
     icon[i].image = folder[i];
+    icon[i].onDoubleClick = onDoubleClickHandler;
     switch (st.type)
     {
       case T_DIR:

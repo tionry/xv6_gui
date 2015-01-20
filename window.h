@@ -41,6 +41,7 @@ typedef struct IconView
   int leftTopX, leftTopY, width, height;
   struct RGB* image;
   char text[MAX_STRING_NUM];
+  void (*onDoubleClick)(void);
 } IconView;
 
 typedef union WidgetContext
