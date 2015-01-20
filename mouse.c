@@ -134,16 +134,16 @@ void handleLeftDoubleClick()
       switch (pwidget->type)
       {
       case iconView:
+cprintf("start\n");
         cli();
         switchuvm(pwindowQueue->proc);
-        cprintf("enter\n");
         pwidget->context.iconView->onDoubleClick();
-        cprintf("check\n");
         if (proc == 0)
           switchkvm();
         else
           switchuvm(proc);
         sti();
+cprintf("end\n");
         break;
       default:
         break;

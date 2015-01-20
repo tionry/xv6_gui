@@ -11,6 +11,7 @@ IconView icon[20];
 struct RGB temp[1310720];
 struct RGB folder[20][10000];
 char *argv[] = { "explorer", 0 };
+void (*f)(void) = 0;
 
 char*
 fmtname(char *path)
@@ -25,12 +26,26 @@ fmtname(char *path)
   return p;
 }
 
-void onDoubleClickHandler(void)
+void onDoubleClick(void)
 {
   if (fork() == 0)
   {
     exec(argv[0], argv);
     exit();
+  }
+}
+
+void onDoubleClickHandler(void)
+{
+  f = onDoubleClick;
+}
+
+void handleEvent()
+{
+  if (f != 0)
+  {
+    f();
+    f = 0;
   }
 }
 
@@ -113,6 +128,6 @@ int main(void)
   ls(".");
 
   createWindow(&window);
-  while (1) ;
+  while (1) handleEvent();
 }
 
