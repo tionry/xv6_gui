@@ -48,6 +48,7 @@ int readBitmapFile(char *fileName, RGB *result, int *height, int *width)
     }
   }
 
+  close(bmpFile);
   return 0;
 }
 

@@ -7,9 +7,9 @@
 
 Window window;
 ImageView image;
-IconView icon[20];
+IconView icon[50];
 struct RGB temp[1310720];
-struct RGB folder[20][10000];
+struct RGB folder[50][10000];
 void (*f)(void) = 0;
 
 char*
@@ -70,7 +70,7 @@ ls(char *path)
       continue;
     }
     tmpName = fmtname(buf);
-    if (strcmp(tmpName, ".") == 0 || strcmp(tmpName, "..") == 0)
+    if (strcmp(tmpName, ".") == 0 || strcmp(tmpName, "..") == 0 || st.type == T_DEV)
     {
       continue;
     }
