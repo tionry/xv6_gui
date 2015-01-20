@@ -28,7 +28,7 @@ typedef struct Label
 
 typedef struct TextBox
 {
-  int leftTopX, leftTopY, width, height;
+  int leftTopX, leftTopY, width, height, cursor;
   char text[MAX_STRING_NUM];
 } TextBox;
 

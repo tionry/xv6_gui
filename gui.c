@@ -143,6 +143,10 @@ void drawTextBox(RGB *buf, TextBox *textBox, Window *window)
       t++;
     }
   }
+  for(j = 0;j < 18;j ++)
+  {
+    t = buf + (window->leftTopY + textBox->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + textBox->leftTopX + cursor;
+  }
 }
 
 void drawButton(RGB *buf, Button *button, Window *window)
