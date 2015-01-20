@@ -362,7 +362,10 @@ void drawBackWindows()
           }
       }
   }
-  switchuvm(proc);
+  if (proc == 0)
+    switchkvm();
+  else
+    switchuvm(proc);
   sti();
 }
 
@@ -384,7 +387,10 @@ void removeLastWindow()
       t2++;
     }
   }
-  switchuvm(proc);
+  if (proc == 0)
+    switchkvm();
+  else
+    switchuvm(proc);
   sti();
 }
 
@@ -422,7 +428,10 @@ void drawLastWindow()
     }
   lastWindow->window->last_leftTopX = lastWindow->window->leftTopX;
   lastWindow->window->last_leftTopY = lastWindow->window->leftTopY;
-  switchuvm(proc);
+  if (proc == 0)
+    switchkvm();
+  else
+    switchuvm(proc);
   sti();
 }
 
