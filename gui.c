@@ -373,11 +373,11 @@ void removeLastWindow()
 
   cli();
   switchuvm(lastWindow->proc);
-  for (j = 0; j < lastWindow->window->height; j++)
+  for (j = -1; j <= lastWindow->window->height; j++)
   {
-    t1 = screen_temp2 + (lastWindow->window->last_leftTopY + j) * SCREEN_WIDTH + lastWindow->window->last_leftTopX;
-    t2 = screen_temp1 + (lastWindow->window->last_leftTopY + j) * SCREEN_WIDTH + lastWindow->window->last_leftTopX;
-    for (i = 0; i < lastWindow->window->width; i++)
+    t1 = screen_temp2 + (lastWindow->window->last_leftTopY + j) * SCREEN_WIDTH + lastWindow->window->last_leftTopX - 1;
+    t2 = screen_temp1 + (lastWindow->window->last_leftTopY + j) * SCREEN_WIDTH + lastWindow->window->last_leftTopX - 1;
+    for (i = -1; i <= lastWindow->window->width; i++)
     {
       *t1 = *t2;
       t1++;

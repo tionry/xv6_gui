@@ -116,3 +116,4 @@ void moveWindow(Window *window, int fx, int fy, int tx, int ty)
   if (dx || dy) 
     updateLastWindow();
 }
+
