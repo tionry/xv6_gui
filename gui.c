@@ -157,7 +157,7 @@ void drawImageView(RGB *buf, ImageView *imageView)
 
 void drawIconView(RGB *buf, IconView *iconView)
 {
-  int i, j;
+  int i, j, len;
   RGB *t1, *t2;
 
   for (j = 0; j < iconView->height; j++)
@@ -172,12 +172,13 @@ void drawIconView(RGB *buf, IconView *iconView)
       t2++;
     }
   }
-  drawCharacters(buf, iconView->leftTopX + 10, iconView->leftTopY + iconView->height + 5, iconView->text, 0, 0, 0);
+  len = strlen(iconView->text);
+  drawCharacters(buf, iconView->leftTopX + iconView->width / 2 - len * 9 / 2, iconView->leftTopY + iconView->height + 5, iconView->text, 0, 0, 0);
 }
 
 void drawWindow(RGB *buf, Window *window)
 {
-  int i, j, k;
+  int i, j, k, len;
   RGB *t;
   
   if (window->hasCaption == 1)
@@ -191,7 +192,8 @@ void drawWindow(RGB *buf, Window *window)
         t++;
       }
     }
-    drawCharacters(buf, window->leftTopX + 10, window->leftTopY + 5, window->caption, 0, 0, 0);
+    len = strlen(window->caption);
+    drawCharacters(buf, window->leftTopX + window->width / 2 - len * 9 / 2, window->leftTopY + 5, window->caption, 0, 0, 0);
     for (j = CAPTION_HEIGHT; j < window->height - BORDER_WIDTH; j++)
     {
       t = buf + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
