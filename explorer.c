@@ -30,7 +30,7 @@ int main(void)
   for (j = 0; j < image.height; j++)
     for (i = 0; i < image.width; i++)
     {
-      if ( i >=2 && i <= 7 && (i == j  || (i+j) == 9))
+      if (i >=2 && i <= 7 && (i == j  || (i+j) == 9))
       {
         t->R = 0x00;
         t->G = 0x00;

@@ -25,12 +25,16 @@ static int dis_x = 0 , dis_y = 0;
 
 //mouse event
 static int left_btn_down = 0;
+static int down_pos_x = 0;
+static int down_pos_y = 0;
 static int right_btn_down = 0;
 static int last_tick = -20;
 static int event = 0;
-
+static int drag_state = 0;
+static WindowQueue *pwque;
 extern WindowQueue windowQueue;
 extern WindowQueue *lastWindow;
+
 
 void mouseinit()
 {
@@ -44,11 +48,6 @@ void mouseinit()
   initlock(&mouse_lock, "mouse");
   picenable(IRQ_MOUSE);
   ioapicenable(IRQ_MOUSE, 0);
-}
-
-void moveMousePosition(int x, int y)
-{
-  setMousePosition(mouse_info.x_position + x, mouse_info.y_position + y);
 }
 
 int inWindowRange(Window *window, int x, int y)
@@ -179,6 +178,57 @@ void handleRightClick()
   sti();
 }
 
+WindowQueue* getDraggedWindowQueue()
+{
+  WindowQueue *p = lastWindow;
+  int x = down_pos_x;
+  int y = down_pos_y;
+  if (!x || !y)
+    return 0;
+  //get dragged window
+  while (p)
+  {
+    switchuvm(p->proc);
+    if (inWindowRange(p->window, x, y))
+    {
+      if (y <= p->window->leftTopY + CAPTION_HEIGHT)
+        return (p);
+      else
+        return 0;
+    }
+    p = p->prev;
+  }
+  return 0;
+}
+
+void handleMouseDrag()
+{
+  if (drag_state == 0)
+  {
+    pwque = getDraggedWindowQueue();
+    if (pwque)
+    {
+      drag_state = 1;
+    }
+    else
+      drag_state = 2;
+  }
+  else
+  if (drag_state == 1)
+  {
+    cprintf("move\n");
+  }
+  else
+  {
+    return;
+  }
+}
+
+void moveMousePosition(int x, int y)
+{
+  setMousePosition(mouse_info.x_position + x, mouse_info.y_position + y);
+}
+
 void setMousePosition(int x, int y)
 {
   if (x < 0)
@@ -194,12 +244,14 @@ void setMousePosition(int x, int y)
   updateMouse();
 }
 
-void updateMouseEvent(uint tick)
+void updateMouseEvent(uint tick, int x, int y)
 {
   //cprintf("tick = %d\n", tick);
   event = 0;
   if (left_down)
   {
+    down_pos_x = x;
+    down_pos_y = y;
     if (!left_btn_down)
     {
       left_btn_down = 1;
@@ -214,6 +266,8 @@ void updateMouseEvent(uint tick)
     if (left_btn_down)
     {
       left_btn_down = 0;
+      down_pos_x = 0;
+      down_pos_y = 0;
       if (tick - last_tick <= 20)
         event = LEFT_DOUBLE_CLICK;
       else
@@ -253,12 +307,19 @@ void updateMouseEvent(uint tick)
     handleLeftDoubleClick();
     //cprintf("LEFT_DOUBLE_CLICK\n");
   }
-  // if (event == MOUSE_DRAGGING)
-  //   cprintf("MOUSE_DRAGGING\n");
+  if (event == MOUSE_DRAGGING)
+  {
+    handleMouseDrag();
+    //cprintf("MOUSE_DRAGGING\n");
+   }
   if (event == RIGHT_CLICK)
   {
     handleRightClick();
     //cprintf("RIGHT_CLICK\n");
+  }
+  if (event = 0)
+  {
+    drag_state = 0;
   }
 }
 
@@ -321,7 +382,7 @@ void mouseint(uint tick)
     to_read = READ_MOUSE_INFO;
     release(&mouse_lock);
     //cprintf("x: %d, y: %d\n", mouse_info.x_position, mouse_info.y_position);
-    updateMouseEvent(tick);
+    updateMouseEvent(tick, mouse_info.x_position + dis_x, mouse_info.y_position +dis_y);
     moveMousePosition(dis_x, dis_y);
   }
 }
