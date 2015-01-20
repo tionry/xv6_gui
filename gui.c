@@ -59,23 +59,47 @@ void drawPoint(RGB* color, unsigned char R, unsigned char G, unsigned char B)
 
 int drawCharacter(RGB *buf, int x, int y, char ch, unsigned char R, unsigned char G, unsigned char B)
 {
-  int i, j;
+  int i, j, flag, tem_int, tem_width;
   RGB *t;
   int ord = ch - 0x20;
 
   if(ord > 94 || ord < 0)
     return -1;
-  for (j = 0; j < CHARACTER_HEIGHT; j++)
+  
+  tem_int = 0;
+  tem_width = 0;
+  flag = 1;
+  for (j = 0; j < CHARACTER_WIDTH; j++)
   {
-    t = buf + (y + j) * SCREEN_WIDTH + x;
-    for (i = 0; i < CHARACTER_WIDTH; i++)
+    if(j > 1)
     {
-      if (character[ord][j][i] == 1)
-        drawPoint(t, R, G, B);
-      t++;
+      tem_int = 0;
+      for (i = 0; i < CHARACTER_HEIGHT; i++)
+      {
+        if(character[ord][i][j] == 1)
+        {
+          tem_int = 1;
+          break;
+        }          
+      }
+      if(tem_int == 1)
+        flag = 1;
+      else
+        flag = 0;
+    }
+    
+    if(flag == 1)
+    {
+      tem_width ++;
+      for (i = 0; i < CHARACTER_HEIGHT; i++)
+      {
+        t = buf + (y + i) * SCREEN_WIDTH + x + j;
+        if (character[ord][i][j] == 1)
+          drawPoint(t, R, G, B);
+      }
     }
   }
-  return (i);
+  return (tem_width + 2);
 }
 
 void drawCharacters(RGB *buf, int x, int y, char *str, unsigned char R, unsigned char G, unsigned char B)
