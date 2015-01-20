@@ -74,6 +74,7 @@ ls(char *path)
     {
       continue;
     }
+    memset(icon + i, 0, sizeof(IconView));
     icon[i].leftTopX = 50 + (i / 6) * 140;
     icon[i].leftTopY = 50 + (i % 6) * 140;
     icon[i].image = folder[i];
@@ -98,13 +99,14 @@ ls(char *path)
 
 int main(void)
 {
-  initWindow(&window);
+  memset(&window, 0, sizeof(Window));
   window.leftTopX = 0;
   window.leftTopY = 0;
   window.width = 1280;
   window.height = 1024;
   window.show = 1;
   window.hasCaption = 0;
+  memset(&image, 0, sizeof(ImageView));
   image.leftTopX = 0;
   image.leftTopY = 0;
   image.image = temp;
