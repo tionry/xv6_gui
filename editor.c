@@ -52,7 +52,7 @@ int main(int argc,char *argv[])
     window.widgetsNum = 1;
   }
   createWindow(&window);
-  while(1)
+  while(text_box.semoph)
   {
     
   }
@@ -70,6 +70,10 @@ static int initText()
   text_box.semoph = 1;
 }
 
+static void closeTextBox()
+{
+  text_box.semoph = 0;
+}
 static int deleteChar(int pos)
 {
   if(pos < 0 || pos >= MAX_STRING_NUM)
