@@ -18,14 +18,19 @@ int main(int argc, char *argv[])
   window.show = 1;
   window.hasCaption = 1;
   strcpy(window.caption, "ImageViewer");
-  memset(&image, 0, sizeof(ImageView));
-  image.image = temp;
-  readBitmapFile(argv[0], image.image, &image.height, &image.width);
-  image.leftTopX = window.leftTopX + (window.width >> 1) - (image.width >> 1);
-  image.leftTopY = window.leftTopY + (window.height >> 1) - (image.height >> 1);
-  window.widgets[0].type = imageView;
-  window.widgets[0].context.imageView = &image;
-  window.widgetsNum = 1;
+  if (strcmp(argv[0], "imageviewer") != 0)
+  {
+    memset(&image, 0, sizeof(ImageView));
+    image.image = temp;
+printf(1, "%s\n", argv[0]);
+    readBitmapFile(argv[0], image.image, &image.height, &image.width);
+printf(1, "%d %d\n", image.width, image.height);
+    image.leftTopX = window.leftTopX + (window.width >> 1) - (image.width >> 1);
+    image.leftTopY = window.leftTopY + (window.height >> 1) - (image.height >> 1);
+    window.widgets[0].type = imageView;
+    window.widgets[0].context.imageView = &image;
+    window.widgetsNum = 1;
+  }
   createWindow(&window);
   exit();
 }
