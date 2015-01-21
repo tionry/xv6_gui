@@ -57,31 +57,31 @@ int inWindowRange(Window *window, int x, int y)
   return 0;
 }
 
-int inWidgetRange(Widget* widget, int x, int y)
+int inWidgetRange(Window *window, Widget* widget, int x, int y)
 {
   int leftTopX, leftTopY, width, height;
 
   switch (widget->type)
   {
   case button:
-    leftTopX = widget->context.button->leftTopX;
-    leftTopY = widget->context.button->leftTopY;
+    leftTopX = window->leftTopX + widget->context.button->leftTopX;
+    leftTopY = window->leftTopY + widget->context.button->leftTopY;
     width = widget->context.button->width;
     height = widget->context.button->height;
     if (x >= leftTopX && x < leftTopX + width && y >= leftTopY && y < leftTopY + height)
       return 1;
     break;
   case imageView:
-    leftTopX = widget->context.imageView->leftTopX;
-    leftTopY = widget->context.imageView->leftTopY;
+    leftTopX = window->leftTopX + widget->context.imageView->leftTopX;
+    leftTopY = window->leftTopY + widget->context.imageView->leftTopY;
     width = widget->context.imageView->width;
     height = widget->context.imageView->height;
     if (x >= leftTopX && x < leftTopX + width && y >= leftTopY && y < leftTopY + height)
       return 1;
     break;
   case iconView:
-    leftTopX = widget->context.iconView->leftTopX;
-    leftTopY = widget->context.iconView->leftTopY;
+    leftTopX = window->leftTopX + widget->context.iconView->leftTopX;
+    leftTopY = window->leftTopY + widget->context.iconView->leftTopY;
     width = widget->context.iconView->width;
     height = widget->context.iconView->height;
     if (x >= leftTopX && x < leftTopX + width && y >= leftTopY && y < leftTopY + height)
@@ -119,7 +119,7 @@ Widget* getClickedWidget(Window* pwindow)
   int i;
   for (i = pwindow->widgetsNum - 1; i >= 0; i--)
   {
-    if (inWidgetRange(pwindow->widgets + i, x, y))
+    if (inWidgetRange(pwindow, pwindow->widgets + i, x, y))
     {
       return(pwindow->widgets + i);
     }
