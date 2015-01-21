@@ -5,9 +5,6 @@
 #include "x86.h"
 #include "uwindow.h"
 
-RGB closeButtonImageViewTemp[100];
-ImageView closeButtonImageView;
-
 void handleEvent(Window *window)
 {
   int i;
@@ -27,19 +24,20 @@ void handleEvent(Window *window)
     }
 }
 
-void addCloseButton(Window *window)
+void addCloseButton(Window *window, ImageView *closeButtonImageView, RGB *closeButtonImageViewTemp)
 {
   int i, j;
   RGB *t;
 
-  closeButtonImageView.leftTopX = window->width - 20;
-  closeButtonImageView.leftTopY = 10;
-  closeButtonImageView.width = 10;
-  closeButtonImageView.height = 10;
-  closeButtonImageView.image = closeButtonImageViewTemp;
+  memset(closeButtonImageView, 0, sizeof(ImageView));
+  closeButtonImageView->leftTopX = window->width - 20;
+  closeButtonImageView->leftTopY = 10;
+  closeButtonImageView->width = 10;
+  closeButtonImageView->height = 10;
+  closeButtonImageView->image = closeButtonImageViewTemp;
   t = closeButtonImageViewTemp;
-  for (j = 0; j < closeButtonImageView.height; j++)
-    for (i = 0; i < closeButtonImageView.width; i++)
+  for (j = 0; j < closeButtonImageView->height; j++)
+    for (i = 0; i < closeButtonImageView->width; i++)
     {
       if (i >=2 && i <= 7 && (i == j  || (i+j) == 9))
       {
@@ -56,7 +54,7 @@ void addCloseButton(Window *window)
       t++;
     }
   window->widgets[window->widgetsNum].type = imageView;
-  window->widgets[window->widgetsNum].context.imageView = &closeButtonImageView;
+  window->widgets[window->widgetsNum].context.imageView = closeButtonImageView;
   window->widgetsNum++;
 }
 

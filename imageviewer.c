@@ -7,6 +7,8 @@
 Window window;
 ImageView image;
 struct RGB temp[1310720];
+RGB closeButtonImageViewTemp[100];
+ImageView closeButtonImageView;
 
 int main(int argc, char *argv[])
 {
@@ -18,7 +20,7 @@ int main(int argc, char *argv[])
   window.show = 1;
   window.hasCaption = 1;
   strcpy(window.caption, "ImageViewer");
-  addCloseButton(&window);
+  addCloseButton(&window, &closeButtonImageView, closeButtonImageViewTemp);
   if (strcmp(argv[0], "imageviewer") != 0)
   {
     memset(&image, 0, sizeof(ImageView));

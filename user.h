@@ -1,5 +1,6 @@
 struct stat;
 struct rtcdate;
+struct ImageView;
 struct Window;
 struct RGB;
 
@@ -44,7 +45,7 @@ int atoi(const char*);
 
 // uwindow.c
 void handleEvent(struct Window *window);
-void addCloseButton(struct Window *window);
+void addCloseButton(struct Window *window, struct ImageView *closeButtonImageView, struct RGB *closeButtonImageViewTemp);
 
 // bitmap.c
 int readBitmapFile(char *fileName, struct RGB *result, int *height, int *width);
