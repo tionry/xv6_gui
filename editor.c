@@ -1,8 +1,8 @@
-#include "defs.h"
-#include "gui.h"
+#include "types.h"
 #include "uwindow.h"
 #include "stat.h"
 #include "user.h"
+
 
 static int text_length;
 static TextBox text_box;
@@ -15,10 +15,15 @@ void cat(int fd)
   while((n = read(fd, text_box.text, sizeof(text_box.text))) > 0)
     write(1, text_box.text, n);
   if(n < 0){
-    cprintf(1, "cat: read error\n");
+    printf(1, "cat: read error\n");
     exit();
   }
 }
+
+static void initText();
+static void closeTextBox();
+static int insertCharacter(int pos,char ch);
+static int deleteCharacter(int pos);
 
 int main(int argc,char *argv[])
 {
@@ -37,7 +42,7 @@ int main(int argc,char *argv[])
     initText();
     memset(&text_box, 0, sizeof(TextBox));
     if((fd = open(argv[1], 0)) < 0){
-      printf(1, "cat: cannot open %s\n", argv[i]);
+      printf(1, "cat: cannot open %s\n", argv[1]);
       exit();
     }
       cat(fd);
@@ -47,25 +52,30 @@ int main(int argc,char *argv[])
       exit();
     text_box.leftTopX = (window.width >> 1) - (text_box.width >> 1);
     text_box.leftTopY = (window.height >> 1) - (text_box.height >> 1);
-    window.widgets[0].type = TextBox;
+    window.widgets[0].type = textBox;
     window.widgets[0].context.textBox = &text_box;
     window.widgetsNum = 1;
   }
   createWindow(&window);
   while(text_box.semoph)
   {
-    
+    if(1==0)
+    {
+      insertCharacter(0,'a');
+      deleteCharacter(0);
+    }
   }
   close(fd);
+  closeTextBox();
   exit();
 }
-static int initText()
+static void initText()
 {
-  text_box.leftTopx = 20;
-  text_box.leftTopy = 20;
+  text_box.leftTopX = 20;
+  text_box.leftTopY = 20;
   text_box.width = 500;
   text_box.height = 400;
-  text_box.text = '\0';
+  text_box.text[0] = '\0';
   text_box.cursor = 0;
   text_box.semoph = 1;
 }
@@ -74,11 +84,11 @@ static void closeTextBox()
 {
   text_box.semoph = 0;
 }
-static int deleteChar(int pos)
+static int deleteCharacter(int pos)
 {
   if(pos < 0 || pos >= MAX_STRING_NUM)
     return -1;
-  if(pos != cur_cursor || pos != cur_cursor + 1)
+  if(pos != text_box.cursor || pos != text_box.cursor + 1)
     return -2;
   int i;
   for(i = pos;i < MAX_STRING_NUM - 1;i++)
@@ -87,15 +97,19 @@ static int deleteChar(int pos)
       break;
     text_box.text[i] = text_box.text[i + 1];
   }
+  if(pos == text_box.cursor)
+    text_box.cursor --;
   text_length --;
-  updateLastWindow();
+  window.widgets[0].context.textBox = &text_box;
+  createWindow(&window);
+  return 0;
 }
 
 static int insertCharacter(int pos,char ch)
 {
   if(pos < 0 || pos >= MAX_STRING_NUM)
     return -1;
-  if(pos != cur_cursor)
+  if(pos != text_box.cursor)
     return -2;
   int i;
   for(i = text_length - 1;i > pos; i--)
@@ -104,7 +118,10 @@ static int insertCharacter(int pos,char ch)
   }
   text_box.text[i] = ch;
   text_length ++;
-  updateLastWindow();
+  text_box.cursor ++;
+  window.widgets[0].context.textBox = &text_box;
+  createWindow(&window);
+  return 0;
 }
 
 
