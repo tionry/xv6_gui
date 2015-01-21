@@ -1,16 +1,22 @@
 #include "types.h"
-#include "x86.h"
 #include "defs.h"
+#include "param.h"
+#include "memlayout.h"
+#include "mmu.h"
+#include "proc.h"
+#include "traps.h"
+#include "x86.h"
 #include "kbd.h"
-#include "window.h"
+#include "spinlock.h"
 #include "gui.h"
+#include "mouse.h"
+#include "window.h"
 
 static uint shift;
 
 extern WindowQueue *lastWindow;
-static TextBox *textbox;
 
-void insertCharacter(char ch)
+void insertCharacter(TextBox *textbox, char ch)
 {
   int i;
   int pos = textbox->cursor;
@@ -22,42 +28,53 @@ void insertCharacter(char ch)
   textbox->text[i] = ch;
   textbox->cursor++;
   textbox->textLength++;
+  updateLastWindow();
 }
 
-void deleteCharacter()
+void deleteCharacter(TextBox *textbox)
 {
+  if (textbox->textLength == 0)
+    return;
   int i;
   int pos = textbox->cursor;
   int len = textbox->textLength;
-  for (i = pos; i < len - 1; i++)
+  cprintf("cursor = %d, length = %d\n", pos, len);
+  for (i = pos-1; i < len; i++)
   {
-    textbox->text[i-1] = textbox->text[i];
+    cprintf("i = %d\n", i);
+    textbox->text[i] = textbox->text[i+1];
   }
   textbox->cursor--;
   textbox->textLength--;
+  updateLastWindow();
 }
 
 void keyboardHandler(char ch)
 {
   int i;
-  Window *window = lastWindow->window;
-  textbox = 0;
-  for (i = 0; i < window->widgetsNum; i++)
-    if (window->widgets[i].type == textBox)
+  TextBox *textbox = 0;
+  switchuvm(lastWindow->proc);
+  for (i = 0; i < lastWindow->window->widgetsNum; i++)
+  {
+    if (lastWindow->window->widgets[i].type == textBox)
     {
-      if (window->widgets[i].context.textBox->fixed)
-      {
-        textbox = window->widgets[i].context.textBox;
-        break;
-      }
+      textbox = lastWindow->window->widgets[i].context.textBox;
+      break;
     }
+  }
   if (textbox)
   {
-    if (ch < 225 && ch !=9)
-      insertCharacter(ch);
-    if (ch == 9)
-      deleteCharacter();
+    if (ch < 225 && ch !=8)
+    {
+      insertCharacter(textbox, ch);
+    }
+    if (ch == 8)
+      deleteCharacter(textbox);
   }
+  if (proc == 0)
+    switchkvm();
+  else
+    switchuvm(proc);
 }
 
 void kbdintr(void)
@@ -97,7 +114,7 @@ void kbdintr(void)
   }
   if (c)
   {
-    cprintf("%d\n", c);
-    //keyboardHandler(c);
+    //cprintf("%d\n", c);
+    keyboardHandler(c);
   }
 }

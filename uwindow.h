@@ -40,6 +40,7 @@ typedef struct TextBox
 {
   int fixed;
   int leftTopX, leftTopY, width, height, cursor, semoph;
+  int textLength;
   char text[MAX_STRING_NUM];
 } TextBox;
 
