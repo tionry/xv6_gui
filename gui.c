@@ -132,6 +132,18 @@ void drawLabel(RGB *buf, Label *label, Window *window)
   }
 }
 
+void drawCursor(RGB *buf,TextBox *textBox,Window *window,int lines,int pos_x)
+{
+  int s;
+  RGB *t;
+  t = buf + (window->leftTopY + textBox->leftTopY + lines * 18) * SCREEN_WIDTH + window->leftTopX + textBox->leftTopX + pos_x;
+  for (s = 0; s < CHARACTER_HEIGHT; s++)
+  {
+    drawPoint(t, 0x00, 0x00, 0x00);
+    t += SCREEN_WIDTH;
+  }
+}
+
 void drawTextBox(RGB *buf, TextBox *textBox, Window *window)
 {
   int i, j, pos_x;
@@ -164,21 +176,23 @@ void drawTextBox(RGB *buf, TextBox *textBox, Window *window)
       pos_x = 9;
       j++;
       i++;
+      if(textBox->text[i] == '\0')
+      {
+      drawCursor(buf,textBox,window,j,pos_x);
+      }
       continue;
     }
     pos_x += drawCharacter(buf, window->leftTopX + textBox->leftTopX + pos_x,window->leftTopY + textBox->leftTopY + j * CHARACTER_HEIGHT,textBox->text[i],0x00,0x00,0x00);  
     //printf(1,"%c",textBox->text[i]);  
     if(i == textBox->cursor - 1)
     {
-      int s;
-      t = buf + (window->leftTopY + textBox->leftTopY + j * 18) * SCREEN_WIDTH + window->leftTopX + textBox->leftTopX + pos_x;
-      for (s = 0; s < CHARACTER_HEIGHT; s++)
-      {
-        drawPoint(t, 0x00, 0x00, 0x00);
-        t += SCREEN_WIDTH;
-      }
+      drawCursor(buf,textBox,window,j,pos_x);
     }
     i++;
+  }
+  if(i == 0)
+  {
+    drawCursor(buf,textBox,window,j,pos_x);
   }
 }
 
