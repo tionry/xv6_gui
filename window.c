@@ -98,6 +98,12 @@ int sys_deleteWindow(void)
   return -1;
 }
 
+int sys_updateWindow(void)
+{
+  updateBackWindows();
+  return 0;
+}
+
 void moveWindow(Window *window, int fx, int fy, int tx, int ty, int isdraw)
 {
   int dx = tx - fx;

@@ -31,3 +31,5 @@ SYSCALL(sleep)
 SYSCALL(uptime)
 SYSCALL(createWindow)
 SYSCALL(deleteWindow)
+SYSCALL(updateWindow)
+
