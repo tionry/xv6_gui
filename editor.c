@@ -40,11 +40,11 @@ int main(int argc,char *argv[])
   window.hasCaption = 1;
   strcpy(window.caption, "TextEditor");
 
-  //addCloseButton(&window, &closeButtonImageView, closeButtonImageViewTemp);
-  //closeButtonImageView.onLeftClickHandler.handlerFunction = closeWindow;
+  addCloseButton(&window, &closeButtonImageView, closeButtonImageViewTemp);
+  closeButtonImageView.onLeftClickHandler.handlerFunction = closeWindow;
 
-  addSaveButton(&window,&saveButtonImageView,saveButtonImageViewTemp);
-  saveButtonImageView.onLeftClickHandler.handlerFunction = saveFile;
+  //addSaveButton(&window,&saveButtonImageView,saveButtonImageViewTemp);
+  //saveButtonImageView.onLeftClickHandler.handlerFunction = saveFile;
 
   if (strcmp(argv[0], "editor") != 0)
   {   
