@@ -32,4 +32,5 @@ SYSCALL(uptime)
 SYSCALL(createWindow)
 SYSCALL(deleteWindow)
 SYSCALL(updateWindow)
+SYSCALL(fileSystemChanged)
 

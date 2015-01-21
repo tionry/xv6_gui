@@ -16,6 +16,7 @@ int hWind;
 
 void closeWindow(Widget *widget, Window *window);
 void newFolder(Widget *widget, Window *window);
+void refresh(Widget *widget, Window *window);
 
 char*
 fmtname(char *path)
@@ -160,6 +161,7 @@ int main(int argc, char *argv[])
   window.show = 1;
   window.hasCaption = 1;
   strcpy(window.caption, "Explorer");
+  window.onFileSystemChangedHandler.handlerFunction = refresh;
   addCloseButton(&window, &closeButtonImageView, closeButtonImageViewTemp);
   closeButtonImageView.onLeftClickHandler.handlerFunction = closeWindow;
   strcpy(wd, ".");
@@ -188,7 +190,10 @@ void closeWindow(Widget *widget, Window *window)
 
 void newFolder(Widget *widget, Window *window)
 {
-  char *argv[] = { "mkdir", "aaa", 0 };
+  char s[256];
+  strcpy(s, wd);
+  strcat(s, "/aaa");
+  char *argv[] = { "mkdir", s, 0 };
 
   if (fork() == 0)
   {
@@ -196,6 +201,11 @@ void newFolder(Widget *widget, Window *window)
     exit();
   }
   wait();
+  fileSystemChanged();
+}
+
+void refresh(Widget *widget, Window *window)
+{
   window->widgetsNum = 2;
   updateWindow();
   ls(wd);
