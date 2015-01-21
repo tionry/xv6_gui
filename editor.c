@@ -3,8 +3,8 @@
 #include "stat.h"
 #include "user.h"
 
+static TextBox text_box;
 
-TextBox text_box;
 Window window;
 int hWind;
 RGB closeButtonImageViewTemp[100];
@@ -25,7 +25,9 @@ void cat(int fd)
     exit();
   }
   text_box.cursor = n;
-  printf(1,"%d",n);
+  text_box.textLength = n;
+  //printf(1,"%d\n",n);
+  //printf(1, "%s\n", text_box.text);
 }
 
 int main(int argc,char *argv[])
@@ -62,14 +64,15 @@ int main(int argc,char *argv[])
     }
     cat(fd);
 
-    printf(1,"text begin\n");
-    printf(1,"%s",text_box.text);
-    printf(1,"%d %d %d %d\n",window.leftTopX,window.leftTopY,text_box.leftTopX,text_box.leftTopY);
+    // printf(1,"text begin\n");
+    // printf(1,"%s",text_box.text);
+    // printf(1,"%d %d %d %d\n",window.leftTopX,window.leftTopY,text_box.leftTopX,text_box.leftTopY);
       //close(fd);
     text_box.leftTopX = (window.width >> 1) - (text_box.width >> 1);
     text_box.leftTopY = (window.height >> 1) - (text_box.height >> 1);
     window.widgets[window.widgetsNum].type = textBox;
     window.widgets[window.widgetsNum].context.textBox = &text_box;
+    //printf(1, "length : %d\n", window.widgets[window.widgetsNum].context.textBox->textLength);
     window.widgetsNum++;
   }
   hWind = createWindow(&window);

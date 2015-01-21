@@ -147,6 +147,7 @@ void drawTextBox(RGB *buf, TextBox *textBox, Window *window)
   j = 0;
   pos_x = 9;
   
+  cprintf("%s\n", textBox->text);
   while(textBox->text[i] != '\0')
   {
     if(pos_x > (textBox->width - 9))  
@@ -170,7 +171,7 @@ void drawTextBox(RGB *buf, TextBox *textBox, Window *window)
       t = buf + (window->leftTopY + textBox->leftTopY + j * 18) * SCREEN_WIDTH + window->leftTopX + textBox->leftTopX + pos_x;
       for (s = 0; s < CHARACTER_HEIGHT; s++)
       {
-        drawPoint(t, 0x33, 0x33, 0x33);
+        drawPoint(t, 0x00, 0x00, 0x00);
         t += SCREEN_WIDTH;
       }
     }
