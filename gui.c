@@ -170,7 +170,7 @@ void drawTextBox(RGB *buf, TextBox *textBox, Window *window)
       pos_x = 2;
       j++;
     }
-    cprintf("%d %d\n",textBox->cursor, pos_x);
+    //cprintf("%d %d\n",textBox->cursor, pos_x);
     if(textBox->text[i] == '\n')
     {
       pos_x = 9;

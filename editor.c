@@ -52,10 +52,10 @@ int main(int argc,char *argv[])
   {
     memset(&text_box, 0, sizeof(TextBox));
 
-    text_box.leftTopX = 2;
-    text_box.leftTopY = 2;
-    text_box.width = 500;
-    text_box.height = 400;
+    text_box.leftTopX = 0;
+    text_box.leftTopY = 0;
+    text_box.width = 580;
+    text_box.height = 460;
     text_box.cursor = 0;
     text_box.semoph = 1;
     if((fd = open(argv[1], 0)) < 0){
@@ -68,8 +68,8 @@ int main(int argc,char *argv[])
     // printf(1,"%s",text_box.text);
     // printf(1,"%d %d %d %d\n",window.leftTopX,window.leftTopY,text_box.leftTopX,text_box.leftTopY);
       //close(fd);
-    text_box.leftTopX = (window.width >> 1) - (text_box.width >> 1);
-    text_box.leftTopY = (window.height >> 1) - (text_box.height >> 1);
+    text_box.leftTopX = 10;//(window.width >> 1) - (text_box.width >> 1);
+    text_box.leftTopY = 30;//(window.height >> 1) - (text_box.height >> 1);
     window.widgets[window.widgetsNum].type = textBox;
     window.widgets[window.widgetsNum].context.textBox = &text_box;
     //printf(1, "length : %d\n", window.widgets[window.widgetsNum].context.textBox->textLength);

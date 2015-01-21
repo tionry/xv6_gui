@@ -48,7 +48,7 @@ void deleteCharacter(TextBox *textbox)
 void moveCursor(TextBox *textbox, unsigned char ch)
 {
   int i, j, lineIndex = 0;
-  if (textbox->textLength == 0  || textbox->cursor == 0)
+  if (textbox->textLength == 0)
     return;
   if (ch == 228)
   {
@@ -106,7 +106,7 @@ void moveCursor(TextBox *textbox, unsigned char ch)
       if (textbox->text[j] == '\0')
         return;
     }
-    for (i = j + 1; i < textbox->textLength; i++)
+    for (i = j+1; i < textbox->textLength; i++)
     {
       if (textbox->text[i] == '\n' || textbox->text[i] == '\0')
         break;
@@ -115,6 +115,7 @@ void moveCursor(TextBox *textbox, unsigned char ch)
       textbox->cursor = i;
     else
       textbox->cursor = j+1+lineIndex;
+   //cprintf("cursor : %d\n", textbox->cursor);
     updateLastWindow();
   }
 }
