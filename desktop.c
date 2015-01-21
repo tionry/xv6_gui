@@ -11,6 +11,21 @@ IconView icon[50];
 struct RGB temp[1310720];
 struct RGB folder[50][10000];
 
+//Result: T_DIR || T_FILE || T_DEV, define in stat.h
+//-1: error occured.
+int
+getiNodeType(char *path)
+{
+  struct stat st;
+  
+  if (stat(path, &st))
+  {
+    return -1;
+  }
+  
+  return st.type;
+}
+
 char*
 fmtname(char *path)
 {
