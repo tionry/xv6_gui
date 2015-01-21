@@ -4,10 +4,14 @@
 #include "user.h"
 
 
-static int text_length;
 static TextBox text_box;
 Window window;
-static hwind;
+static int hWind;
+RGB closeButtonImageViewTemp[100];
+ImageView closeButtonImageView;
+
+static void initText();
+void closeWindow(Widget *widget, Window *window);
 
 void cat(int fd)
 {
@@ -21,7 +25,6 @@ void cat(int fd)
   }
 }
 
-static void closeTextBox();
 
 int main(int argc,char *argv[])
 {
@@ -34,7 +37,8 @@ int main(int argc,char *argv[])
   window.show = 1;
   window.hasCaption = 1;
   strcpy(window.caption, "TextEditor");
-  
+  addCloseButton(&window, &closeButtonImageView, closeButtonImageViewTemp);
+  closeButtonImageView.onLeftClickHandler.handlerFunction = closeWindow;
   if (strcmp(argv[0], "texteditor") != 0)
   {
     initText();
@@ -62,13 +66,19 @@ int main(int argc,char *argv[])
   exit();
 }
 
-static void closeTextBox()
+static void initText()
 {
-  text_box.semoph = 0;
-  close(fd);
+  text_box.leftTopX = 20;
+  text_box.leftTopY = 20;
+  text_box.width = 500;
+  text_box.height = 400;
+  text_box.text[0] = '\0';
+  text_box.cursor = 0;
+  text_box.semoph = 1;
+}
+
+void closeWindow(Widget *widget, Window *window)
+{
   deleteWindow(hWind);
   exit();
 }
-
-
-
