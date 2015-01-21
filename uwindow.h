@@ -90,5 +90,6 @@ typedef struct Window
   char caption[MAX_STRING_NUM];
   int widgetsNum;
   Widget widgets[MAX_WIDGET_NUM];
+  Handler onFileSystemChangedHandler;
 } Window;
 

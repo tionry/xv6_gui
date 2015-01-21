@@ -9,6 +9,12 @@ void handleEvent(Window *window)
 {
   int i;
 
+  if ((window->onFileSystemChangedHandler.triggered == 1) && (window->onFileSystemChangedHandler.handlerFunction != 0))
+  {
+    window->onFileSystemChangedHandler.handlerFunction(window->widgets, window);
+    window->onFileSystemChangedHandler.triggered = 0;
+  }
+
   for (i = 0; i < window->widgetsNum; i++)
     switch (window->widgets[i].type)
     {

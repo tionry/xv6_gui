@@ -11,8 +11,13 @@
 #include "mmu.h"
 #include "proc.h"
 #include "fs.h"
+#include "x86.h"
 #include "file.h"
 #include "fcntl.h"
+#include "gui.h"
+#include "window.h"
+
+extern WindowQueue windowQueue;
 
 // Fetch the nth word-sized system call argument as a file descriptor
 // and return both the descriptor and the corresponding struct file.
@@ -440,3 +445,22 @@ sys_pipe(void)
   fd[1] = fd1;
   return 0;
 }
+
+int sys_fileSystemChanged(void)
+{
+  WindowQueue *p = &windowQueue;
+  cli();
+  while (p->next != 0)
+  {
+    switchuvm(p->next->proc);
+    p->next->window->onFileSystemChangedHandler.triggered = 1;
+    p = p->next;
+  }
+  if (proc == 0)
+    switchkvm();
+  else
+    switchuvm(proc);
+  sti();
+  return 0;
+}
+

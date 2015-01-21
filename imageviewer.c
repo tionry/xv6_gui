@@ -25,11 +25,11 @@ int main(int argc, char *argv[])
   strcpy(window.caption, "ImageViewer");
   addCloseButton(&window, &closeButtonImageView, closeButtonImageViewTemp);
   closeButtonImageView.onLeftClickHandler.handlerFunction = closeWindow;
-  if (strcmp(argv[0], "imageviewer") != 0)
+  if (argv[1] != 0)
   {
     memset(&image, 0, sizeof(ImageView));
     image.image = temp;
-    readBitmapFile(argv[0], image.image, &image.height, &image.width);
+    readBitmapFile(argv[1], image.image, &image.height, &image.width);
     if ((image.width > window.width) || (image.height > window.height))
       exit();
     image.leftTopX = (window.width >> 1) - (image.width >> 1);

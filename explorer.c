@@ -11,10 +11,12 @@ RGB closeButtonImageViewTemp[100];
 ImageView closeButtonImageView;
 IconView icon[50];
 struct RGB folder[50][10000];
+char wd[256];
 int hWind;
 
 void closeWindow(Widget *widget, Window *window);
 void newFolder(Widget *widget, Window *window);
+void refresh(Widget *widget, Window *window);
 
 char*
 fmtname(char *path)
@@ -27,6 +29,64 @@ fmtname(char *path)
   p++;
 
   return p;
+}
+
+void suffix(char *t, char *s)
+{
+  int point = 0;
+
+  while (*s != 0)
+  {
+    if (*s == '.')
+      point = 1;
+    s++;
+  }
+  if (point == 0)
+  {
+    strcpy(t, "");
+    return;
+  }
+  while (*s != '.')
+    s--;
+  s++;
+  strcpy(t, s);
+}
+
+void iconOnLeftDoubleClick(Widget *widget, Window *window)
+{
+  char *s = widget->context.iconView->text;
+  char *argv1[] = { s, 0 };
+  char *argv2[] = { "", s, 0};
+  char t[256];
+
+  suffix(t, s);
+  if (strcmp(t, "") == 0)
+  {
+    if (fork() == 0)
+    {
+      exec(argv1[0], argv1);
+      exit();
+    }
+  }
+  else
+    if (strcmp(t, "bmp") == 0)
+    {
+      if (fork() == 0)
+      {
+        strcpy(argv2[0], "imageviewer");
+        exec(argv2[0], argv2);
+        exit();
+      }
+    }
+    if (strcmp(t, "txt") == 0)
+    {
+      if (fork() == 0)
+      {
+        strcpy(argv2[0], "editor");
+        exec(argv2[0], argv2);
+        exit();
+      }
+    }
 }
 
 void
@@ -72,7 +132,7 @@ ls(char *path)
     icon[i].leftTopX = 50 + (i % 6) * 140;
     icon[i].leftTopY = 50 + (i / 6) * 140;
     icon[i].image = folder[i];
-//    icon[i].onLeftDoubleClickHandler.handlerFunction = iconOnLeftDoubleClick;
+    icon[i].onLeftDoubleClickHandler.handlerFunction = iconOnLeftDoubleClick;
     switch (st.type)
     {
       case T_DIR:
@@ -87,10 +147,11 @@ ls(char *path)
     window.widgets[window.widgetsNum].context.iconView = &icon[i];
     i++;
     window.widgetsNum++;
+    if (i % 4 == 0) updateWindow();
   }
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
   memset(&window, 0, sizeof(Window));
   window.leftTopX = 100;
@@ -100,8 +161,12 @@ int main(void)
   window.show = 1;
   window.hasCaption = 1;
   strcpy(window.caption, "Explorer");
+  window.onFileSystemChangedHandler.handlerFunction = refresh;
   addCloseButton(&window, &closeButtonImageView, closeButtonImageViewTemp);
   closeButtonImageView.onLeftClickHandler.handlerFunction = closeWindow;
+  strcpy(wd, ".");
+  if (argv[1] != 0)
+    strcpy(wd, argv[1]);
   newFolderButton.width = 100;
   newFolderButton.height = 50;
   newFolderButton.leftTopX = (window.width >> 1) - (newFolderButton.width >> 1);
@@ -112,7 +177,7 @@ int main(void)
   window.widgets[window.widgetsNum].context.button = &newFolderButton;
   window.widgetsNum++;
   hWind = createWindow(&window);
-  ls(".");
+  ls(wd);
   updateWindow();
   while (1) handleEvent(&window);
 }
@@ -125,7 +190,10 @@ void closeWindow(Widget *widget, Window *window)
 
 void newFolder(Widget *widget, Window *window)
 {
-  char *argv[] = { "mkdir", "aaa", 0 };
+  char s[256];
+  strcpy(s, wd);
+  strcat(s, "/aaa");
+  char *argv[] = { "mkdir", s, 0 };
 
   if (fork() == 0)
   {
@@ -133,9 +201,14 @@ void newFolder(Widget *widget, Window *window)
     exit();
   }
   wait();
+  fileSystemChanged();
+}
+
+void refresh(Widget *widget, Window *window)
+{
   window->widgetsNum = 2;
   updateWindow();
-  ls(".");
+  ls(wd);
   updateWindow();
 }
 

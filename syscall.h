@@ -23,4 +23,5 @@
 #define SYS_createWindow  22
 #define SYS_deleteWindow  23
 #define SYS_updateWindow  24
+#define SYS_fileSystemChanged 25
 

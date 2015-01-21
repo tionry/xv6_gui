@@ -4,8 +4,9 @@
 #include "user.h"
 
 static TextBox text_box;
+
 Window window;
-static int hWind;
+int hWind;
 RGB closeButtonImageViewTemp[100];
 RGB saveButtonImageViewTemp[100];
 ImageView closeButtonImageView;
@@ -47,8 +48,8 @@ int main(int argc,char *argv[])
   //addSaveButton(&window,&saveButtonImageView,saveButtonImageViewTemp);
   //saveButtonImageView.onLeftClickHandler.handlerFunction = saveFile;
 
-  if (strcmp(argv[0], "editor") != 0)
-  {   
+  if (argv[1] != 0)
+  {
     memset(&text_box, 0, sizeof(TextBox));
 
     text_box.leftTopX = 2;
@@ -57,7 +58,7 @@ int main(int argc,char *argv[])
     text_box.height = 400;
     text_box.cursor = 0;
     text_box.semoph = 1;
-    if((fd = open(argv[0], 0)) < 0){
+    if((fd = open(argv[1], 0)) < 0){
       printf(1, "cat: cannot open %s\n", argv[0]);
       exit();
     }

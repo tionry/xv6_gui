@@ -11,6 +11,21 @@ IconView icon[50];
 struct RGB temp[1310720];
 struct RGB folder[50][10000];
 
+//Result: T_DIR || T_FILE || T_DEV, define in stat.h
+//-1: error occured.
+int
+getiNodeType(char *path)
+{
+  struct stat st;
+  
+  if (stat(path, &st))
+  {
+    return -1;
+  }
+  
+  return st.type;
+}
+
 char*
 fmtname(char *path)
 {
@@ -48,7 +63,8 @@ void suffix(char *t, char *s)
 void iconOnLeftDoubleClick(Widget *widget, Window *window)
 {
   char *s = widget->context.iconView->text;
-  char *argv[] = { s, 0 };
+  char *argv1[] = { s, 0 };
+  char *argv2[] = { "", s, 0};
   char t[256];
 
   suffix(t, s);
@@ -56,7 +72,7 @@ void iconOnLeftDoubleClick(Widget *widget, Window *window)
   {
     if (fork() == 0)
     {
-      exec(argv[0], argv);
+      exec(argv1[0], argv1);
       exit();
     }
   }
@@ -65,7 +81,8 @@ void iconOnLeftDoubleClick(Widget *widget, Window *window)
     {
       if (fork() == 0)
       {
-        exec("imageviewer", argv);
+        strcpy(argv2[0], "imageviewer");
+        exec(argv2[0], argv2);
         exit();
       }
     }
@@ -73,7 +90,8 @@ void iconOnLeftDoubleClick(Widget *widget, Window *window)
     {
       if (fork() == 0)
       {
-        exec("editor", argv);
+        strcpy(argv2[0], "editor");
+        exec(argv2[0], argv2);
         exit();
       }
     }
@@ -137,6 +155,7 @@ ls(char *path)
     window.widgets[window.widgetsNum].context.iconView = &icon[i];
     i++;
     window.widgetsNum++;
+    if (i % 4 == 0) updateWindow();
   }
 }
 
