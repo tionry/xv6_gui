@@ -204,7 +204,7 @@ void drawIconView(RGB *buf, IconView *iconView, Window *window)
   drawCharacters(buf, window->leftTopX + iconView->leftTopX + iconView->width / 2 - len * 9 / 2, window->leftTopY + iconView->leftTopY + iconView->height + 5, iconView->text, 0, 0, 0);
 }
 
-void drawWindow(RGB *buf, Window *window)
+void drawWindow(RGB *buf, Window *window, int focus)
 {
   int i, j, len;
   RGB *t;
@@ -216,7 +216,10 @@ void drawWindow(RGB *buf, Window *window)
       t = buf + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
       for (i = 0; i < window->width; i++)
       {
-        drawPoint(t, 145, 210, 228);
+        if (focus)
+          drawPoint(t, 145, 210, 228);
+        else
+          drawPoint(t, 0xbb, 0xbb, 0xbb);
         t++;
       }
     }
@@ -250,7 +253,10 @@ void drawWindow(RGB *buf, Window *window)
     t = buf + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
     for (i = 0; i < BORDER_WIDTH; i++)
     {
-      drawPoint(t, 145, 210, 228);
+        if (focus)
+          drawPoint(t, 145, 210, 228);
+        else
+          drawPoint(t, 0xbb, 0xbb, 0xbb);
       t++;
     }
   }
@@ -259,7 +265,10 @@ void drawWindow(RGB *buf, Window *window)
     t = buf + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + window->width - BORDER_WIDTH;
     for (i = window->width - BORDER_WIDTH; i < window->width; i++)
     {
-      drawPoint(t, 145, 210, 228);
+        if (focus)
+          drawPoint(t, 145, 210, 228);
+        else
+          drawPoint(t, 0xbb, 0xbb, 0xbb);
       t++;
     }
   }
@@ -268,7 +277,10 @@ void drawWindow(RGB *buf, Window *window)
     t = buf + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
     for (i = 0; i < window->width; i++)
     {
-      drawPoint(t, 145, 210, 228);
+        if (focus)
+          drawPoint(t, 145, 210, 228);
+        else
+          drawPoint(t, 0xbb, 0xbb, 0xbb);
       t++;
     }
   }
@@ -342,7 +354,7 @@ void drawBackWindows()
     if (p->window != 0)
       if (p->window->show == 1)
       {
-        drawWindow(screen_temp1, p->window);
+        drawWindow(screen_temp1, p->window, 0);
         for (k = 0; k < p->window->widgetsNum; k++)
           switch (p->window->widgets[k].type)
           {
@@ -407,7 +419,7 @@ void drawLastWindow()
   if (lastWindow->window != 0)
     if (lastWindow->window->show == 1)
     {
-      drawWindow(screen_temp2, lastWindow->window);
+      drawWindow(screen_temp2, lastWindow->window, 1);
       for (k = 0; k < lastWindow->window->widgetsNum; k++)
         switch (lastWindow->window->widgets[k].type)
         {
