@@ -74,6 +74,13 @@ void iconOnLeftDoubleClick(Widget *widget, Window *window)
   char *argv2[] = { "", s, 0};
   char t[256];
 
+  if (getiNodeType(s) == T_DIR)
+  {
+    strcat(wd, "/");
+    strcat(wd, s);
+    refresh(window->widgets, window);
+    return;
+  }
   suffix(t, s);
   if (strcmp(t, "") == 0)
   {
