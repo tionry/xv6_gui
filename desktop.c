@@ -159,6 +159,14 @@ ls(char *path)
   }
 }
 
+void refresh(Widget *widget, Window *window)
+{
+  window->widgetsNum = 1;
+  updateWindow();
+  ls(".");
+  updateWindow();
+}
+
 int main(void)
 {
   memset(&window, 0, sizeof(Window));
@@ -168,6 +176,7 @@ int main(void)
   window.height = 1024;
   window.show = 1;
   window.hasCaption = 0;
+  window.onFileSystemChangedHandler.handlerFunction = refresh;
   memset(&image, 0, sizeof(ImageView));
   image.leftTopX = 0;
   image.leftTopY = 0;
