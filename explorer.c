@@ -6,6 +6,7 @@
 #include "bitmap.h"
 
 Window window;
+TextBox filenameBox;
 Button newFolderButton;
 RGB closeButtonImageViewTemp[100];
 ImageView closeButtonImageView;
@@ -190,6 +191,16 @@ int main(int argc, char *argv[])
   strcpy(wd, ".");
   if (argv[1] != 0)
     strcpy(wd, argv[1]);
+  filenameBox.width = 200;
+  filenameBox.height = 50;
+  filenameBox.leftTopX = 20;
+  filenameBox.leftTopY = window.height - BORDER_WIDTH - filenameBox.height - 10;
+  strcpy(filenameBox.text, "NewFolderName");
+  filenameBox.cursor = 0;
+  filenameBox.semoph = 1;
+  window.widgets[window.widgetsNum].type = textBox;
+  window.widgets[window.widgetsNum].context.textBox = &filenameBox;
+  window.widgetsNum++;
   newFolderButton.width = 100;
   newFolderButton.height = 50;
   newFolderButton.leftTopX = (window.width >> 1) - (newFolderButton.width >> 1);
@@ -216,7 +227,9 @@ void newFolder(Widget *widget, Window *window)
 {
   char s[256];
   strcpy(s, wd);
-  strcat(s, "/aaa");
+  strcat(s, "/");
+  strcat(s, filenameBox.text);
+
   char *argv[] = { "mkdir", s, 0 };
 
   if (fork() == 0)
