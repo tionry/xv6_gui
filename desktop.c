@@ -45,7 +45,7 @@ void suffix(char *t, char *s)
   strcpy(t, s);
 }
 
-void iconOnLeftDoubleClick(Widget *widget)
+void iconOnLeftDoubleClick(Widget *widget, Window *window)
 {
   char *s = widget->context.iconView->text;
   char *argv[] = { s, 0 };

@@ -18,7 +18,7 @@ void handleEvent(Window *window)
     case iconView:
       if ((window->widgets[i].context.iconView->onLeftDoubleClickHandler.triggered == 1) && (window->widgets[i].context.iconView->onLeftDoubleClickHandler.handlerFunction != 0))
       {
-        window->widgets[i].context.iconView->onLeftDoubleClickHandler.handlerFunction(window->widgets + i);
+        window->widgets[i].context.iconView->onLeftDoubleClickHandler.handlerFunction(window->widgets + i, window);
         window->widgets[i].context.iconView->onLeftDoubleClickHandler.triggered = 0;
       }
       break;

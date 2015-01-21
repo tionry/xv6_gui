@@ -22,11 +22,12 @@ typedef enum WidgetType
 } WidgetType;
 
 typedef struct Widget Widget;
+typedef struct Window Window;
 
 typedef struct Handler
 {
   int triggered;
-  void (*handlerFunction)(Widget *widget);
+  void (*handlerFunction)(Widget *widget, Window *window);
 } Handler;
 
 typedef struct Label
