@@ -43,9 +43,9 @@ int main(int argc,char *argv[])
   addCloseButton(&window, &closeButtonImageView, closeButtonImageViewTemp);
   closeButtonImageView.onLeftClickHandler.handlerFunction = closeWindow;
 
-//  addSaveButton(&window,&saveButtonImageView,saveButtonImageViewTemp);
-//  saveButtonImageView.onLeftClickHandler.handlerFunction = saveFile;
-printf(1, "%s\n", argv[0]);
+  //addSaveButton(&window,&saveButtonImageView,saveButtonImageViewTemp);
+  //saveButtonImageView.onLeftClickHandler.handlerFunction = saveFile;
+
   if (strcmp(argv[0], "editor") != 0)
   {
     memset(&text_box, 0, sizeof(TextBox));

@@ -2,11 +2,65 @@
 #include "x86.h"
 #include "defs.h"
 #include "kbd.h"
+#include "window.h"
+#include "gui.h"
 
 static uint shift;
 
-void
-kbdintr(void)
+extern WindowQueue *lastWindow;
+static TextBox *textbox;
+
+void insertCharacter(char ch)
+{
+  int i;
+  int pos = textbox->cursor;
+  int len = textbox->textLength++;
+  for (i = len; i > pos; i--)
+  {
+    textbox->text[i] = textbox->text[i - 1];
+  }
+  textbox->text[i] = ch;
+  textbox->cursor++;
+  textbox->textLength++;
+}
+
+void deleteCharacter()
+{
+  int i;
+  int pos = textbox->cursor;
+  int len = textbox->textLength;
+  for (i = pos; i < len - 1; i++)
+  {
+    textbox->text[i-1] = textbox->text[i];
+  }
+  textbox->cursor--;
+  textbox->textLength--;
+}
+
+void keyboardHandler(char ch)
+{
+  int i;
+  Window *window = lastWindow->window;
+  textbox = 0;
+  for (i = 0; i < window->widgetsNum; i++)
+    if (window->widgets[i].type == textBox)
+    {
+      if (window->widgets[i].context.textBox->fixed)
+      {
+        textbox = window->widgets[i].context.textBox;
+        break;
+      }
+    }
+  if (textbox)
+  {
+    if (ch < 225 && ch !=9)
+      insertCharacter(ch);
+    if (ch == 9)
+      deleteCharacter();
+  }
+}
+
+void kbdintr(void)
 {
   static uchar *charcode[4] = {
     normalmap, shiftmap, ctlmap, ctlmap
@@ -42,5 +96,8 @@ kbdintr(void)
       c += 'a' - 'A';
   }
   if (c)
+  {
     cprintf("%d\n", c);
+    //keyboardHandler(c);
+  }
 }
