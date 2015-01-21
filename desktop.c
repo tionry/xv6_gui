@@ -67,6 +67,16 @@ void iconOnLeftDoubleClick(Widget *widget, Window *window)
   char *argv2[] = { "", s, 0};
   char t[256];
 
+  if (getiNodeType(s) == T_DIR)
+  {
+    if (fork() == 0)
+    {
+      strcpy(argv2[0], "explorer");
+      exec(argv2[0], argv2);
+      exit();
+    }
+    return;
+  }
   suffix(t, s);
   if (strcmp(t, "") == 0)
   {

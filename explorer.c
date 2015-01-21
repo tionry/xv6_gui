@@ -74,6 +74,13 @@ void iconOnLeftDoubleClick(Widget *widget, Window *window)
   char *argv2[] = { "", s, 0};
   char t[256];
 
+  if (getiNodeType(s) == T_DIR)
+  {
+    strcat(wd, "/");
+    strcat(wd, s);
+    refresh(window->widgets, window);
+    return;
+  }
   suffix(t, s);
   if (strcmp(t, "") == 0)
   {
@@ -93,6 +100,7 @@ void iconOnLeftDoubleClick(Widget *widget, Window *window)
         exit();
       }
     }
+    else
     if (strcmp(t, "txt") == 0)
     {
       if (fork() == 0)
@@ -171,7 +179,7 @@ int main(int argc, char *argv[])
   memset(&window, 0, sizeof(Window));
   window.leftTopX = 100;
   window.leftTopY = 100;
-  window.width = 1000;
+  window.width = 900;
   window.height = 800;
   window.show = 1;
   window.hasCaption = 1;
@@ -200,6 +208,7 @@ int main(int argc, char *argv[])
 void closeWindow(Widget *widget, Window *window)
 {
   deleteWindow(hWind);
+  wait();
   exit();
 }
 
