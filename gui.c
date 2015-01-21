@@ -167,9 +167,10 @@ void drawTextBox(RGB *buf, TextBox *textBox, Window *window)
   {
     if(pos_x > (textBox->width - 9))  
     {
-      pos_x = 2;
+      pos_x = 9;
       j++;
     }
+    if(j > textBox ->height / 18 - 2)  return;
     cprintf("%d %d\n",textBox->cursor, pos_x);
     if(textBox->text[i] == '\n')
     {
