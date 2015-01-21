@@ -149,10 +149,9 @@ int main(void)
   window.widgets[0].type = imageView;
   window.widgets[0].context.imageView = &image;
   window.widgetsNum = 1;
-
-  ls(".");
-
   createWindow(&window);
+  ls(".");
+  updateWindow();
   while (1) handleEvent(&window);
 }
 

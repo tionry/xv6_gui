@@ -111,8 +111,9 @@ int main(void)
   window.widgets[window.widgetsNum].type = button;
   window.widgets[window.widgetsNum].context.button = &newFolderButton;
   window.widgetsNum++;
-  ls(".");
   hWind = createWindow(&window);
+  ls(".");
+  updateWindow();
   while (1) handleEvent(&window);
 }
 
@@ -124,6 +125,17 @@ void closeWindow(Widget *widget, Window *window)
 
 void newFolder(Widget *widget, Window *window)
 {
-printf(1, "newFolder\n");
+  char *argv[] = { "mkdir", "aaa", 0 };
+
+  if (fork() == 0)
+  {
+    exec(argv[0], argv);
+    exit();
+  }
+  wait();
+  window->widgetsNum = 2;
+  updateWindow();
+  ls(".");
+  updateWindow();
 }
 
