@@ -14,7 +14,7 @@ ImageView saveButtonImageView;
 
 static void initText();
 void closeWindow(Widget *widget, Window *window);
-void saveFile();
+void saveFile(int fd);
 
 void cat(int fd)
 {
@@ -93,6 +93,6 @@ void saveFile(int fd)
 {
   //file name :text1,text2...
   //file content text_box.content
-  
+  write(fd, text_box.content, strlen(text_box.content));
 }
 
