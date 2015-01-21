@@ -5,6 +5,7 @@
 #include "mmu.h"
 #include "proc.h"
 #include "x86.h"
+#include "spinlock.h"
 #include "gui.h"
 #include "window.h"
 #include "bitmap.h"
@@ -16,6 +17,7 @@ extern WindowQueue windowQueue;
 extern WindowQueue *lastWindow;
 extern mouseinfo mouse_info;
 RGB *screen, *screen_temp1, *screen_temp2;
+struct spinlock gui_lock;
 
 char dm[14][14] = {
     {0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0},
@@ -40,6 +42,7 @@ void initGUI()
   screen = (RGB *)GUI_INFO.PhysBasePtr;
   screen_temp1 = (RGB *)(GUI_INFO.PhysBasePtr + 0x3c0000);
   screen_temp2 = (RGB *)(GUI_INFO.PhysBasePtr + 0x780000);
+  initlock(&gui_lock, "gui");
 }
 
 inline int isAlpha(RGB *color)
@@ -379,7 +382,6 @@ void drawBackWindows()
   int k;
   WindowQueue *p = &windowQueue;
 
-  cli();
   while (p->next != lastWindow)
   {
     p = p->next;
@@ -415,7 +417,6 @@ void drawBackWindows()
     switchkvm();
   else
     switchuvm(proc);
-  sti();
 }
 
 void removeLastWindow()
@@ -423,7 +424,6 @@ void removeLastWindow()
   int i, j;
   RGB *t1, *t2;
 
-  cli();
   switchuvm(lastWindow->proc);
   for (j = -1; j <= lastWindow->window->height; j++)
   {
@@ -440,14 +440,12 @@ void removeLastWindow()
     switchkvm();
   else
     switchuvm(proc);
-  sti();
 }
 
 void drawLastWindow()
 {
   int k;
 
-  cli();
   switchuvm(lastWindow->proc);
   if (lastWindow->window != 0)
     if (lastWindow->window->show == 1)
@@ -481,7 +479,6 @@ void drawLastWindow()
     switchkvm();
   else
     switchuvm(proc);
-  sti();
 }
 
 void removeMouse()
@@ -586,27 +583,33 @@ void updateBackWindows()
 {
   int totalPels = SCREEN_WIDTH * SCREEN_HEIGHT;
 
+  acquire(&gui_lock);
   memset(screen_temp1, 0x00, sizeof(RGB) * totalPels);
   drawBackWindows();
   memmove(screen_temp2, screen_temp1, sizeof(RGB) * totalPels);
   drawLastWindow();
   memmove(screen, screen_temp2, sizeof(RGB) * totalPels);
   drawMouse();
+  release(&gui_lock);
 }
 
 void updateLastWindow()
 {
   int totalPels = SCREEN_WIDTH * SCREEN_HEIGHT;
 
+  acquire(&gui_lock);
   removeLastWindow();
   drawLastWindow();
   memmove(screen, screen_temp2, sizeof(RGB) * totalPels);
   drawMouse();
+  release(&gui_lock);
 }
 
 void updateMouse()
 {
+  acquire(&gui_lock);
   removeMouse();
   drawMouse();
+  release(&gui_lock);
 }
 

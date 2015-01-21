@@ -162,7 +162,7 @@ ls(char *path)
     window.widgets[window.widgetsNum].context.iconView = &icon[i];
     i++;
     window.widgetsNum++;
-    if (i % 4 == 0) updateWindow();
+    if (i % 2 == 0) updateWindow();
   }
 }
 
