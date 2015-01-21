@@ -10,13 +10,11 @@ struct RGB temp[1310720];
 RGB closeButtonImageViewTemp[100];
 ImageView closeButtonImageView;
 int hWind;
-char *s;
 
 void closeWindow(Widget *widget, Window *window);
 
 int main(int argc, char *argv[])
 {
-s = argv[0];
   memset(&window, 0, sizeof(Window));
   window.leftTopX = 300;
   window.leftTopY = 200;
@@ -46,7 +44,6 @@ s = argv[0];
 
 void closeWindow(Widget *widget, Window *window)
 {
-printf(1, "%s\n", s);
   deleteWindow(hWind);
   exit();
 }
