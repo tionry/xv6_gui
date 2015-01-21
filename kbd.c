@@ -3,10 +3,11 @@
 #include "defs.h"
 #include "kbd.h"
 
-int
-kbdgetc(void)
+static uint shift;
+
+void
+kbdintr(void)
 {
-  static uint shift;
   static uchar *charcode[4] = {
     normalmap, shiftmap, ctlmap, ctlmap
   };
@@ -14,20 +15,20 @@ kbdgetc(void)
 
   st = inb(KBSTATP);
   if((st & KBS_DIB) == 0)
-    return -1;
+    return;
   data = inb(KBDATAP);
 
   if(data == 0xE0){
     shift |= E0ESC;
-    return 0;
+    return;
   } else if(data & 0x80){
     // Key released
     data = (shift & E0ESC ? data : data & 0x7F);
     shift &= ~(shiftcode[data] | E0ESC);
-    return 0;
+    return;
   } else if(shift & E0ESC){
     // Last character was an E0 escape; or with 0x80
-    data |= 0x80;
+    data|= 0x80;
     shift &= ~E0ESC;
   }
 
@@ -40,11 +41,6 @@ kbdgetc(void)
     else if('A' <= c && c <= 'Z')
       c += 'a' - 'A';
   }
-  return c;
-}
-
-void
-kbdintr(void)
-{
-  consoleintr(kbdgetc);
+  if (c)
+    cprintf("%d\n", c);
 }
