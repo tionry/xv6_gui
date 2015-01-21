@@ -11,6 +11,7 @@ RGB closeButtonImageViewTemp[100];
 ImageView closeButtonImageView;
 IconView icon[50];
 struct RGB folder[50][10000];
+char wd[256];
 int hWind;
 
 void closeWindow(Widget *widget, Window *window);
@@ -146,7 +147,7 @@ ls(char *path)
   }
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
   memset(&window, 0, sizeof(Window));
   window.leftTopX = 100;
@@ -158,6 +159,9 @@ int main(void)
   strcpy(window.caption, "Explorer");
   addCloseButton(&window, &closeButtonImageView, closeButtonImageViewTemp);
   closeButtonImageView.onLeftClickHandler.handlerFunction = closeWindow;
+  strcpy(wd, ".");
+  if (strcmp(argv[0], "explorer") != 0)
+    strcpy(wd, argv[0]);
   newFolderButton.width = 100;
   newFolderButton.height = 50;
   newFolderButton.leftTopX = (window.width >> 1) - (newFolderButton.width >> 1);
@@ -168,7 +172,7 @@ int main(void)
   window.widgets[window.widgetsNum].context.button = &newFolderButton;
   window.widgetsNum++;
   hWind = createWindow(&window);
-  ls(".");
+  ls(wd);
   updateWindow();
   while (1) handleEvent(&window);
 }
@@ -191,7 +195,7 @@ void newFolder(Widget *widget, Window *window)
   wait();
   window->widgetsNum = 2;
   updateWindow();
-  ls(".");
+  ls(wd);
   updateWindow();
 }
 
