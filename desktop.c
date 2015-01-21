@@ -125,11 +125,11 @@ ls(char *path)
         break;
     }
     strcpy(icon[i].text, tmpName);
-    window.widgets[i + 1].type = iconView;
-    window.widgets[i + 1].context.iconView = &icon[i];
+    window.widgets[window.widgetsNum].type = iconView;
+    window.widgets[window.widgetsNum].context.iconView = &icon[i];
     i++;
+    window.widgetsNum++;
   }
-  window.widgetsNum = i + 1;
 }
 
 int main(void)
@@ -148,6 +148,7 @@ int main(void)
   readBitmapFile("desktop_background.bmp", image.image, &image.height, &image.width);
   window.widgets[0].type = imageView;
   window.widgets[0].context.imageView = &image;
+  window.widgetsNum = 1;
 
   ls(".");
 
