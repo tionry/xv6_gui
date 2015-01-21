@@ -155,8 +155,16 @@ ls(char *path)
     window.widgets[window.widgetsNum].context.iconView = &icon[i];
     i++;
     window.widgetsNum++;
-    if (i % 4 == 0) updateWindow();
+    if (i % 2 == 0) updateWindow();
   }
+}
+
+void refresh(Widget *widget, Window *window)
+{
+  window->widgetsNum = 1;
+  updateWindow();
+  ls(".");
+  updateWindow();
 }
 
 int main(void)
@@ -168,6 +176,7 @@ int main(void)
   window.height = 1024;
   window.show = 1;
   window.hasCaption = 0;
+  window.onFileSystemChangedHandler.handlerFunction = refresh;
   memset(&image, 0, sizeof(ImageView));
   image.leftTopX = 0;
   image.leftTopY = 0;

@@ -5,6 +5,7 @@
 #include "mmu.h"
 #include "proc.h"
 #include "x86.h"
+#include "spinlock.h"
 #include "window.h"
 #include "gui.h"
 
@@ -12,6 +13,7 @@ WindowQueue windowLine[MAX_WINDOW_NUM];
 WindowQueue windowQueue;
 WindowQueue *lastWindow;
 ImageView closeTag;
+struct spinlock window_lock;
 
 void initWindow()
 {
@@ -29,6 +31,7 @@ void initWindow()
   windowQueue.next = 0;
   windowQueue.prev = 0;
   lastWindow = &windowQueue;
+  initlock(&window_lock, "window");
 }
 
 int acquireWindow()
@@ -62,12 +65,17 @@ int sys_createWindow(void)
   if (argint(0, &window) < 0)
     return -1;
 
+  acquire(&window_lock);
   int hWind = acquireWindow();
   if (hWind < 0)
+  {
+    release(&window_lock);
     return hWind;
+  }
   windowLine[hWind].proc = proc;
   windowLine[hWind].window = (Window *)window;
   addWindow(hWind);
+  release(&window_lock);
   updateBackWindows();
   return hWind;
 }
@@ -78,6 +86,7 @@ int sys_deleteWindow(void)
   if (argint(0, &hWind) < 0)
     return -1;
 
+  acquire(&window_lock);
   WindowQueue *p = &windowQueue;
   while (p->next != 0)
   {
@@ -90,11 +99,13 @@ int sys_deleteWindow(void)
       p->next = p->next->next;
       if (p->next)
         p->next->prev = p;
+      release(&window_lock);
       updateBackWindows();
       return 0;
     }
     p = p->next;
   }
+  release(&window_lock);
   return -1;
 }
 
@@ -125,6 +136,7 @@ void moveWindow(Window *window, int fx, int fy, int tx, int ty, int isdraw)
 
 void reorderQueue(WindowQueue *q)
 {
+  acquire(&window_lock);
   WindowQueue *p = lastWindow;
   while (p)
   {
@@ -138,5 +150,7 @@ void reorderQueue(WindowQueue *q)
   q->prev = lastWindow;
   q->next = 0;
   lastWindow = q;
+  release(&window_lock);
   updateBackWindows();
 }
+

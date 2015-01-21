@@ -18,6 +18,21 @@ void closeWindow(Widget *widget, Window *window);
 void newFolder(Widget *widget, Window *window);
 void refresh(Widget *widget, Window *window);
 
+//Result: T_DIR || T_FILE || T_DEV, define in stat.h
+//-1: error occured.
+int
+getiNodeType(char *path)
+{
+  struct stat st;
+  
+  if (stat(path, &st))
+  {
+    return -1;
+  }
+  
+  return st.type;
+}
+
 char*
 fmtname(char *path)
 {
@@ -147,7 +162,7 @@ ls(char *path)
     window.widgets[window.widgetsNum].context.iconView = &icon[i];
     i++;
     window.widgetsNum++;
-    if (i % 4 == 0) updateWindow();
+    if (i % 2 == 0) updateWindow();
   }
 }
 
