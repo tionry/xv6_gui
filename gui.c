@@ -151,7 +151,7 @@ void drawTextBox(RGB *buf, TextBox *textBox, Window *window)
 
 void drawButton(RGB *buf, Button *button, Window *window)
 {
-  int i, j;
+  int i, j, len;
   RGB *t;
 
   for (j = 0; j < button->height; j++)
@@ -163,6 +163,9 @@ void drawButton(RGB *buf, Button *button, Window *window)
       t++;
     }
   }
+
+  len = strlen(button->text);
+  drawCharacters(buf, window->leftTopX + button->leftTopX + button->width / 2 - len * 9 / 2, window->leftTopY + button->leftTopY + button->height / 3, button->text, 0, 0, 0);
 }
 
 void drawImageView(RGB *buf, ImageView *imageView, Window *window)
