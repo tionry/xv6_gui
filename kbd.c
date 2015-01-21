@@ -92,7 +92,7 @@ void keyboardHandler(unsigned char ch)
       break;
     }
   }
-  cprintf("%d\n", ch);
+  //cprintf("%d\n", ch);
   if (textbox)
   {
     if (ch < 225 && ch !=8)
