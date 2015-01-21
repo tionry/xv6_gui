@@ -29,7 +29,7 @@ static int left_btn_down = 0;
 static int down_pos_x = 0;
 static int down_pos_y = 0;
 static int right_btn_down = 0;
-static int last_tick = -20;
+static int last_tick = -30;
 static int event = 0;
 static int drag_state = 0;
 static WindowQueue *pwque;
@@ -298,7 +298,7 @@ void updateMouseEvent(uint tick, int x, int y)
       left_btn_down = 0;
       down_pos_x = 0;
       down_pos_y = 0;
-      if (tick - last_tick <= 20)
+      if (tick - last_tick <= 30)
         event = LEFT_DOUBLE_CLICK;
       else
       {
@@ -308,7 +308,7 @@ void updateMouseEvent(uint tick, int x, int y)
           event = LEFT_CLICK;
       }
       if (event == LEFT_DOUBLE_CLICK)
-        last_tick = -20;
+        last_tick = -30;
       else
         last_tick = tick;
     }
