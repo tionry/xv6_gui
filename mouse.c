@@ -44,7 +44,6 @@ void mouseinit()
   outb(0x60, 0xf4);
   outb(0x64, 0x60);
   outb(0x60, 0x47);
-  cprintf("mouse initialized.\n");
   setMousePosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
   initlock(&mouse_lock, "mouse");
   picenable(IRQ_MOUSE);
@@ -369,7 +368,6 @@ void mouseint(uint tick)
   {
     if ((ch & 0x08) == 0 || (ch & 0x04) != 0)
     {
-       cprintf("Error\n");
       	release(&mouse_lock);
       	return;
     }
