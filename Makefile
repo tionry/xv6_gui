@@ -163,6 +163,7 @@ UPROGS=\
 	_cat\
 	_desktop\
 	_echo\
+	_editor\
 	_explorer\
 	_forktest\
 	_grep\

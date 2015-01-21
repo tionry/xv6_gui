@@ -161,7 +161,7 @@ void drawTextBox(RGB *buf, TextBox *textBox, Window *window)
       i++;
       continue;
     }
-    pos_x += drawCharacter(buf, window->leftTopX + textBox->leftTopX + pos_x,(window->leftTopY + textBox->leftTopY + j) * CHARACTER_HEIGHT,textBox->text[i],0xff,0xff,0xff);    
+    pos_x += drawCharacter(buf, window->leftTopX + textBox->leftTopX + pos_x,(window->leftTopY + textBox->leftTopY + j) * CHARACTER_HEIGHT,textBox->text[i],0x00,0x00,0x00);    
     i++;
   }
 }

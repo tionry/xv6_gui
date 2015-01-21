@@ -43,29 +43,28 @@ int main(int argc,char *argv[])
   addCloseButton(&window, &closeButtonImageView, closeButtonImageViewTemp);
   closeButtonImageView.onLeftClickHandler.handlerFunction = closeWindow;
 
-  addSaveButton(&window,&saveButtonImageView,saveButtonImageViewTemp);
-  saveButtonImageView.onLeftClickHandler.handlerFunction = saveFile;
+//  addSaveButton(&window,&saveButtonImageView,saveButtonImageViewTemp);
+//  saveButtonImageView.onLeftClickHandler.handlerFunction = saveFile;
 
-  if (strcmp(argv[0], "texteditor") != 0)
+  if (strcmp(argv[0], "editor") != 0)
   {
     initText();
     memset(&text_box, 0, sizeof(TextBox));
-    if((fd = open(argv[1], 0)) < 0){
+    if((fd = open(argv[0], 0)) < 0){
       printf(1, "cat: cannot open %s\n", argv[1]);
       exit();
     }
     cat(fd);
       //close(fd);
-	
-    if ((text_box.width > window.width) || (text_box.height > window.height))
-      exit();
+strcpy(text_box.text, "adsfadsf");
     text_box.leftTopX = (window.width >> 1) - (text_box.width >> 1);
     text_box.leftTopY = (window.height >> 1) - (text_box.height >> 1);
-    window.widgets[0].type = textBox;
-    window.widgets[0].context.textBox = &text_box;
-    window.widgetsNum = 1;
+    window.widgets[window.widgetsNum].type = textBox;
+    window.widgets[window.widgetsNum].context.textBox = &text_box;
+    window.widgetsNum++;
   }
-  createWindow(&window);
+printf(1, "haha\n");
+  hWind = createWindow(&window);
   while(1)
   {
     handleEvent(&window);
@@ -95,3 +94,4 @@ void saveFile()
   //file name :text1,text2...
   //file content text_box.content
 }
+

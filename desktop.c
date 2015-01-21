@@ -69,6 +69,14 @@ void iconOnLeftDoubleClick(Widget *widget, Window *window)
         exit();
       }
     }
+    if (strcmp(t, "txt") == 0)
+    {
+      if (fork() == 0)
+      {
+        exec("editor", argv);
+        exit();
+      }
+    }
 }
 
 void
