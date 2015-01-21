@@ -9,6 +9,7 @@ ImageView image;
 struct RGB temp[1310720];
 RGB closeButtonImageViewTemp[100];
 ImageView closeButtonImageView;
+int hWind;
 char *s;
 
 void closeWindow(Widget *widget, Window *window);
@@ -39,14 +40,14 @@ s = argv[0];
     window.widgets[window.widgetsNum].context.imageView = &image;
     window.widgetsNum++;
   }
-  createWindow(&window);
+  hWind = createWindow(&window);
   while (1) handleEvent(&window);
 }
 
 void closeWindow(Widget *widget, Window *window)
 {
 printf(1, "%s\n", s);
-  deleteWindow(window);
+  deleteWindow(hWind);
   exit();
 }
 
