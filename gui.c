@@ -139,29 +139,41 @@ void drawTextBox(RGB *buf, TextBox *textBox, Window *window)
     t = buf + (window->leftTopY + textBox->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + textBox->leftTopX;
     for (i = 0; i < textBox->width; i++)
     {
-      drawPoint(t, 0xff, 0xff, 0xff);
+      drawPoint(t, 0xcc, 0xcc, 0xcc);
       t++;
     }
   }
   i = 0;
   j = 0;
-  pos_x = 2;
+  pos_x = 9;
   
   while(textBox->text[i] != '\0')
   {
-    if(pos_x > (textBox->width - 5))  
+    if(pos_x > (textBox->width - 9))  
     {
       pos_x = 2;
       j++;
     }
+    //printf(1,"%d %d\n",j, pos_x);
     if(textBox->text[i] == '\n')
     {
-      pos_x = 2;
+      pos_x = 9;
       j++;
       i++;
       continue;
     }
-    pos_x += drawCharacter(buf, window->leftTopX + textBox->leftTopX + pos_x,(window->leftTopY + textBox->leftTopY + j) * CHARACTER_HEIGHT,textBox->text[i],0x00,0x00,0x00);    
+    pos_x += drawCharacter(buf, window->leftTopX + textBox->leftTopX + pos_x,window->leftTopY + textBox->leftTopY + j * CHARACTER_HEIGHT,textBox->text[i],0x00,0x00,0x00);  
+    //printf(1,"%c",textBox->text[i]);  
+    if(i == textBox->cursor - 1)
+    {
+      int s;
+      t = buf + (window->leftTopY + textBox->leftTopY + j * 18) * SCREEN_WIDTH + window->leftTopX + textBox->leftTopX + pos_x;
+      for (s = 0; s < CHARACTER_HEIGHT; s++)
+      {
+        drawPoint(t, 0x33, 0x33, 0x33);
+        t += SCREEN_WIDTH;
+      }
+    }
     i++;
   }
 }
