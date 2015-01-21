@@ -29,6 +29,61 @@ fmtname(char *path)
   return p;
 }
 
+void suffix(char *t, char *s)
+{
+  int point = 0;
+
+  while (*s != 0)
+  {
+    if (*s == '.')
+      point = 1;
+    s++;
+  }
+  if (point == 0)
+  {
+    strcpy(t, "");
+    return;
+  }
+  while (*s != '.')
+    s--;
+  s++;
+  strcpy(t, s);
+}
+
+void iconOnLeftDoubleClick(Widget *widget, Window *window)
+{
+  char *s = widget->context.iconView->text;
+  char *argv[] = { s, 0 };
+  char t[256];
+
+  suffix(t, s);
+  if (strcmp(t, "") == 0)
+  {
+    if (fork() == 0)
+    {
+      exec(argv[0], argv);
+      exit();
+    }
+  }
+  else
+    if (strcmp(t, "bmp") == 0)
+    {
+      if (fork() == 0)
+      {
+        exec("imageviewer", argv);
+        exit();
+      }
+    }
+    if (strcmp(t, "txt") == 0)
+    {
+      if (fork() == 0)
+      {
+        exec("editor", argv);
+        exit();
+      }
+    }
+}
+
 void
 ls(char *path)
 {
@@ -72,7 +127,7 @@ ls(char *path)
     icon[i].leftTopX = 50 + (i % 6) * 140;
     icon[i].leftTopY = 50 + (i / 6) * 140;
     icon[i].image = folder[i];
-//    icon[i].onLeftDoubleClickHandler.handlerFunction = iconOnLeftDoubleClick;
+    icon[i].onLeftDoubleClickHandler.handlerFunction = iconOnLeftDoubleClick;
     switch (st.type)
     {
       case T_DIR:
@@ -87,6 +142,7 @@ ls(char *path)
     window.widgets[window.widgetsNum].context.iconView = &icon[i];
     i++;
     window.widgetsNum++;
+    if (i % 4 == 0) updateWindow();
   }
 }
 

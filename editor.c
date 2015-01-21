@@ -4,9 +4,9 @@
 #include "user.h"
 
 
-static TextBox text_box;
+TextBox text_box;
 Window window;
-static int hWind;
+int hWind;
 RGB closeButtonImageViewTemp[100];
 RGB saveButtonImageViewTemp[100];
 ImageView closeButtonImageView;
@@ -45,9 +45,9 @@ int main(int argc,char *argv[])
 
 //  addSaveButton(&window,&saveButtonImageView,saveButtonImageViewTemp);
 //  saveButtonImageView.onLeftClickHandler.handlerFunction = saveFile;
-
+printf(1, "%s\n", argv[0]);
   if (strcmp(argv[0], "editor") != 0)
-  {   
+  {
     memset(&text_box, 0, sizeof(TextBox));
 
     text_box.leftTopX = 2;
