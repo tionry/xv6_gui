@@ -167,18 +167,23 @@ void drawTextBox(RGB *buf, TextBox *textBox, Window *window)
   {
     if(pos_x > (textBox->width - 9))  
     {
-      pos_x = 2;
+      pos_x = 9;
       j++;
     }
-    //printf(1,"%d %d\n",j, pos_x);
+    if(j > textBox ->height / 18 - 2)  return;
+    cprintf("%d %d\n",textBox->cursor, pos_x);
     if(textBox->text[i] == '\n')
     {
       pos_x = 9;
-      j++;
+      j++;      
+      if(i == textBox->cursor - 1)
+      {
+        drawCursor(buf,textBox,window,j,pos_x);
+      }
       i++;
       if(textBox->text[i] == '\0')
-      {
-      drawCursor(buf,textBox,window,j,pos_x);
+      {        
+        break;
       }
       continue;
     }
@@ -190,9 +195,9 @@ void drawTextBox(RGB *buf, TextBox *textBox, Window *window)
     }
     i++;
   }
-  if(i == 0)
+  if(textBox->cursor == 0)
   {
-    drawCursor(buf,textBox,window,j,pos_x);
+    drawCursor(buf,textBox,window,0,9);
   }
 }
 
