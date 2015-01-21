@@ -8,10 +8,13 @@ static TextBox text_box;
 Window window;
 static int hWind;
 RGB closeButtonImageViewTemp[100];
+RGB saveButtonImageViewTemp[100];
 ImageView closeButtonImageView;
+ImageView saveButtonImageView;
 
 static void initText();
 void closeWindow(Widget *widget, Window *window);
+void saveFile();
 
 void cat(int fd)
 {
@@ -25,7 +28,6 @@ void cat(int fd)
   }
 }
 
-
 int main(int argc,char *argv[])
 {
   int fd;
@@ -37,8 +39,13 @@ int main(int argc,char *argv[])
   window.show = 1;
   window.hasCaption = 1;
   strcpy(window.caption, "TextEditor");
+
   addCloseButton(&window, &closeButtonImageView, closeButtonImageViewTemp);
   closeButtonImageView.onLeftClickHandler.handlerFunction = closeWindow;
+
+  addSaveButton(&window,&saveButtonImageView,saveButtonImageViewTemp);
+  saveButtonImageView.onLeftClickHandler.handlerFunction = saveFile;
+
   if (strcmp(argv[0], "texteditor") != 0)
   {
     initText();
@@ -81,4 +88,10 @@ void closeWindow(Widget *widget, Window *window)
 {
   deleteWindow(hWind);
   exit();
+}
+
+void saveFile()
+{
+  //file name :text1,text2...
+  //file content text_box.content
 }
