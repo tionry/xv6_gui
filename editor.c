@@ -50,7 +50,7 @@ int main(int argc,char *argv[])
   {
     initText();
     memset(&text_box, 0, sizeof(TextBox));
-    if((fd = open(argv[1], 0)) < 0){
+    if((fd = open(argv[1], O_RDWR)) < 0){
       printf(1, "cat: cannot open %s\n", argv[1]);
       exit();
     }
@@ -90,8 +90,9 @@ void closeWindow(Widget *widget, Window *window)
   exit();
 }
 
-void saveFile()
+void saveFile(int fd)
 {
   //file name :text1,text2...
   //file content text_box.content
+  
 }
