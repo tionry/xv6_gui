@@ -31,17 +31,47 @@ void insertCharacter(TextBox *textbox, char ch)
   updateLastWindow();
 }
 
-void deleteCharacter(TextBox *textbox)
+void deleteCharacter(TextBox *textbox, unsigned char ch)
 {
-  if (textbox->textLength == 0)
+  int i;//, lineIndex;
+  if (textbox->textLength == 0  || textbox->cursor == 0)
     return;
-  int i;
+  if (ch == 228)
+  {
+    textbox->cursor--;
+    updateLastWindow();
+    return;
+  }
+  if (ch == 229)
+  {
+    if (textbox->text[textbox->cursor] != '\0' && textbox->text[textbox->cursor] != '\n')
+    {
+      textbox->cursor++;
+      updateLastWindow();
+    }
+    return;
+  }
+  if (ch == 226)
+  {
+    // lineIndex = 0;
+    // for (i = textbox->cursor-1; i >=0; i--)
+    // {
+    //   if (textbox->text[i] != '\n')
+    //   {
+    //     lineIndex++;
+    //   }
+    //   else
+    //   {
+    //     break;
+    //   }
+    // }
+    // if (i == -1)
+    //   break;
+  }
   int pos = textbox->cursor;
   int len = textbox->textLength;
-  cprintf("cursor = %d, length = %d\n", pos, len);
   for (i = pos-1; i < len; i++)
   {
-    cprintf("i = %d\n", i);
     textbox->text[i] = textbox->text[i+1];
   }
   textbox->cursor--;
@@ -49,7 +79,7 @@ void deleteCharacter(TextBox *textbox)
   updateLastWindow();
 }
 
-void keyboardHandler(char ch)
+void keyboardHandler(unsigned char ch)
 {
   int i;
   TextBox *textbox = 0;
@@ -62,14 +92,17 @@ void keyboardHandler(char ch)
       break;
     }
   }
+  cprintf("%d\n", ch);
   if (textbox)
   {
     if (ch < 225 && ch !=8)
     {
       insertCharacter(textbox, ch);
     }
-    if (ch == 8)
-      deleteCharacter(textbox);
+    else
+    if (ch == 8|| ch == 228 || ch == 229)
+      deleteCharacter(textbox, ch);
+
   }
   if (proc == 0)
     switchkvm();
