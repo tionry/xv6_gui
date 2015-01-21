@@ -131,7 +131,7 @@ void drawLabel(RGB *buf, Label *label, Window *window)
 
 void drawTextBox(RGB *buf, TextBox *textBox, Window *window)
 {
-  int i, j;
+  int i, j, pos_x;
   RGB *t;
 
   for (j = 0; j < textBox->height; j++)
@@ -143,9 +143,26 @@ void drawTextBox(RGB *buf, TextBox *textBox, Window *window)
       t++;
     }
   }
-  for(j = 0;j < 18;j ++)
+  i = 0;
+  j = 0;
+  pos_x = 2;
+  
+  while(textBox->text[i] != '\0')
   {
-    t = buf + (window->leftTopY + textBox->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + textBox->leftTopX + textBox->cursor;
+    if(pos_x > (textBox->width - 5))  
+    {
+      pos_x = 2;
+      j++;
+    }
+    if(textBox->text[i] == '\n')
+    {
+      pos_x = 2;
+      j++;
+      i++;
+      continue;
+    }
+    pos_x += drawCharacter(buf, window->leftTopX + textBox->leftTopX + pos_x,(window->leftTopY + textBox->leftTopY + j) * CHARACTER_HEIGHT,textBox->text[i],0xff,0xff,0xff);    
+    i++;
   }
 }
 
