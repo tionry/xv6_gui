@@ -147,7 +147,7 @@ void drawTextBox(RGB *buf, TextBox *textBox, Window *window)
   j = 0;
   pos_x = 9;
   
-  cprintf("%s\n", textBox->text);
+  //cprintf("%s\n", textBox->text);
   while(textBox->text[i] != '\0')
   {
     if(pos_x > (textBox->width - 9))  
