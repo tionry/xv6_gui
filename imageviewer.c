@@ -9,6 +9,9 @@ ImageView image;
 struct RGB temp[1310720];
 RGB closeButtonImageViewTemp[100];
 ImageView closeButtonImageView;
+int hWind;
+
+void closeWindow(Widget *widget, Window *window);
 
 int main(int argc, char *argv[])
 {
@@ -21,6 +24,7 @@ int main(int argc, char *argv[])
   window.hasCaption = 1;
   strcpy(window.caption, "ImageViewer");
   addCloseButton(&window, &closeButtonImageView, closeButtonImageViewTemp);
+  closeButtonImageView.onLeftClickHandler.handlerFunction = closeWindow;
   if (strcmp(argv[0], "imageviewer") != 0)
   {
     memset(&image, 0, sizeof(ImageView));
@@ -34,7 +38,13 @@ int main(int argc, char *argv[])
     window.widgets[window.widgetsNum].context.imageView = &image;
     window.widgetsNum++;
   }
-  createWindow(&window);
+  hWind = createWindow(&window);
+  while (1) handleEvent(&window);
+}
+
+void closeWindow(Widget *widget, Window *window)
+{
+  deleteWindow(hWind);
   exit();
 }
 

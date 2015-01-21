@@ -12,6 +12,13 @@ void handleEvent(Window *window)
   for (i = 0; i < window->widgetsNum; i++)
     switch (window->widgets[i].type)
     {
+    case imageView:
+      if ((window->widgets[i].context.imageView->onLeftClickHandler.triggered == 1) && (window->widgets[i].context.imageView->onLeftClickHandler.handlerFunction != 0))
+      {
+        window->widgets[i].context.imageView->onLeftClickHandler.handlerFunction(window->widgets + i, window);
+        window->widgets[i].context.imageView->onLeftClickHandler.triggered = 0;
+      }
+      break;
     case iconView:
       if ((window->widgets[i].context.iconView->onLeftDoubleClickHandler.triggered == 1) && (window->widgets[i].context.iconView->onLeftDoubleClickHandler.handlerFunction != 0))
       {

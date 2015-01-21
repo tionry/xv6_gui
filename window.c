@@ -48,11 +48,11 @@ void addWindow(int x)
   while (p->next != 0)
     p = p->next;
   q = p;
-  p->next = &windowLine[x];
+  p->next = windowLine + x;
   p = p->next;
   p->prev = q;
   p->next = 0;
-  lastWindow = &windowLine[x];
+  lastWindow = windowLine + x;
 }
 
 int sys_createWindow(void)
@@ -74,14 +74,14 @@ int sys_createWindow(void)
 
 int sys_deleteWindow(void)
 {
-  int window;
-  if (argint(0, &window) < 0)
+  int hWind;
+  if (argint(0, &hWind) < 0)
     return -1;
 
   WindowQueue *p = &windowQueue;
   while (p->next != 0)
   {
-    if (p->next->window == (Window*)window)
+    if (p->next == windowLine + hWind)
     {
       p->next->proc = 0;
       p->next->window = 0;

@@ -27,7 +27,7 @@ char* sbrk(int);
 int sleep(int);
 int uptime(void);
 int createWindow(struct Window *window);
-int deleteWindow(struct Window *window);
+int deleteWindow(int hWind);
 
 // ulib.c
 int stat(char*, struct stat*);

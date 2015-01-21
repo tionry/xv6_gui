@@ -114,7 +114,6 @@ ls(char *path)
     icon[i].leftTopX = 50 + (i / 6) * 140;
     icon[i].leftTopY = 50 + (i % 6) * 140;
     icon[i].image = folder[i];
-    icon[i].onLeftDoubleClickHandler.triggered = 0;
     icon[i].onLeftDoubleClickHandler.handlerFunction = iconOnLeftDoubleClick;
     switch (st.type)
     {
