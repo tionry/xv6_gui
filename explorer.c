@@ -54,7 +54,8 @@ void suffix(char *t, char *s)
 void iconOnLeftDoubleClick(Widget *widget, Window *window)
 {
   char *s = widget->context.iconView->text;
-  char *argv[] = { s, 0 };
+  char *argv1[] = { s, 0 };
+  char *argv2[] = { "", s, 0};
   char t[256];
 
   suffix(t, s);
@@ -62,7 +63,7 @@ void iconOnLeftDoubleClick(Widget *widget, Window *window)
   {
     if (fork() == 0)
     {
-      exec(argv[0], argv);
+      exec(argv1[0], argv1);
       exit();
     }
   }
@@ -71,7 +72,8 @@ void iconOnLeftDoubleClick(Widget *widget, Window *window)
     {
       if (fork() == 0)
       {
-        exec("imageviewer", argv);
+        strcpy(argv2[0], "imageviewer");
+        exec(argv2[0], argv2);
         exit();
       }
     }
@@ -79,7 +81,8 @@ void iconOnLeftDoubleClick(Widget *widget, Window *window)
     {
       if (fork() == 0)
       {
-        exec("editor", argv);
+        strcpy(argv2[0], "editor");
+        exec(argv2[0], argv2);
         exit();
       }
     }
@@ -160,8 +163,8 @@ int main(int argc, char *argv[])
   addCloseButton(&window, &closeButtonImageView, closeButtonImageViewTemp);
   closeButtonImageView.onLeftClickHandler.handlerFunction = closeWindow;
   strcpy(wd, ".");
-  if (strcmp(argv[0], "explorer") != 0)
-    strcpy(wd, argv[0]);
+  if (argv[1] != 0)
+    strcpy(wd, argv[1]);
   newFolderButton.width = 100;
   newFolderButton.height = 50;
   newFolderButton.leftTopX = (window.width >> 1) - (newFolderButton.width >> 1);
