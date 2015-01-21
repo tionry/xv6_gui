@@ -61,17 +61,37 @@ int inWindowRange(Window *window, int x, int y)
 int inWidgetRange(Widget* widget, int x, int y)
 {
   int leftTopX, leftTopY, width, height;
-  if (widget->type == iconView)
+
+  switch (widget->type)
   {
+  case button:
+    leftTopX = widget->context.button->leftTopX;
+    leftTopY = widget->context.button->leftTopY;
+    width = widget->context.button->width;
+    height = widget->context.button->height;
+    if (x >= leftTopX && x < leftTopX + width && y >= leftTopY && y < leftTopY + height)
+      return 1;
+    break;
+  case imageView:
+    leftTopX = widget->context.imageView->leftTopX;
+    leftTopY = widget->context.imageView->leftTopY;
+    width = widget->context.imageView->width;
+    height = widget->context.imageView->height;
+    if (x >= leftTopX && x < leftTopX + width && y >= leftTopY && y < leftTopY + height)
+      return 1;
+    break;
+  case iconView:
     leftTopX = widget->context.iconView->leftTopX;
     leftTopY = widget->context.iconView->leftTopY;
     width = widget->context.iconView->width;
     height = widget->context.iconView->height;
     if (x >= leftTopX && x < leftTopX + width && y >= leftTopY && y < leftTopY + height)
-    {
       return 1;
-    }
+    break;
+  default:
+    break;
   }
+
   return 0;
 }
 
@@ -98,7 +118,7 @@ Widget* getClickedWidget(Window* pwindow)
   int x = mouse_info.x_position;
   int y = mouse_info.y_position;
   int i;
-  for (i = 0; i < pwindow->widgetsNum; i++)
+  for (i = pwindow->widgetsNum - 1; i >= 0; i--)
   {
     if (inWidgetRange(pwindow->widgets + i, x, y))
     {
@@ -113,7 +133,6 @@ void handleLeftClick()
   WindowQueue *pwindowQueue;
   Widget *pwidget;
 
-  cli();
   pwindowQueue = getClickedWindowQueue();
   if (pwindowQueue)
   {
@@ -121,15 +140,22 @@ void handleLeftClick()
       reorderQueue(pwindowQueue);
     pwidget = getClickedWidget(pwindowQueue->window);
     if (pwidget)
-    {
-      cprintf("hit.\n");
-    }
+      switch (pwidget->type)
+      {
+      case button:
+        pwidget->context.button->onLeftClickHandler.triggered = 1;
+        break;
+      case imageView:
+        pwidget->context.imageView->onLeftClickHandler.triggered = 1;
+        break;
+      default:
+        break;
+      }
   }
   if (proc == 0)
     switchkvm();
   else
     switchuvm(proc);
-  sti();
 }
 
 void handleLeftDoubleClick()
@@ -137,7 +163,6 @@ void handleLeftDoubleClick()
   WindowQueue *pwindowQueue;
   Widget *pwidget;
 
-  cli();
   pwindowQueue = getClickedWindowQueue();
   if (pwindowQueue)
   {
@@ -156,7 +181,6 @@ void handleLeftDoubleClick()
     switchkvm();
   else
     switchuvm(proc);
-  sti();
 }
 
 void handleRightClick()
@@ -164,21 +188,18 @@ void handleRightClick()
   WindowQueue *pwindowQueue;
   Widget *pwidget;
 
-  cli();
   pwindowQueue = getClickedWindowQueue();
   if (pwindowQueue)
   {
     pwidget = getClickedWidget(pwindowQueue->window);
     if (pwidget)
     {
-      cprintf("show menu.\n");
     }
   }
   if (proc == 0)
     switchkvm();
   else
     switchuvm(proc);
-  sti();
 }
 
 WindowQueue* getDraggedWindowQueue()
@@ -206,7 +227,6 @@ WindowQueue* getDraggedWindowQueue()
 
 void handleMouseDrag()
 {
-  cli();
   if (drag_state == 0)
   {
     pwque = getDraggedWindowQueue();
@@ -222,7 +242,6 @@ void handleMouseDrag()
   else
   if (drag_state == 1)
   {
-    //cprintf("move : from (%d, %d) to (%d, %d)\n", mouse_info.x_position, mouse_info.y_position, down_pos_x, down_pos_y);
     switchuvm(pwque->proc);
     counter = (counter + 1) % 20;
     if (counter == 0)
@@ -235,7 +254,6 @@ void handleMouseDrag()
     switchkvm();
   else
     switchuvm(proc);
-  sti();
 }
 
 void moveMousePosition(int x, int y)
@@ -260,7 +278,6 @@ void setMousePosition(int x, int y)
 
 void updateMouseEvent(uint tick, int x, int y)
 {
-  //cprintf("tick = %d\n", tick);
   event = 0;
   if (left_down)
   {
@@ -314,22 +331,18 @@ void updateMouseEvent(uint tick, int x, int y)
   if (event == LEFT_CLICK)
   {
     handleLeftClick();
-    //cprintf("LEFT_CLICK\n");
   }
   if (event == LEFT_DOUBLE_CLICK)
   {
     handleLeftDoubleClick();
-    //cprintf("LEFT_DOUBLE_CLICK\n");
   }
   if (event == MOUSE_DRAGGING)
   {
     handleMouseDrag();
-    //cprintf("MOUSE_DRAGGING\n");
    }
   if (event == RIGHT_CLICK)
   {
     handleRightClick();
-    //cprintf("RIGHT_CLICK\n");
   }
   if (event == 0)
   {
@@ -346,14 +359,12 @@ void mouseint(uint tick)
   ch = inb(0x64);
   if ((ch & 0x01) == 0)
   {
-    //cprintf("no data\n");
     to_read = READ_MOUSE_INFO;
     return;
   }
 
   acquire(&mouse_lock);
   ch = inb(0x60);
-  //cprintf("ch=%d\n", ch);
   if (to_read == READ_MOUSE_INFO)
   {
     if ((ch & 0x08) == 0 || (ch & 0x04) != 0)
@@ -362,17 +373,12 @@ void mouseint(uint tick)
       	release(&mouse_lock);
       	return;
     }
-    //cprintf("Counter: %d\n", counter++);
     left_down = (ch & 0x01) ? 1 : 0;
     right_down = (ch & 0x02) ? 1 : 0;
     x_sign = (ch & 0x10) ? 1 : 0;
     y_sign = (ch & 0x20) ? 1 : 0;
     x_overflow = (ch & 0x40) ? 1 : 0;
     y_overflow = (ch & 0x80) ? 1 : 0;
-
-    //cprintf("mouse_down: left_down=%d, right_down=%d\n", left_down, right_down);
-    //cprintf("move direction: x_sign=%d, y_sign=%d\n", x_sign, y_sign);
-    //cprintf("overflow: x_overflow = %d, y_overflow = %d\n",x_overflow,  y_overflow);
     to_read = READ_X_MOVEMENT;
     release(&mouse_lock);
     return;
@@ -382,10 +388,8 @@ void mouseint(uint tick)
     dis_x = ch;
     if (x_sign == 1)
       	dis_x = ch - 256;
-    	//cprintf("x_movement: %d\n", dis);
     	to_read = READ_Y_MOVEMENT;
     	release(&mouse_lock);
-    	//moveMousePosition(dis, 0);
     	return;
   }
   else if (to_read == READ_Y_MOVEMENT)
@@ -394,11 +398,10 @@ void mouseint(uint tick)
     if (y_sign == 1)
       dis_y = ch - 256;
     dis_y = - dis_y;
-    //cprintf("y_movement: %d\n", dis);
     to_read = READ_MOUSE_INFO;
     release(&mouse_lock);
-    //cprintf("x: %d, y: %d\n", mouse_info.x_position, mouse_info.y_position);
     updateMouseEvent(tick, mouse_info.x_position + dis_x, mouse_info.y_position +dis_y);
     moveMousePosition(dis_x, dis_y);
   }
 }
+

@@ -191,7 +191,7 @@ void            clearpteu(pde_t *pgdir, char *uva);
 
 // window.c
 void            initWindow();
-int               createWindow(int leftTopX, int leftTopY, int width, int height);
+int             createWindow(int leftTopX, int leftTopY, int width, int height);
 void            deleteWindow(int x);
 void            moveWindow(struct Window *window, int fx, int fy, int tx, int ty, int isdraw);
 void            reorderQueue(struct WindowQueue *q);

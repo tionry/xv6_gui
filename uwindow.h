@@ -46,12 +46,14 @@ typedef struct Button
 {
   int leftTopX, leftTopY, width, height;
   char text[MAX_STRING_NUM];
+  Handler onLeftClickHandler;
 } Button;
 
 typedef struct ImageView
 {
   int leftTopX, leftTopY, width, height;
   struct RGB *image;
+  Handler onLeftClickHandler;
 } ImageView;
 
 typedef struct IconView
