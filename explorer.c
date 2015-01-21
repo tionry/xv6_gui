@@ -196,8 +196,8 @@ int main(int argc, char *argv[])
   filenameBox.leftTopX = 20;
   filenameBox.leftTopY = window.height - BORDER_WIDTH - filenameBox.height - 10;
   strcpy(filenameBox.text, "NewFolderName");
-  filenameBox.cursor = 0;
-  filenameBox.semoph = 1;
+  filenameBox.cursor = 13;
+  filenameBox.textLength = 13;
   window.widgets[window.widgetsNum].type = textBox;
   window.widgets[window.widgetsNum].context.textBox = &filenameBox;
   window.widgetsNum++;
