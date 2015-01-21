@@ -89,9 +89,10 @@ void closeWindow(Widget *widget, Window *window)
   exit();
 }
 
-void saveFile()
+void saveFile(int fd)
 {
   //file name :text1,text2...
   //file content text_box.content
+  
 }
 
