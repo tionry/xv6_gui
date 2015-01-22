@@ -166,6 +166,8 @@ UPROGS=\
 	_imageviewer\
 	_init\
 	_mkdir\
+	_sh\
+	_ls\
 
 fs.img: mkfs README.txt desktop_background.bmp folder.bmp file.bmp $(UPROGS)
 	./mkfs fs.img README.txt desktop_background.bmp folder.bmp file.bmp $(UPROGS)

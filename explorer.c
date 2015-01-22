@@ -243,7 +243,7 @@ void newFolder(Widget *widget, Window *window)
 
 void refresh(Widget *widget, Window *window)
 {
-  window->widgetsNum = 2;
+  window->widgetsNum = 3;
   updateWindow();
   ls(wd);
   updateWindow();
