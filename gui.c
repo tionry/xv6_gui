@@ -643,7 +643,10 @@ void focusIconView(IconView *icon)
   if (focusIcon)
   {
     if (focusIcon == icon)
+    {
+      release(&gui_lock);
       return;
+    }
     for (i = 0; i < size; i++)
     {
       x = i % 96;
@@ -726,3 +729,4 @@ void focusDismiss()
     switchuvm(proc);
   release(&gui_lock);
 }
+

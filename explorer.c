@@ -218,6 +218,7 @@ int main(int argc, char *argv[])
 
 void closeWindow(Widget *widget, Window *window)
 {
+  wait();
   deleteWindow(hWind);
   exit();
 }
