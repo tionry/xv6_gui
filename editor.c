@@ -162,7 +162,7 @@ void saveFile(Widget *widget, Window *window)
     }
     isNewFile = 1;
   }
-
+printf(1, "%s\n%d\n", text_box.text, strlen(text_box.text));
   write(fd, text_box.text, strlen(text_box.text));
   close(fd);
   if (isNewFile)

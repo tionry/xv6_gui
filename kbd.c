@@ -19,29 +19,27 @@ extern WindowQueue *lastWindow;
 void insertCharacter(TextBox *textbox, unsigned char ch)
 {
   int i;
-  int pos = textbox->cursor;
-  int len = textbox->textLength++;
+  int pos = (textbox->cursor++);
+  int len = (++textbox->textLength);
   for (i = len; i > pos; i--)
-  {
     textbox->text[i] = textbox->text[i - 1];
-  }
   textbox->text[i] = ch;
-  textbox->cursor++;
-  textbox->textLength++;
   updateLastWindow();
 }
 
 void deleteCharacter(TextBox *textbox)
 {
   int i;
-  int pos = textbox->cursor;
-  int len = textbox->textLength;
-  for (i = pos-1; i < len; i++)
+  int pos = (textbox->cursor--);
+  int len = (textbox->textLength--);
+  if (pos == 0)
   {
-    textbox->text[i] = textbox->text[i+1];
+    textbox->cursor++;
+    textbox->textLength++;
+    return;
   }
-  textbox->cursor--;
-  textbox->textLength--;
+  for (i = pos - 1; i < len; i++)
+    textbox->text[i] = textbox->text[i + 1];
   updateLastWindow();
 }
 
@@ -69,7 +67,7 @@ void moveCursor(TextBox *textbox, unsigned char ch)
   if (ch == 226)
   {
     lineIndex = 0;
-    for (i = textbox->cursor-1; i >=0; i--)
+    for (i = textbox->cursor - 1; i >= 0; i--)
     {
       if (textbox->text[i] != '\n')
         lineIndex++;
@@ -78,44 +76,43 @@ void moveCursor(TextBox *textbox, unsigned char ch)
     }
     if (i == -1)
       return;
-    for (j = i-1; j >= 0; j--)
+    for (j = i - 1; j >= 0; j--)
     {
       if (textbox->text[j] == '\n')
         break;
     }
-    if (i < j+1+lineIndex)
+    if (i < j + 1 + lineIndex)
       textbox->cursor = i;
     else
-      textbox->cursor = j+1+lineIndex;
+      textbox->cursor = j + 1 + lineIndex;
     updateLastWindow();
   }
   if (ch == 227)
   {
     lineIndex = 0;
-    for (i = textbox->cursor-1; i >=0; i--)
+    for (i = textbox->cursor - 1; i >= 0; i--)
     {
       if (textbox->text[i] != '\n')
         lineIndex++;
       else
         break;
     }
-    for (j = i+1; j <textbox->textLength; j++)
+    for (j = i + 1; j <= textbox->textLength; j++)
     {
       if (textbox->text[j] == '\n')
         break;
       if (textbox->text[j] == '\0')
         return;
     }
-    for (i = j+1; i < textbox->textLength; i++)
+    for (i = j + 1; i <= textbox->textLength; i++)
     {
       if (textbox->text[i] == '\n' || textbox->text[i] == '\0')
         break;
     }
-    if (i < j + lineIndex + 1)
+    if (i < j + 1 + lineIndex)
       textbox->cursor = i;
     else
-      textbox->cursor = j+1+lineIndex;
-   //cprintf("cursor : %d\n", textbox->cursor);
+      textbox->cursor = j + 1 + lineIndex;
     updateLastWindow();
   }
 }
@@ -133,13 +130,10 @@ void keyboardHandler(unsigned char ch)
       break;
     }
   }
-  //cprintf("%d\n", ch);
   if (textbox)
   {
     if (ch < 225 && ch !=8)
-    {
       insertCharacter(textbox, ch);
-    }
     else
     if (ch == 8)
       deleteCharacter(textbox);
