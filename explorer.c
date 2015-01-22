@@ -219,7 +219,6 @@ int main(int argc, char *argv[])
 void closeWindow(Widget *widget, Window *window)
 {
   deleteWindow(hWind);
-  wait();
   exit();
 }
 
@@ -229,15 +228,7 @@ void newFolder(Widget *widget, Window *window)
   strcpy(s, wd);
   strcat(s, "/");
   strcat(s, filenameBox.text);
-
-  char *argv[] = { "mkdir", s, 0 };
-
-  if (fork() == 0)
-  {
-    exec(argv[0], argv);
-    exit();
-  }
-  wait();
+  mkdir(s);
   fileSystemChanged();
 }
 

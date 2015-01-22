@@ -636,6 +636,7 @@ void updateMouse()
 void focusIconView(IconView *icon)
 {
   int size = 0, i, x, y;
+  acquire(&gui_lock);
   switchuvm(lastWindow->proc);
   Window *window = lastWindow->window;
   size = 96 * 96;
@@ -684,12 +685,14 @@ void focusIconView(IconView *icon)
     switchkvm();
   else
     switchuvm(proc);
+  release(&gui_lock);
 }
 
 void focusDismiss()
 {
   // cprintf("dismiss!\n");
   int size , i, x, y;
+  acquire(&gui_lock);
   switchuvm(lastWindow->proc);
   Window *window = lastWindow->window;
   size = 96 * 96;
@@ -721,4 +724,5 @@ void focusDismiss()
     switchkvm();
   else
     switchuvm(proc);
+  release(&gui_lock);
 }
