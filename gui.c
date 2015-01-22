@@ -161,6 +161,28 @@ void drawTextBox(RGB *buf, TextBox *textBox, Window *window)
       t++;
     }
   }
+
+  for (j = 0; j < textBox->height; j++)
+  {
+    t = buf + (window->leftTopY + textBox->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + textBox->leftTopX;
+    drawPoint(t, 0x00, 0x00, 0x00);
+    t += textBox->width;
+    drawPoint(t, 0x00, 0x00, 0x00);
+  }
+
+  t =  buf + (window->leftTopY + textBox->leftTopY) * SCREEN_WIDTH + window->leftTopX + textBox->leftTopX;
+  for (i = 0; i < textBox->width-1; i++)
+  {
+     drawPoint(t, 0x00, 0x00, 0x00);
+     t++;
+  }
+  t =  buf + (window->leftTopY + textBox->leftTopY + textBox->height - 1) * SCREEN_WIDTH + window->leftTopX + textBox->leftTopX;
+  for (i = 0; i < textBox->width-1; i++)
+  {
+     drawPoint(t, 0x00, 0x00, 0x00);
+     t++;
+  }
+  
   i = 0;
   j = 0;
   pos_x = 9;
