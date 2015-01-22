@@ -13,6 +13,7 @@ RGB saveButtonImageViewTemp[100];
 ImageView closeButtonImageView;
 ImageView saveButtonImageView;
 Button saveFileButton;
+RGB buttons[1000];
 
 Window dialog;
 TextBox filenameBox;
@@ -44,10 +45,11 @@ int main(int argc,char *argv[])
   memset(&mainwindow, 0, sizeof(Window));
   mainwindow.leftTopX = 300;
   mainwindow.leftTopY = 200;
-  mainwindow.width = 600;
-  mainwindow.height = 500;
+  mainwindow.width = 800;
+  mainwindow.height = 600;
   mainwindow.show = 1;
   mainwindow.hasCaption = 1;
+  mainwindow.hasMenu = 1;
   mainwindow.hasFooter = 1;
   addCloseButton(&mainwindow, &closeButtonImageView, closeButtonImageViewTemp);
   closeButtonImageView.onLeftClickHandler.handlerFunction = closeWindow;
@@ -71,17 +73,19 @@ int main(int argc,char *argv[])
     text_box.textLength = 0;
   }
   text_box.leftTopX = 10;
-  text_box.leftTopY = 30;
-  text_box.width = 580;
-  text_box.height = 435;
+  text_box.leftTopY = 105;
+  text_box.width = 780;
+  text_box.height = 465;
   mainwindow.widgets[mainwindow.widgetsNum].type = textBox;
   mainwindow.widgets[mainwindow.widgetsNum].context.textBox = &text_box;
   mainwindow.widgetsNum++;
   memset(&saveFileButton, 0, sizeof(Button));
   saveFileButton.width = 100;
   saveFileButton.height = 50;
-  saveFileButton.leftTopX = (mainwindow.width >> 1) - (saveFileButton.width >> 1);
-  saveFileButton.leftTopY = mainwindow.height - BORDER_WIDTH - saveFileButton.height - 20;
+  saveFileButton.leftTopX = 30;
+  saveFileButton.leftTopY = 50;
+  saveFileButton.image = buttons;
+  readBitmapFile("logo.bmp", saveFileButton.image, &saveFileButton.height, &saveFileButton.width);
   strcpy(saveFileButton.text, "Save");
   saveFileButton.onLeftClickHandler.handlerFunction = showDialog;
   mainwindow.widgets[mainwindow.widgetsNum].type = button;

@@ -187,9 +187,6 @@ ls(char *path)
         if (tmpName[j+1] == 't' && tmpName[j+2] == 'x' && tmpName[j+3] == 't')
           readBitmapFile("text.bmp", icon[i].image, &icon[i].height, &icon[i].width);
         else
-        if (tmpName[j-1] == 'r' && tmpName[j-2] == 'e' && tmpName[j-3] == 'r')
-          readBitmapFile("folder.bmp", icon[i].image, &icon[i].height, &icon[i].width);
-        else
           readBitmapFile("exec.bmp", icon[i].image, &icon[i].height, &icon[i].width);
         break;
     }
