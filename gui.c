@@ -165,21 +165,21 @@ void drawTextBox(RGB *buf, TextBox *textBox, Window *window)
   for (j = 0; j < textBox->height; j++)
   {
     t = buf + (window->leftTopY + textBox->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + textBox->leftTopX;
-    drawPoint(t, 0x00, 0x00, 0x00);
-    t += textBox->width;
-    drawPoint(t, 0x00, 0x00, 0x00);
+    drawPoint(t, 0xcc, 0xcc, 0xcc);
+    t += textBox->width - 1;
+    drawPoint(t, 0xcc, 0xcc, 0xcc);
   }
 
   t =  buf + (window->leftTopY + textBox->leftTopY) * SCREEN_WIDTH + window->leftTopX + textBox->leftTopX;
   for (i = 0; i < textBox->width-1; i++)
   {
-     drawPoint(t, 0x00, 0x00, 0x00);
+     drawPoint(t, 0xcc, 0xcc, 0xcc);
      t++;
   }
   t =  buf + (window->leftTopY + textBox->leftTopY + textBox->height - 1) * SCREEN_WIDTH + window->leftTopX + textBox->leftTopX;
   for (i = 0; i < textBox->width-1; i++)
   {
-     drawPoint(t, 0x00, 0x00, 0x00);
+     drawPoint(t, 0xcc, 0xcc, 0xcc);
      t++;
   }
 
@@ -256,9 +256,13 @@ void drawButton(RGB *buf, Button *button, Window *window)
       }
     }
   }
-
-  len = strlen(button->text);
-  drawCharacters(buf, window->leftTopX + button->leftTopX + button->width / 2 - len * 9 / 2, window->leftTopY + button->leftTopY + button->height / 3, button->text, 0, 0, 0);
+  if (window->hasMenu)
+    drawCharacters(buf, window->leftTopX + button->leftTopX + button->width + 10, window->leftTopY + button->leftTopY + button->height / 3, button->text, 0, 0, 0);
+  else
+  {
+    len = strlen(button->text);
+    drawCharacters(buf, window->leftTopX + button->leftTopX + button->width / 2 - len * 9 / 2, window->leftTopY + button->leftTopY + button->height / 3, button->text, 0, 0, 0);
+  }
 }
 
 void drawImageView(RGB *buf, ImageView *imageView, Window *window)
@@ -326,10 +330,13 @@ void drawWindow(RGB *buf, Window *window, int focus)
       t = buf + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
       for (i = 0; i < window->width; i++)
       {
-        if (j < window->height - BORDER_WIDTH - MENU_HEIGHT)
-          drawPoint(t, 0xff, 0xff, 0xff);
+        if (j < CAPTION_HEIGHT + MENU_HEIGHT && window->hasMenu)
+          drawPoint(t, 220,226,241);
         else
-          drawPoint(t, 227,237,205);
+        if (j == CAPTION_HEIGHT + MENU_HEIGHT && window->hasMenu)
+          drawPoint(t, 0xcc, 0xcc, 0xcc);
+        else
+          drawPoint(t, 0xff, 0xff, 0xff);
         t++;
       }
     }
@@ -422,22 +429,23 @@ void drawWindow(RGB *buf, Window *window, int focus)
     t = buf + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + window->width;
     drawPoint(t, 0xff, 0xff, 0xff);
   }
-  //draw close
-  // for (i = 0; i < 10; i++)
-  // {
-  //   t = buf + (window->leftTopY + 10 + i) * SCREEN_WIDTH + window->leftTopX + window->width - BORDER_WIDTH - 10 + i;
-  //   for (k = 0; k < 2; k++)
-  //   {
-  //     drawPoint(t, 0x00, 0x00, 0x00);
-  //     t++;
-  //   }
-  //   t = buf + (window->leftTopY + 10 + i) * SCREEN_WIDTH + window->leftTopX + window->width - BORDER_WIDTH - 1 - i;
-  //   for (k = 0; k < 2; k++)
-  //   {
-  //     drawPoint(t, 0x00, 0x00, 0x00);
-  //     t++;
-  //   }
-  // }
+  //draw footer
+  if (window->hasFooter)
+  {
+    for (j = window->height - BORDER_WIDTH - FOOTER_HEIGHT - 1; j < window->height - BORDER_WIDTH; j++)
+    {
+      t = buf + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + BORDER_WIDTH;
+      for (i = BORDER_WIDTH + 1; i < window->width - BORDER_WIDTH + 1; i++)
+      {
+        if (j == window->height - BORDER_WIDTH- FOOTER_HEIGHT - 1)
+          drawPoint(t - SCREEN_WIDTH, 0xcc, 0xcc, 0xcc);
+        drawPoint(t, 220,226,241);
+        t++;
+      }
+    }
+    len = strlen("COOL GUI\0");
+    drawCharacters(buf, window->leftTopX + window->width - len * 9 - 20, window->leftTopY + window->height - 30, "COOL GUI\0", 0, 0, 0);
+  }
 }
 
 void drawBackWindows()
@@ -722,7 +730,7 @@ void focusIconView(IconView *icon)
     if (isAlpha(&(focusIcon->image[i])))
     {
       isBg[i] = 1;
-      drawPoint(&(focusIcon->image[i]), 0, 128, 255);
+      drawPoint(&(focusIcon->image[i]), 145, 210, 228);
     }
   }
   drawIconView(screen_temp2, focusIcon, window);
@@ -739,7 +747,7 @@ void focusDismiss()
   // cprintf("dismiss!\n");
   //return;
   int size , i, x, y;
-  //acquire(&gui_lock);
+  acquire(&gui_lock);
   switchuvm(lastWindow->proc);
   Window *window = lastWindow->window;
   size = 96 * 96;
@@ -771,6 +779,6 @@ void focusDismiss()
     switchkvm();
   else
     switchuvm(proc);
-  //release(&gui_lock);
+  release(&gui_lock);
 }
 

@@ -22,6 +22,8 @@ int main(int argc, char *argv[])
   window.height = 500;
   window.show = 1;
   window.hasCaption = 1;
+  window.hasMenu = 0;
+  window.hasFooter = 1;
   strcpy(window.caption, "ImageViewer");
   addCloseButton(&window, &closeButtonImageView, closeButtonImageViewTemp);
   closeButtonImageView.onLeftClickHandler.handlerFunction = closeWindow;

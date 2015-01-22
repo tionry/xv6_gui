@@ -166,8 +166,8 @@ UPROGS=\
 	_imageviewer\
 	_init\
 
-fs.img: mkfs README.txt desktop_background.bmp folder.bmp file.bmp folder-plus.bmp  undo2.bmp $(UPROGS)
-	./mkfs fs.img README.txt desktop_background.bmp folder.bmp file.bmp folder-plus.bmp undo2.bmp $(UPROGS)
+fs.img: mkfs README.txt desktop_background.bmp folder.bmp file.bmp folder-plus.bmp  undo2.bmp photo.bmp text.bmp exec.bmp $(UPROGS)
+	./mkfs fs.img README.txt desktop_background.bmp folder.bmp file.bmp folder-plus.bmp undo2.bmp photo.bmp text.bmp exec.bmp $(UPROGS)
 
 -include *.d
 

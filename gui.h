@@ -2,9 +2,9 @@
 #define SCREEN_WIDTH   1280
 #define SCREEN_HEIGHT  1024
 #define CAPTION_HEIGHT 30
-#define MENU_HEIGHT 100
+#define MENU_HEIGHT 70
 #define BORDER_WIDTH 10
-
+#define FOOTER_HEIGHT 25
 #ifndef __ASSEMBLER__
 
 typedef struct GUI_MODE_INFO

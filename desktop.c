@@ -114,7 +114,7 @@ ls(char *path)
   int fd;
   struct dirent de;
   struct stat st;
-  int i = 0;
+  int i = 0, j;
 
   if ((fd = open(path, 0)) < 0) 
   {
@@ -151,13 +151,27 @@ ls(char *path)
     icon[i].leftTopY = 50 + (i % 6) * 140;
     icon[i].image = folder[i];
     icon[i].onLeftDoubleClickHandler.handlerFunction = iconOnLeftDoubleClick;
+    for (j = 0; j < strlen(tmpName); j++)
+    {
+      if (tmpName[j] == '.')
+        break;
+    }
     switch (st.type)
     {
       case T_DIR:
         readBitmapFile("folder.bmp", icon[i].image, &icon[i].height, &icon[i].width);
         break;
       case T_FILE:
-        readBitmapFile("file.bmp", icon[i].image, &icon[i].height, &icon[i].width);
+        if (tmpName[j+1] == 'b' && tmpName[j+2] == 'm' && tmpName[j+3] == 'p')
+          readBitmapFile("photo.bmp", icon[i].image, &icon[i].height, &icon[i].width);
+        else
+        if (tmpName[j+1] == 't' && tmpName[j+2] == 'x' && tmpName[j+3] == 't')
+          readBitmapFile("text.bmp", icon[i].image, &icon[i].height, &icon[i].width);
+        else
+        if (tmpName[j-1] == 'r' && tmpName[j-2] == 'e' && tmpName[j-3] == 'r')
+          readBitmapFile("folder.bmp", icon[i].image, &icon[i].height, &icon[i].width);
+        else
+          readBitmapFile("exec.bmp", icon[i].image, &icon[i].height, &icon[i].width);
         break;
     }
     strcpy(icon[i].text, tmpName);

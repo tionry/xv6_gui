@@ -133,7 +133,7 @@ ls(char *path)
   int fd;
   struct dirent de;
   struct stat st;
-  int i = 0;
+  int i = 0, j;
 
   if ((fd = open(path, 0)) < 0) 
   {
@@ -167,16 +167,30 @@ ls(char *path)
     }
     memset(icon + i, 0, sizeof(IconView));
     icon[i].leftTopX = 50 + (i % 6) * 140;
-    icon[i].leftTopY = 50 + (i / 6) * 140;
+    icon[i].leftTopY = 150 + (i / 6) * 140;
     icon[i].image = folder[i];
     icon[i].onLeftDoubleClickHandler.handlerFunction = iconOnLeftDoubleClick;
+    for (j = 0; j < strlen(tmpName); j++)
+    {
+      if (tmpName[j] == '.')
+        break;
+    }
     switch (st.type)
     {
       case T_DIR:
         readBitmapFile("folder.bmp", icon[i].image, &icon[i].height, &icon[i].width);
         break;
       case T_FILE:
-        readBitmapFile("file.bmp", icon[i].image, &icon[i].height, &icon[i].width);
+        if (tmpName[j+1] == 'b' && tmpName[j+2] == 'm' && tmpName[j+3] == 'p')
+          readBitmapFile("photo.bmp", icon[i].image, &icon[i].height, &icon[i].width);
+        else
+        if (tmpName[j+1] == 't' && tmpName[j+2] == 'x' && tmpName[j+3] == 't')
+          readBitmapFile("text.bmp", icon[i].image, &icon[i].height, &icon[i].width);
+        else
+        if (tmpName[j-1] == 'r' && tmpName[j-2] == 'e' && tmpName[j-3] == 'r')
+          readBitmapFile("folder.bmp", icon[i].image, &icon[i].height, &icon[i].width);
+        else
+          readBitmapFile("exec.bmp", icon[i].image, &icon[i].height, &icon[i].width);
         break;
     }
     strcpy(icon[i].text, tmpName);
@@ -197,6 +211,8 @@ int main(int argc, char *argv[])
   window.height = 800;
   window.show = 1;
   window.hasCaption = 1;
+  window.hasMenu = 1;
+  window.hasFooter = 1;
   strcpy(window.caption, "Explorer:/");
   window.onFileSystemChangedHandler.handlerFunction = refresh;
   addCloseButton(&window, &closeButtonImageView, closeButtonImageViewTemp);
@@ -211,11 +227,11 @@ int main(int argc, char *argv[])
   }
   newFolderButton.width = 100;
   newFolderButton.height = 50;
-  newFolderButton.leftTopX = (window.width >> 2);
-  newFolderButton.leftTopY = window.height - BORDER_WIDTH - newFolderButton.height - 10;
+  newFolderButton.leftTopX = 200;
+  newFolderButton.leftTopY = CAPTION_HEIGHT + BORDER_WIDTH + 10;
   newFolderButton.image = buttons[0];
   readBitmapFile("folder-plus.bmp", newFolderButton.image, &newFolderButton.height, &newFolderButton.width);
-  //strcpy(newFolderButton.text, "New Folder");
+  strcpy(newFolderButton.text, "Folder");
   newFolderButton.onLeftClickHandler.handlerFunction = showDialog;
   window.widgets[window.widgetsNum].type = button;
   window.widgets[window.widgetsNum].context.button = &newFolderButton;
@@ -223,11 +239,11 @@ int main(int argc, char *argv[])
 
   backupButton.width = 100;
   backupButton.height = 50;
-  backupButton.leftTopX = newFolderButton.leftTopX * 3;
+  backupButton.leftTopX = 60;
   backupButton.leftTopY = newFolderButton.leftTopY;
   backupButton.image = buttons[1];
   readBitmapFile("undo2.bmp", backupButton.image, &backupButton.height, &backupButton.width);
-  //strcpy(backupButton.text, "Backup");
+  strcpy(backupButton.text, "Back");
   backupButton.onLeftClickHandler.handlerFunction = backup;
   window.widgets[window.widgetsNum].type = button;
   window.widgets[window.widgetsNum].context.button = &backupButton;

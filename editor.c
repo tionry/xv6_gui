@@ -48,6 +48,7 @@ int main(int argc,char *argv[])
   mainwindow.height = 500;
   mainwindow.show = 1;
   mainwindow.hasCaption = 1;
+  mainwindow.hasFooter = 1;
   addCloseButton(&mainwindow, &closeButtonImageView, closeButtonImageViewTemp);
   closeButtonImageView.onLeftClickHandler.handlerFunction = closeWindow;
   memset(&text_box, 0, sizeof(TextBox));
@@ -72,7 +73,7 @@ int main(int argc,char *argv[])
   text_box.leftTopX = 10;
   text_box.leftTopY = 30;
   text_box.width = 580;
-  text_box.height = 460;
+  text_box.height = 435;
   mainwindow.widgets[mainwindow.widgetsNum].type = textBox;
   mainwindow.widgets[mainwindow.widgetsNum].context.textBox = &text_box;
   mainwindow.widgetsNum++;
