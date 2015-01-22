@@ -160,25 +160,12 @@ mkfs: mkfs.c fs.h
 .PRECIOUS: %.o
 
 UPROGS=\
-	_cat\
 	_desktop\
-	_echo\
 	_editor\
 	_explorer\
-	_forktest\
-	_grep\
 	_imageviewer\
 	_init\
-	_kill\
-	_ln\
-	_ls\
 	_mkdir\
-	_rm\
-	_sh\
-	_stressfs\
-	_usertests\
-	_wc\
-	_zombie\
 
 fs.img: mkfs README.txt desktop_background.bmp folder.bmp file.bmp $(UPROGS)
 	./mkfs fs.img README.txt desktop_background.bmp folder.bmp file.bmp $(UPROGS)
