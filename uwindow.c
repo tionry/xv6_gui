@@ -59,18 +59,9 @@ void addCloseButton(Window *window, ImageView *closeButtonImageView, RGB *closeB
   for (j = 0; j < closeButtonImageView->height; j++)
     for (i = 0; i < closeButtonImageView->width; i++)
     {
-      if (i >=2 && i <= 7 && (i == j  || (i+j) == 9))
-      {
-        t->R = 0x00;
-        t->G = 0x00;
-        t->B = 0x00;
-      }
-      else
-      {
-        t->R = 0xff;
-        t->G = 0xff;
-        t->B = 0xff;
-      }
+      t->R = 0xff;
+      t->G = 0x00;
+      t->B = 0x00;
       t++;
     }
   window->widgets[window->widgetsNum].type = imageView;

@@ -317,7 +317,7 @@ void drawWindow(RGB *buf, Window *window, int focus)
       for (i = 0; i < window->width; i++)
       {
         if (focus)
-          drawPoint(t, 145, 210, 228);
+          drawPoint(t, 226, 149, 91);
         else
           drawPoint(t, 0xbb, 0xbb, 0xbb);
         t++;
@@ -360,7 +360,7 @@ void drawWindow(RGB *buf, Window *window, int focus)
     for (i = 0; i < BORDER_WIDTH; i++)
     {
         if (focus)
-          drawPoint(t, 145, 210, 228);
+          drawPoint(t,  226, 149, 91);
         else
           drawPoint(t, 0xbb, 0xbb, 0xbb);
       t++;
@@ -372,7 +372,7 @@ void drawWindow(RGB *buf, Window *window, int focus)
     for (i = window->width - BORDER_WIDTH; i < window->width; i++)
     {
         if (focus)
-          drawPoint(t, 145, 210, 228);
+          drawPoint(t, 226, 149, 91);
         else
           drawPoint(t, 0xbb, 0xbb, 0xbb);
       t++;
@@ -384,7 +384,7 @@ void drawWindow(RGB *buf, Window *window, int focus)
     for (i = 0; i < window->width; i++)
     {
         if (focus)
-          drawPoint(t, 145, 210, 228);
+          drawPoint(t, 226, 149, 91);
         else
           drawPoint(t, 0xbb, 0xbb, 0xbb);
       t++;
@@ -730,7 +730,7 @@ void focusIconView(IconView *icon)
     if (isAlpha(&(focusIcon->image[i])))
     {
       isBg[i] = 1;
-      drawPoint(&(focusIcon->image[i]), 145, 210, 228);
+      drawPoint(&(focusIcon->image[i]),  226, 149, 91);
     }
   }
   drawIconView(screen_temp2, focusIcon, window);
