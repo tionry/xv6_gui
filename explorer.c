@@ -8,16 +8,17 @@
 Window window;
 TextBox filenameBox;
 Button newFolderButton;
+Button backupButton;
 RGB closeButtonImageViewTemp[100];
 ImageView closeButtonImageView;
 IconView icon[50];
 struct RGB folder[50][10000];
 char wd[256];
-char dir[256];
 int hWind;
 
 void closeWindow(Widget *widget, Window *window);
 void newFolder(Widget *widget, Window *window);
+void backup(Widget *widget, Window *window);
 void refresh(Widget *widget, Window *window);
 
 //Result: T_DIR || T_FILE || T_DEV, define in stat.h
@@ -82,8 +83,6 @@ void iconOnLeftDoubleClick(Widget *widget, Window *window)
     strcat(wd, s);
     strcat(window->caption, s);
     strcat(window->caption, "/");
-    strcat(dir, s);
-    strcat(dir, "/");
     refresh(window->widgets, window);
     return;
   }
@@ -189,18 +188,18 @@ int main(int argc, char *argv[])
   window.height = 800;
   window.show = 1;
   window.hasCaption = 1;
-  strcpy(window.caption, "Explorer");
+  strcpy(window.caption, "Explorer:/");
   window.onFileSystemChangedHandler.handlerFunction = refresh;
   addCloseButton(&window, &closeButtonImageView, closeButtonImageViewTemp);
   closeButtonImageView.onLeftClickHandler.handlerFunction = closeWindow;
   strcpy(wd, ".");
-  strcpy(dir, ":/");
   if (argv[1] != 0)
   {
-    strcpy(wd, argv[1]);
-    strcat(dir, argv[1]);
+    strcat(wd, "/");
+    strcat(wd, argv[1]);
+    strcat(window.caption, argv[1]);
+    strcat(window.caption, "/");
   }
-  strcat(window.caption, dir);
   filenameBox.width = 200;
   filenameBox.height = 50;
   filenameBox.leftTopX = 20;
@@ -213,12 +212,21 @@ int main(int argc, char *argv[])
   window.widgetsNum++;
   newFolderButton.width = 100;
   newFolderButton.height = 50;
-  newFolderButton.leftTopX = (window.width >> 1) - (newFolderButton.width >> 1);
-  newFolderButton.leftTopY = window.height - BORDER_WIDTH - newFolderButton.height - 10;
+  newFolderButton.leftTopX = filenameBox.leftTopX + 220;
+  newFolderButton.leftTopY = filenameBox.leftTopY;
   strcpy(newFolderButton.text, "New Folder");
   newFolderButton.onLeftClickHandler.handlerFunction = newFolder;
   window.widgets[window.widgetsNum].type = button;
   window.widgets[window.widgetsNum].context.button = &newFolderButton;
+  window.widgetsNum++;
+  backupButton.width = 100;
+  backupButton.height = 50;
+  backupButton.leftTopX = newFolderButton.leftTopX + 220;
+  backupButton.leftTopY = newFolderButton.leftTopY;
+  strcpy(backupButton.text, "Backup");
+  backupButton.onLeftClickHandler.handlerFunction = backup;
+  window.widgets[window.widgetsNum].type = button;
+  window.widgets[window.widgetsNum].context.button = &backupButton;
   window.widgetsNum++;
   hWind = createWindow(&window);
   ls(wd);
@@ -243,9 +251,34 @@ void newFolder(Widget *widget, Window *window)
   fileSystemChanged();
 }
 
+void backup(Widget *widget, Window *window)
+{
+  char *s;
+
+  if (strcmp(wd, ".") == 0)
+    return;
+  s = wd;
+  while (*s != 0)
+    s++;
+  while (*s != '/')
+    s--;
+  *s = 0;
+  s = window->caption;
+  while (*s != 0)
+    s++;
+  while (*s != '/')
+    s--;
+  s--;
+  while (*s != '/')
+    s--;
+  s++;
+  *s = 0;
+  refresh(window->widgets, window);
+}
+
 void refresh(Widget *widget, Window *window)
 {
-  window->widgetsNum = 3;
+  window->widgetsNum = 4;
   updateWindow();
   ls(wd);
   updateWindow();
