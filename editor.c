@@ -1,4 +1,5 @@
 #include "types.h"
+#include "fcntl.h"
 #include "uwindow.h"
 #include "stat.h"
 #include "user.h"
@@ -73,15 +74,15 @@ int main(int argc,char *argv[])
   {
     strcpy(window.caption, argv[1]);
     strcpy(fileNameBox.text, argv[1]);
-    if((fd = open(argv[1], 0)) < 0){
+    if((fd = open(argv[1], O_RDONLY)) < 0){
       printf(1, "cat: cannot open %s\n", argv[1]);
       exit();
     }
     cat(fd);
+    close(fd);
   }
   else
   {
-    
     text_box.text[0] = '\0';
     text_box.cursor = 0;
     text_box.textLength = 0;
@@ -111,15 +112,22 @@ int main(int argc,char *argv[])
 void closeWindow(Widget *widget, Window *window)
 {
   deleteWindow(hWind);
-  close(fd);
   exit();
 }
 
-void saveFile(int fdi)
+void saveFile()
 {
   //file name :text1,text2...
   //file content text_box.content
+  int fd = open(window.caption, O_WRONLY);
+  
+  if (fd < 0)
+  {
+    return;
+  }
+
   printf(1,"save\n");
-  write(fdi, text_box.text, strlen(text_box.text));
+  write(fd, text_box.text, strlen(text_box.text));
+  close(fd);
 }
 
