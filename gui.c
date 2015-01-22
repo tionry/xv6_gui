@@ -17,6 +17,9 @@ extern WindowQueue windowQueue;
 extern WindowQueue *lastWindow;
 extern mouseinfo mouse_info;
 RGB *screen, *screen_temp1, *screen_temp2;
+IconView *focusIcon = 0;
+RGB background[96 * 96];
+int isBg[96 * 96];
 struct spinlock gui_lock;
 
 char dm[14][14] = {
@@ -154,7 +157,7 @@ void drawTextBox(RGB *buf, TextBox *textBox, Window *window)
     t = buf + (window->leftTopY + textBox->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + textBox->leftTopX;
     for (i = 0; i < textBox->width; i++)
     {
-      drawPoint(t, 0xcc, 0xcc, 0xcc);
+      drawPoint(t, 0xff, 0xff, 0xff);
       t++;
     }
   }
@@ -630,3 +633,92 @@ void updateMouse()
   release(&gui_lock);
 }
 
+void focusIconView(IconView *icon)
+{
+  int size = 0, i, x, y;
+  switchuvm(lastWindow->proc);
+  Window *window = lastWindow->window;
+  size = 96 * 96;
+  if (focusIcon)
+  {
+    if (focusIcon == icon)
+      return;
+    for (i = 0; i < size; i++)
+    {
+      x = i % 96;
+      y = i / 96;
+      focusIcon->image[(95-y)*96+x].R = background[i].R;
+      focusIcon->image[(95-y)*96+x].G = background[i].G;
+      focusIcon->image[(95-y)*96+x].B = background[i].B;
+    }
+    drawIconView(screen_temp2, focusIcon, window);
+    drawIconView(screen, focusIcon, window);
+    for (i = 0; i < size; i++)
+    {
+      if (isBg[i])
+      {
+        focusIcon->image[i].R = 0x00;
+        focusIcon->image[i].G = 0x00;
+        focusIcon->image[i].B = 0x00;
+      }
+      isBg[i] = 0;
+    }
+  }
+  focusIcon = icon;
+  for (i = 0; i < size; i++)
+  {
+    x = window->leftTopX + icon->leftTopX + i % 96;
+    y = window->leftTopY + icon->leftTopY + i / 96;
+    background[i].R = screen_temp2[y * SCREEN_WIDTH + x].R;
+    background[i].G = screen_temp2[y * SCREEN_WIDTH + x].G;
+    background[i].B = screen_temp2[y * SCREEN_WIDTH + x].B;
+    if (isAlpha(&(focusIcon->image[i])))
+    {
+      isBg[i] = 1;
+      drawPoint(&(focusIcon->image[i]), 0, 128, 255);
+    }
+  }
+  drawIconView(screen_temp2, focusIcon, window);
+  drawIconView(screen, focusIcon, window);
+  if (proc == 0)
+    switchkvm();
+  else
+    switchuvm(proc);
+}
+
+void focusDismiss()
+{
+  // cprintf("dismiss!\n");
+  int size , i, x, y;
+  switchuvm(lastWindow->proc);
+  Window *window = lastWindow->window;
+  size = 96 * 96;
+  if (focusIcon)
+  {
+    for (i = 0; i < size; i++)
+    {
+      x = i % 96;
+      y = i / 96;
+      focusIcon->image[(95-y)*96+x].R = background[i].R;
+      focusIcon->image[(95-y)*96+x].G = background[i].G;
+      focusIcon->image[(95-y)*96+x].B = background[i].B;
+    }
+    drawIconView(screen_temp2, focusIcon, window);
+    drawIconView(screen, focusIcon, window);
+  }
+   for (i = 0; i < size; i++)
+  {
+    if (isBg[i])
+    {
+      focusIcon->image[i].R = 0x00;
+      focusIcon->image[i].G = 0x00;
+      focusIcon->image[i].B = 0x00;
+    }
+    isBg[i] = 0;
+  }
+  focusIcon = 0;
+  if (proc == 0)
+    switchkvm();
+  else
+    switchuvm(proc);
+}

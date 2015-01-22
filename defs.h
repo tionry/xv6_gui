@@ -11,6 +11,7 @@ struct superblock;
 struct RGB;
 struct Window;
 struct WindowQueue;
+struct IconView;
 
 // bio.c
 void            binit(void);
@@ -56,11 +57,13 @@ void            stati(struct inode*, struct stat*);
 int             writei(struct inode*, char*, uint, uint);
 
 // gui.c
-void            initGUI();
-void            updateBackWindows();
-void 		updateLastWindow();
-void		updateMouse();
-void drawBitmap(char *filename, int leftTopX, int leftTopY);
+void             initGUI();
+void             updateBackWindows();
+void 	      updateLastWindow();
+void	      updateMouse();
+void            drawBitmap(char *filename, int leftTopX, int leftTopY);
+void            focusIconView(struct IconView *icon);
+void            focusDismiss();
 
 // ide.c
 void            ideinit(void);

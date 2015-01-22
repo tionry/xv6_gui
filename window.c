@@ -12,6 +12,8 @@
 WindowQueue windowLine[MAX_WINDOW_NUM];
 WindowQueue windowQueue;
 WindowQueue *lastWindow;
+Widget *focusWidget = 0;
+ImageView background;
 ImageView closeTag;
 struct spinlock window_lock;
 

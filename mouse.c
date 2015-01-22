@@ -135,21 +135,42 @@ void handleLeftClick()
   pwindowQueue = getClickedWindowQueue();
   if (pwindowQueue)
   {
-    if (pwindowQueue != lastWindow && pwindowQueue != &windowLine[0])
+    if (pwindowQueue != lastWindow && pwindowQueue == &windowLine[0])
+    {
+      if (proc == 0)
+        switchkvm();
+      else
+        switchuvm(proc);
+      return;
+    }
+    if (pwindowQueue != lastWindow  && pwindowQueue != &windowLine[0])
+    {
+      focusDismiss();
       reorderQueue(pwindowQueue);
+    }
     pwidget = getClickedWidget(pwindowQueue->window);
     if (pwidget)
+    {
       switch (pwidget->type)
       {
       case button:
+        focusDismiss();
         pwidget->context.button->onLeftClickHandler.triggered = 1;
         break;
       case imageView:
+        focusDismiss();
         pwidget->context.imageView->onLeftClickHandler.triggered = 1;
         break;
+      case iconView:
+        focusIconView(pwidget->context.iconView);
+        break;
       default:
+        focusDismiss();
         break;
       }
+    }
+    else
+        focusDismiss();
   }
   if (proc == 0)
     switchkvm();
@@ -165,8 +186,10 @@ void handleLeftDoubleClick()
   pwindowQueue = getClickedWindowQueue();
   if (pwindowQueue)
   {
+    focusDismiss();
     pwidget = getClickedWidget(pwindowQueue->window);
     if (pwidget)
+    {
       switch (pwidget->type)
       {
       case iconView:
@@ -175,6 +198,7 @@ void handleLeftDoubleClick()
       default:
         break;
       }
+    }
   }
   if (proc == 0)
     switchkvm();

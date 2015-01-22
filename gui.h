@@ -53,5 +53,6 @@ typedef struct RGB
   unsigned char R;
 } RGB;
 
+
 #endif
 
