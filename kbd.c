@@ -36,7 +36,7 @@ void deleteCharacter(TextBox *textbox)
   int i;
   int pos = textbox->cursor;
   int len = textbox->textLength;
-  for (i = pos-1; i < len; i++)
+  for (i = pos-1; i <= len; i++)
   {
     textbox->text[i] = textbox->text[i+1];
   }

@@ -257,10 +257,10 @@ void showDialog(Widget *widget, Window *window)
   strcpy(dialog.caption, "New Folder");
   addCloseButton(&dialog, &dialogCloseButtonImageView, dialogCloseButtonImageViewTemp);
   dialogCloseButtonImageView.onLeftClickHandler.handlerFunction = closeDialog;
-  filenameBox.width = 200;
-  filenameBox.height = 50;
+  filenameBox.width = 150;
+  filenameBox.height = 25;
   filenameBox.leftTopX = 20;
-  filenameBox.leftTopY = dialog.height - BORDER_WIDTH - filenameBox.height - 10;
+  filenameBox.leftTopY = dialog.height - BORDER_WIDTH - filenameBox.height - 40;
   strcpy(filenameBox.text, "NewFolderName");
   filenameBox.cursor = 13;
   filenameBox.textLength = 13;
@@ -269,7 +269,7 @@ void showDialog(Widget *widget, Window *window)
   dialog.widgetsNum++;
   okButton.width = 100;
   okButton.height = 50;
-  okButton.leftTopX = filenameBox.leftTopX + filenameBox.width;
+  okButton.leftTopX = filenameBox.leftTopX + filenameBox.width + 50;
   okButton.leftTopY = filenameBox.leftTopY - 20;
   strcpy(okButton.text, "OK");
   okButton.onLeftClickHandler.handlerFunction = newFolder;
