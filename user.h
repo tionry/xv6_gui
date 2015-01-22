@@ -28,7 +28,7 @@ int sleep(int);
 int uptime(void);
 int createWindow(struct Window *window);
 int deleteWindow(int hWind);
-int updateWindow();
+int updateWindow(int hWind);
 int fileSystemChanged();
 
 // ulib.c

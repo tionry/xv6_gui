@@ -195,7 +195,7 @@ ls(char *path)
     window.widgets[window.widgetsNum].context.iconView = &icon[i];
     i++;
     window.widgetsNum++;
-    if (i % 2 == 0) updateWindow();
+    if (i % 2 == 0) updateWindow(hWind);
   }
 }
 
@@ -247,7 +247,7 @@ int main(int argc, char *argv[])
   window.widgetsNum++;
   hWind = createWindow(&window);
   ls(wd);
-  updateWindow();
+  updateWindow(hWind);
   while (1) handleEvent(&window);
 }
 
@@ -338,8 +338,8 @@ void backup(Widget *widget, Window *window)
 void refresh(Widget *widget, Window *window)
 {
   window->widgetsNum = 3;
-  updateWindow();
+  updateWindow(hWind);
   ls(wd);
-  updateWindow();
+  updateWindow(hWind);
 }
 

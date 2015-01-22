@@ -172,7 +172,7 @@ void saveFile(Widget *widget, Window *window)
   if (isNewFile)
   {
     strcpy(mainwindow.caption, filenameBox.text);
-    updateWindow();
+    updateWindow(hWind);
     fileSystemChanged();
   }
 }

@@ -113,7 +113,17 @@ int sys_deleteWindow(void)
 
 int sys_updateWindow(void)
 {
-  updateBackWindows();
+  int hWind;
+  if (argint(0, &hWind) < 0)
+    return -1;
+
+  acquire(&window_lock);
+  if (windowLine + hWind == lastWindow)
+    updateLastWindow();
+  else
+    updateBackWindows();
+  release(&window_lock);
+
   return 0;
 }
 

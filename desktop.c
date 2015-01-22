@@ -10,6 +10,7 @@ ImageView image;
 IconView icon[50];
 struct RGB temp[1310720];
 struct RGB folder[50][10000];
+int hWind;
 
 //Result: T_DIR || T_FILE || T_DEV, define in stat.h
 //-1: error occured.
@@ -179,16 +180,16 @@ ls(char *path)
     window.widgets[window.widgetsNum].context.iconView = &icon[i];
     i++;
     window.widgetsNum++;
-    if (i % 2 == 0) updateWindow();
+    if (i % 2 == 0) updateWindow(hWind);
   }
 }
 
 void refresh(Widget *widget, Window *window)
 {
   window->widgetsNum = 1;
-  updateWindow();
+  updateWindow(hWind);
   ls(".");
-  updateWindow();
+  updateWindow(hWind);
 }
 
 int main(void)
@@ -209,9 +210,9 @@ int main(void)
   window.widgets[0].type = imageView;
   window.widgets[0].context.imageView = &image;
   window.widgetsNum = 1;
-  createWindow(&window);
+  hWind = createWindow(&window);
   ls(".");
-  updateWindow();
+  updateWindow(hWind);
   while (1) handleEvent(&window);
 }
 
