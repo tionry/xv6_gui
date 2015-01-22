@@ -13,6 +13,7 @@ ImageView closeButtonImageView;
 IconView icon[50];
 struct RGB folder[50][10000];
 char wd[256];
+char dir[256];
 int hWind;
 
 void closeWindow(Widget *widget, Window *window);
@@ -79,6 +80,10 @@ void iconOnLeftDoubleClick(Widget *widget, Window *window)
   {
     strcat(wd, "/");
     strcat(wd, s);
+    strcat(window->caption, s);
+    strcat(window->caption, "/");
+    strcat(dir, s);
+    strcat(dir, "/");
     refresh(window->widgets, window);
     return;
   }
@@ -189,8 +194,13 @@ int main(int argc, char *argv[])
   addCloseButton(&window, &closeButtonImageView, closeButtonImageViewTemp);
   closeButtonImageView.onLeftClickHandler.handlerFunction = closeWindow;
   strcpy(wd, ".");
+  strcpy(dir, ":/");
   if (argv[1] != 0)
+  {
     strcpy(wd, argv[1]);
+    strcat(dir, argv[1]);
+  }
+  strcat(window.caption, dir);
   filenameBox.width = 200;
   filenameBox.height = 50;
   filenameBox.leftTopX = 20;
