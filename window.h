@@ -30,7 +30,7 @@ typedef struct Label
 typedef struct TextBox
 {
   int fixed;
-  int leftTopX, leftTopY, width, height, cursor, semoph;
+  int leftTopX, leftTopY, width, height, cursor;
   int textLength;
   char text[MAX_STRING_NUM];
 } TextBox;
