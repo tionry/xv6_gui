@@ -6,17 +6,25 @@
 
 static TextBox text_box;
 
-Window window;
+Window mainwindow;
 static int hWind,fd;
 RGB closeButtonImageViewTemp[100];
 RGB saveButtonImageViewTemp[100];
 ImageView closeButtonImageView;
 ImageView saveButtonImageView;
 Button saveFileButton;
-TextBox fileNameBox;
+
+Window dialog;
+TextBox filenameBox;
+Button okButton;
+RGB dialogCloseButtonImageViewTemp[100];
+ImageView dialogCloseButtonImageView;
+int hDlog = -1;
 
 void closeWindow(Widget *widget, Window *window);
-void saveFile();
+void closeDialog(Widget *widget, Window *window);
+void showDialog(Widget *widget, Window *window);
+void saveFile(Widget *widget, Window *window);
 
 void cat(int fdi)
 {
@@ -29,51 +37,24 @@ void cat(int fdi)
   }
   text_box.cursor = n;
   text_box.textLength = n;
-  close(fd);
-  //printf(1,"%d\n",n);
-  //printf(1, "%s\n", text_box.text);
 }
 
 int main(int argc,char *argv[])
 {
-  memset(&window, 0, sizeof(Window));
-  window.leftTopX = 300;
-  window.leftTopY = 200;
-  window.width = 600;
-  window.height = 500;
-  window.show = 1;
-  window.hasCaption = 1;
-  strcpy(window.caption, "TextEditor");
-  saveFileButton.leftTopX = 280;
-  saveFileButton.leftTopY = 420;
-  saveFileButton.width = 40;
-  saveFileButton.height = 30;
-  strcpy(saveFileButton.text,"Save");
-
-  addCloseButton(&window, &closeButtonImageView, closeButtonImageViewTemp);
+  memset(&mainwindow, 0, sizeof(Window));
+  mainwindow.leftTopX = 300;
+  mainwindow.leftTopY = 200;
+  mainwindow.width = 600;
+  mainwindow.height = 500;
+  mainwindow.show = 1;
+  mainwindow.hasCaption = 1;
+  addCloseButton(&mainwindow, &closeButtonImageView, closeButtonImageViewTemp);
   closeButtonImageView.onLeftClickHandler.handlerFunction = closeWindow;
-  saveFileButton.onLeftClickHandler.handlerFunction = saveFile;
-  
-  printf(1,"%s\n",argv[0]);
-  printf(1,"%s\n",argv[1]);
-
   memset(&text_box, 0, sizeof(TextBox));
-  text_box.leftTopX = 0;
-  text_box.leftTopY = 0;
-  text_box.width = 580;
-  text_box.height = 460;
   text_box.cursor = 0;
-  fileNameBox.width = 200;
-  fileNameBox.height = 50;
-  fileNameBox.leftTopX = 50;
-  fileNameBox.leftTopY = 420;
-  strcpy(fileNameBox.text, "NewFileName");
-  fileNameBox.cursor = 13;
-  fileNameBox.textLength = 13;
   if (argv[1] != 0)
   {
-    strcpy(window.caption, argv[1]);
-    strcpy(fileNameBox.text, argv[1]);
+    strcpy(mainwindow.caption, argv[1]);
     if((fd = open(argv[1], O_RDONLY)) < 0){
       printf(1, "cat: cannot open %s\n", argv[1]);
       exit();
@@ -83,29 +64,33 @@ int main(int argc,char *argv[])
   }
   else
   {
-    strcpy(fileNameBox.text, "NewFile.txt");
+    strcpy(mainwindow.caption, "NewFile.txt");
     text_box.text[0] = '\0';
     text_box.cursor = 0;
     text_box.textLength = 0;
   }
-  
-  text_box.leftTopX = 10;//(window.width >> 1) - (text_box.width >> 1);
-  text_box.leftTopY = 30;//(window.height >> 1) - (text_box.height >> 1);
-  window.widgets[window.widgetsNum].type = textBox;
-  window.widgets[window.widgetsNum].context.textBox = &text_box;
-  //printf(1, "length : %d\n", window.widgets[window.widgetsNum].context.textBox->textLength);
-  window.widgetsNum++;
-  window.widgets[window.widgetsNum].type = button;
-  window.widgets[window.widgetsNum].context.button = &saveFileButton;
-  window.widgetsNum++;
-  window.widgets[window.widgetsNum].type = textBox;
-  window.widgets[window.widgetsNum].context.textBox = &fileNameBox;
-  window.widgetsNum++;
-  
-  hWind = createWindow(&window);
+  text_box.leftTopX = 10;
+  text_box.leftTopY = 30;
+  text_box.width = 580;
+  text_box.height = 460;
+  mainwindow.widgets[mainwindow.widgetsNum].type = textBox;
+  mainwindow.widgets[mainwindow.widgetsNum].context.textBox = &text_box;
+  mainwindow.widgetsNum++;
+  memset(&saveFileButton, 0, sizeof(Button));
+  saveFileButton.width = 100;
+  saveFileButton.height = 50;
+  saveFileButton.leftTopX = (mainwindow.width >> 1) - (saveFileButton.width >> 1);
+  saveFileButton.leftTopY = mainwindow.height - BORDER_WIDTH - saveFileButton.height - 20;
+  strcpy(saveFileButton.text, "Save");
+  saveFileButton.onLeftClickHandler.handlerFunction = showDialog;
+  mainwindow.widgets[mainwindow.widgetsNum].type = button;
+  mainwindow.widgets[mainwindow.widgetsNum].context.button = &saveFileButton;
+  mainwindow.widgetsNum++;
+ 
+  hWind = createWindow(&mainwindow);
   while(1)
   {
-    handleEvent(&window);
+    handleEvent(&mainwindow);
   }
   exit();
 }
@@ -116,22 +101,61 @@ void closeWindow(Widget *widget, Window *window)
   exit();
 }
 
-void saveFile()
+void closeDialog(Widget *widget, Window *window)
 {
-  //file name :text1,text2...
-  //file content text_box.content
-  int fd = open(fileNameBox.text, O_WRONLY);
+  deleteWindow(hDlog);
+  hDlog = -1;
+}
+
+void showDialog(Widget *widget, Window *window)
+{
+  memset(&dialog, 0, sizeof(Window));
+  dialog.leftTopX = 400;
+  dialog.leftTopY = 375;
+  dialog.width = 350;
+  dialog.height = 150;
+  dialog.show = 1;
+  dialog.hasCaption = 1;
+  strcpy(dialog.caption, "Save File");
+  addCloseButton(&dialog, &dialogCloseButtonImageView, dialogCloseButtonImageViewTemp);
+  dialogCloseButtonImageView.onLeftClickHandler.handlerFunction = closeDialog;
+  filenameBox.width = 200;
+  filenameBox.height = 50;
+  filenameBox.leftTopX = 20;
+  filenameBox.leftTopY = dialog.height - BORDER_WIDTH - filenameBox.height - 10;
+  strcpy(filenameBox.text, window->caption);
+  filenameBox.cursor = filenameBox.textLength = strlen(filenameBox.text);
+  dialog.widgets[dialog.widgetsNum].type = textBox;
+  dialog.widgets[dialog.widgetsNum].context.textBox = &filenameBox;
+  dialog.widgetsNum++;
+  okButton.width = 100;
+  okButton.height = 50;
+  okButton.leftTopX = filenameBox.leftTopX + filenameBox.width;
+  okButton.leftTopY = filenameBox.leftTopY - 20;
+  strcpy(okButton.text, "OK");
+  okButton.onLeftClickHandler.handlerFunction = saveFile;
+  dialog.widgets[dialog.widgetsNum].type = button;
+  dialog.widgets[dialog.widgetsNum].context.button = &okButton;
+  dialog.widgetsNum++; 
+  hDlog = createWindow(&dialog);
+  while (hDlog != -1) handleEvent(&dialog);
+}
+
+void saveFile(Widget *widget, Window *window)
+{
+  closeDialog(widget, window);
+  int fd = open(filenameBox.text, O_WRONLY);
   char isNewFile = 0;
 
   if (fd < 0)
   {
-    fd = open(fileNameBox.text, O_CREATE);
+    fd = open(filenameBox.text, O_CREATE);
     if (fd < 0)
     {
       return;
     }
     close(fd);
-    fd = open(fileNameBox.text, O_WRONLY);
+    fd = open(filenameBox.text, O_WRONLY);
     if (fd < 0)
     {
       return;
@@ -139,11 +163,12 @@ void saveFile()
     isNewFile = 1;
   }
 
-  printf(1,"save\n");
   write(fd, text_box.text, strlen(text_box.text));
   close(fd);
   if (isNewFile)
   {
+    strcpy(mainwindow.caption, filenameBox.text);
+    updateWindow();
     fileSystemChanged();
   }
 }
