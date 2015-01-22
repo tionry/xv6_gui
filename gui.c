@@ -694,8 +694,9 @@ void focusIconView(IconView *icon)
 void focusDismiss()
 {
   // cprintf("dismiss!\n");
+  //return;
   int size , i, x, y;
-  acquire(&gui_lock);
+  //acquire(&gui_lock);
   switchuvm(lastWindow->proc);
   Window *window = lastWindow->window;
   size = 96 * 96;
@@ -727,6 +728,6 @@ void focusDismiss()
     switchkvm();
   else
     switchuvm(proc);
-  release(&gui_lock);
+  //release(&gui_lock);
 }
 

@@ -154,11 +154,11 @@ void handleLeftClick()
       switch (pwidget->type)
       {
       case button:
-        focusDismiss();
+        //focusDismiss();
         pwidget->context.button->onLeftClickHandler.triggered = 1;
         break;
       case imageView:
-        focusDismiss();
+        //focusDismiss();
         pwidget->context.imageView->onLeftClickHandler.triggered = 1;
         break;
       case iconView:
