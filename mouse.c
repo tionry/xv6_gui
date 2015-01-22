@@ -146,8 +146,8 @@ void handleLeftClick()
     if (pwindowQueue != lastWindow  && pwindowQueue != &windowLine[0])
     {
       focusDismiss();
-      switchuvm(pwindowQueue->proc);
       reorderQueue(pwindowQueue);
+      switchuvm(pwindowQueue->proc);
     }
     pwidget = getClickedWidget(pwindowQueue->window);
     if (pwidget)
