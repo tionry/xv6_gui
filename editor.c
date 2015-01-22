@@ -83,7 +83,7 @@ int main(int argc,char *argv[])
   }
   else
   {
-    strcpy(fileNameBox.text, "NewFile");
+    strcpy(fileNameBox.text, "NewFile.txt");
     text_box.text[0] = '\0';
     text_box.cursor = 0;
     text_box.textLength = 0;
@@ -124,7 +124,17 @@ void saveFile()
   
   if (fd < 0)
   {
-    return;
+    fd = open(fileNameBox.text, O_CREATE);
+    if (fd < 0)
+    {
+      return;
+    }
+    close(fd);
+    fd = open(fileNameBox.text, O_WRONLY);
+    if (fd < 0)
+    {
+      return;
+    }
   }
 
   printf(1,"save\n");
