@@ -182,7 +182,7 @@ void drawTextBox(RGB *buf, TextBox *textBox, Window *window)
      drawPoint(t, 0x00, 0x00, 0x00);
      t++;
   }
-  
+
   i = 0;
   j = 0;
   pos_x = 9;
@@ -227,15 +227,33 @@ void drawTextBox(RGB *buf, TextBox *textBox, Window *window)
 void drawButton(RGB *buf, Button *button, Window *window)
 {
   int i, j, len;
-  RGB *t;
+  RGB *t, *t1, *t2;
 
-  for (j = 0; j < button->height; j++)
+  if (button->image)
   {
-    t = buf + (window->leftTopY + button->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + button->leftTopX;
-    for (i = 0; i < button->width; i++)
+    for (j = 0; j < button->height; j++)
     {
-      drawPoint(t, 0xc8, 0xc8, 0xc8);
-      t++;
+      t1 = buf + (window->leftTopY + button->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + button->leftTopX;
+      t2 = button->image + (button->height - 1 - j) * button->width;
+      for (i = 0; i < button->width; i++)
+      {
+        if (isAlpha(t2) == 0)
+          *t1 = *t2;
+        t1++;
+        t2++;
+      }
+    }
+  }
+  else
+  {
+    for (j = 0; j < button->height; j++)
+    {
+      t = buf + (window->leftTopY + button->leftTopY + j) * SCREEN_WIDTH + window->leftTopX + button->leftTopX;
+      for (i = 0; i < button->width; i++)
+      {
+        drawPoint(t, 0xc8, 0xc8, 0xc8);
+        t++;
+      }
     }
   }
 
@@ -308,7 +326,10 @@ void drawWindow(RGB *buf, Window *window, int focus)
       t = buf + (window->leftTopY + j) * SCREEN_WIDTH + window->leftTopX;
       for (i = 0; i < window->width; i++)
       {
-        drawPoint(t, 0xff, 0xff, 0xff);
+        if (j < window->height - BORDER_WIDTH - MENU_HEIGHT)
+          drawPoint(t, 0xff, 0xff, 0xff);
+        else
+          drawPoint(t, 227,237,205);
         t++;
       }
     }

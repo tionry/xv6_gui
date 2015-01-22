@@ -37,6 +37,7 @@ typedef struct TextBox
 
 typedef struct Button
 {
+  struct RGB *image;
   int leftTopX, leftTopY, width, height;
   char text[MAX_STRING_NUM];
   Handler onLeftClickHandler;

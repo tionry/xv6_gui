@@ -12,6 +12,7 @@ RGB closeButtonImageViewTemp[100];
 ImageView closeButtonImageView;
 IconView icon[50];
 struct RGB folder[50][10000];
+struct RGB buttons[10][1000];
 char wd[256];
 int hWind;
 
@@ -212,16 +213,21 @@ int main(int argc, char *argv[])
   newFolderButton.height = 50;
   newFolderButton.leftTopX = (window.width >> 2);
   newFolderButton.leftTopY = window.height - BORDER_WIDTH - newFolderButton.height - 10;
-  strcpy(newFolderButton.text, "New Folder");
+  newFolderButton.image = buttons[0];
+  readBitmapFile("folder-plus.bmp", newFolderButton.image, &newFolderButton.height, &newFolderButton.width);
+  //strcpy(newFolderButton.text, "New Folder");
   newFolderButton.onLeftClickHandler.handlerFunction = showDialog;
   window.widgets[window.widgetsNum].type = button;
   window.widgets[window.widgetsNum].context.button = &newFolderButton;
   window.widgetsNum++;
+
   backupButton.width = 100;
   backupButton.height = 50;
   backupButton.leftTopX = newFolderButton.leftTopX * 3;
   backupButton.leftTopY = newFolderButton.leftTopY;
-  strcpy(backupButton.text, "Backup");
+  backupButton.image = buttons[1];
+  readBitmapFile("undo2.bmp", backupButton.image, &backupButton.height, &backupButton.width);
+  //strcpy(backupButton.text, "Backup");
   backupButton.onLeftClickHandler.handlerFunction = backup;
   window.widgets[window.widgetsNum].type = button;
   window.widgets[window.widgetsNum].context.button = &backupButton;
