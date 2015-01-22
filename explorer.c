@@ -6,7 +6,6 @@
 #include "bitmap.h"
 
 Window window;
-TextBox filenameBox;
 Button newFolderButton;
 Button backupButton;
 RGB closeButtonImageViewTemp[100];
@@ -16,7 +15,16 @@ struct RGB folder[50][10000];
 char wd[256];
 int hWind;
 
+Window dialog;
+TextBox filenameBox;
+Button okButton;
+RGB dialogCloseButtonImageViewTemp[100];
+ImageView dialogCloseButtonImageView;
+int hDlog = -1;
+
 void closeWindow(Widget *widget, Window *window);
+void closeDialog(Widget *widget, Window *window);
+void showDialog(Widget *widget, Window *window);
 void newFolder(Widget *widget, Window *window);
 void backup(Widget *widget, Window *window);
 void refresh(Widget *widget, Window *window);
@@ -200,28 +208,18 @@ int main(int argc, char *argv[])
     strcat(window.caption, argv[1]);
     strcat(window.caption, "/");
   }
-  filenameBox.width = 200;
-  filenameBox.height = 50;
-  filenameBox.leftTopX = 20;
-  filenameBox.leftTopY = window.height - BORDER_WIDTH - filenameBox.height - 10;
-  strcpy(filenameBox.text, "NewFolderName");
-  filenameBox.cursor = 13;
-  filenameBox.textLength = 13;
-  window.widgets[window.widgetsNum].type = textBox;
-  window.widgets[window.widgetsNum].context.textBox = &filenameBox;
-  window.widgetsNum++;
   newFolderButton.width = 100;
   newFolderButton.height = 50;
-  newFolderButton.leftTopX = filenameBox.leftTopX + 220;
-  newFolderButton.leftTopY = filenameBox.leftTopY;
+  newFolderButton.leftTopX = (window.width >> 2);
+  newFolderButton.leftTopY = window.height - BORDER_WIDTH - newFolderButton.height - 10;
   strcpy(newFolderButton.text, "New Folder");
-  newFolderButton.onLeftClickHandler.handlerFunction = newFolder;
+  newFolderButton.onLeftClickHandler.handlerFunction = showDialog;
   window.widgets[window.widgetsNum].type = button;
   window.widgets[window.widgetsNum].context.button = &newFolderButton;
   window.widgetsNum++;
   backupButton.width = 100;
   backupButton.height = 50;
-  backupButton.leftTopX = newFolderButton.leftTopX + 220;
+  backupButton.leftTopX = newFolderButton.leftTopX * 3;
   backupButton.leftTopY = newFolderButton.leftTopY;
   strcpy(backupButton.text, "Backup");
   backupButton.onLeftClickHandler.handlerFunction = backup;
@@ -241,9 +239,51 @@ void closeWindow(Widget *widget, Window *window)
   exit();
 }
 
+void closeDialog(Widget *widget, Window *window)
+{
+  deleteWindow(hDlog);
+  hDlog = -1;
+}
+
+void showDialog(Widget *widget, Window *window)
+{
+  memset(&dialog, 0, sizeof(Window));
+  dialog.leftTopX = 400;
+  dialog.leftTopY = 475;
+  dialog.width = 350;
+  dialog.height = 150;
+  dialog.show = 1;
+  dialog.hasCaption = 1;
+  strcpy(dialog.caption, "New Folder");
+  addCloseButton(&dialog, &dialogCloseButtonImageView, dialogCloseButtonImageViewTemp);
+  dialogCloseButtonImageView.onLeftClickHandler.handlerFunction = closeDialog;
+  filenameBox.width = 200;
+  filenameBox.height = 50;
+  filenameBox.leftTopX = 20;
+  filenameBox.leftTopY = dialog.height - BORDER_WIDTH - filenameBox.height - 10;
+  strcpy(filenameBox.text, "NewFolderName");
+  filenameBox.cursor = 13;
+  filenameBox.textLength = 13;
+  dialog.widgets[dialog.widgetsNum].type = textBox;
+  dialog.widgets[dialog.widgetsNum].context.textBox = &filenameBox;
+  dialog.widgetsNum++;
+  okButton.width = 100;
+  okButton.height = 50;
+  okButton.leftTopX = filenameBox.leftTopX + filenameBox.width;
+  okButton.leftTopY = filenameBox.leftTopY - 20;
+  strcpy(okButton.text, "OK");
+  okButton.onLeftClickHandler.handlerFunction = newFolder;
+  dialog.widgets[dialog.widgetsNum].type = button;
+  dialog.widgets[dialog.widgetsNum].context.button = &okButton;
+  dialog.widgetsNum++; 
+  hDlog = createWindow(&dialog);
+  while (hDlog != -1) handleEvent(&dialog);
+}
+
 void newFolder(Widget *widget, Window *window)
 {
   char s[256];
+  closeDialog(widget, window);
   strcpy(s, wd);
   strcat(s, "/");
   strcat(s, filenameBox.text);
@@ -278,7 +318,7 @@ void backup(Widget *widget, Window *window)
 
 void refresh(Widget *widget, Window *window)
 {
-  window->widgetsNum = 4;
+  window->widgetsNum = 3;
   updateWindow();
   ls(wd);
   updateWindow();
