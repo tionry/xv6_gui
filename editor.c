@@ -121,7 +121,8 @@ void saveFile()
   //file name :text1,text2...
   //file content text_box.content
   int fd = open(fileNameBox.text, O_WRONLY);
-  
+  char isNewFile = 0;
+
   if (fd < 0)
   {
     fd = open(fileNameBox.text, O_CREATE);
@@ -135,10 +136,15 @@ void saveFile()
     {
       return;
     }
+    isNewFile = 1;
   }
 
   printf(1,"save\n");
   write(fd, text_box.text, strlen(text_box.text));
   close(fd);
+  if (isNewFile)
+  {
+    fileSystemChanged();
+  }
 }
 
