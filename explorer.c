@@ -8,7 +8,7 @@
 Window window;
 Button newFolderButton;
 Button backupButton;
-RGB closeButtonImageViewTemp[100];
+RGB closeButtonImageViewTemp[1000];
 ImageView closeButtonImageView;
 IconView icon[50];
 struct RGB folder[50][10000];
