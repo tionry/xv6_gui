@@ -46,24 +46,33 @@ void handleEvent(Window *window)
 
 void addCloseButton(Window *window, ImageView *closeButtonImageView, RGB *closeButtonImageViewTemp)
 {
-  int i, j;
-  RGB *t;
+  // int i, j;
+  // RGB *t;
 
   memset(closeButtonImageView, 0, sizeof(ImageView));
-  closeButtonImageView->leftTopX = window->width - 20;
-  closeButtonImageView->leftTopY = 10;
-  closeButtonImageView->width = 10;
-  closeButtonImageView->height = 10;
+  closeButtonImageView->leftTopX = window->width - 25;
+  closeButtonImageView->leftTopY = 5;
   closeButtonImageView->image = closeButtonImageViewTemp;
-  t = closeButtonImageViewTemp;
-  for (j = 0; j < closeButtonImageView->height; j++)
-    for (i = 0; i < closeButtonImageView->width; i++)
-    {
-      t->R = 0xff;
-      t->G = 0x00;
-      t->B = 0x00;
-      t++;
-    }
+  closeButtonImageView->alphaBG = 1;
+  readBitmapFile("cross.bmp", closeButtonImageView->image, &(closeButtonImageView->height), &(closeButtonImageView->width));
+  // t = closeButtonImageViewTemp;
+  // for (j = 0; j < closeButtonImageView->height; j++)
+  //   for (i = 0; i < closeButtonImageView->width; i++)
+  //   {
+  //     if (i + j == 10 || i +j == 11 || i + j == 9|| i == j || i == j-1 || i-1 == j)
+  //     {
+  //       t->R = 0x00;
+  //     t->G = 0x00;
+  //     t->B = 0x00;
+  //     }
+  //     else
+  //     {
+  //       t->R = 0xff;
+  //       t->G = 0xff;
+  //       t->B = 0xff;
+  //     }
+  //     t++;
+  //   }
   window->widgets[window->widgetsNum].type = imageView;
   window->widgets[window->widgetsNum].context.imageView = closeButtonImageView;
   window->widgetsNum++;

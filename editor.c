@@ -8,8 +8,8 @@ static TextBox text_box;
 
 Window mainwindow;
 static int hWind,fd;
-RGB closeButtonImageViewTemp[100];
-RGB saveButtonImageViewTemp[100];
+RGB closeButtonImageViewTemp[1000];
+RGB saveButtonImageViewTemp[1000];
 ImageView closeButtonImageView;
 ImageView saveButtonImageView;
 Button saveFileButton;

@@ -276,6 +276,7 @@ void drawImageView(RGB *buf, ImageView *imageView, Window *window)
     t2 = imageView->image + (imageView->height - 1 - j) * imageView->width;
     for (i = 0; i < imageView->width; i++)
     {
+      if (!(imageView->alphaBG && isAlpha(t2)))
       *t1 = *t2;
       t1++;
       t2++;

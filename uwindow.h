@@ -55,6 +55,7 @@ typedef struct Button
 typedef struct ImageView
 {
   int leftTopX, leftTopY, width, height;
+  int alphaBG;
   struct RGB *image;
   Handler onLeftClickHandler;
 } ImageView;

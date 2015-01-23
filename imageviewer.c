@@ -6,8 +6,8 @@
 
 Window window;
 ImageView image;
-struct RGB temp[1310720];
-RGB closeButtonImageViewTemp[100];
+RGB temp[1310720];
+RGB closeButtonImageViewTemp[1000];
 ImageView closeButtonImageView;
 int hWind;
 
