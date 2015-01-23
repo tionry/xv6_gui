@@ -81,7 +81,11 @@ void suffix(char *t, char *s)
 
 void iconOnLeftDoubleClick(Widget *widget, Window *window)
 {
-  char *s = widget->context.iconView->text;
+  char s[256];
+  strcpy(s, wd);
+  strcat(s, "/");
+  strcat(s, widget->context.iconView->text);
+
   char *argv1[] = { s, 0 };
   char *argv2[] = { "", s, 0};
   char t[256];
@@ -89,8 +93,8 @@ void iconOnLeftDoubleClick(Widget *widget, Window *window)
   if (getiNodeType(s) == T_DIR)
   {
     strcat(wd, "/");
-    strcat(wd, s);
-    strcat(window->caption, s);
+    strcat(wd, widget->context.iconView->text);
+    strcat(window->caption, widget->context.iconView->text);
     strcat(window->caption, "/");
     refresh(window->widgets, window);
     return;
