@@ -18,7 +18,7 @@ RGB buttons[1000];
 Window dialog;
 TextBox filenameBox;
 Button okButton;
-RGB dialogCloseButtonImageViewTemp[100];
+RGB dialogCloseButtonImageViewTemp[1000];
 ImageView dialogCloseButtonImageView;
 int hDlog = -1;
 
